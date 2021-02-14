@@ -19,7 +19,7 @@
     "build": "webpack && microbundle --target node -f modern,cjs",
     "prepublish": "yarn build",
     "doc": "documentation build entry.js -f html -o doc",
-    "format": "prettier --write ."
+    "prettier": "prettier ."
   },
   "contributors": [
     {
