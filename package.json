@@ -10,6 +10,7 @@
   "unpkg": "dist/bsv.bundle.js",
   "library": "bsvjs",
   "scripts": {
+    "clean": "rm -rf dist",
     "lint": "standard *.js lib/**/*.js bin/**/*.js test/**/*.js",
     "pretest": "npm run lint",
     "test:mocha": "mocha",
@@ -18,7 +19,7 @@
     "build": "webpack && microbundle --target node -f modern,cjs",
     "prepublish": "npm build",
     "doc": "documentation build entry.js -f html -o doc",
-    "prettier": "prettier ."
+    "prettier": "prettier --write '{lib,test}/**/*.+(js|json)'"
   },
   "contributors": [
     {
