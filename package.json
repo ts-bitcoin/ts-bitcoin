@@ -12,7 +12,6 @@
   "scripts": {
     "clean": "rm -rf dist",
     "lint": "standard *.js lib/**/*.js bin/**/*.js test/**/*.js",
-    "pretest": "npm run lint",
     "test:mocha": "mocha",
     "test:karma": "karma start --single-run",
     "test": "npm run test:mocha && npm run test:karma",
