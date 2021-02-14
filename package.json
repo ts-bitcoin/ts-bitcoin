@@ -10,14 +10,13 @@
   "unpkg": "dist/bsv.bundle.js",
   "library": "bsvjs",
   "scripts": {
-    "clean": "rm -rf node_modules/* yarn.lock",
     "lint": "standard *.js lib/**/*.js bin/**/*.js test/**/*.js",
-    "pretest": "yarn run lint",
+    "pretest": "npm run lint",
     "test:mocha": "mocha",
     "test:karma": "karma start --single-run",
-    "test": "yarn run test:mocha && yarn run test:karma",
+    "test": "npm run test:mocha && npm run test:karma",
     "build": "webpack && microbundle --target node -f modern,cjs",
-    "prepublish": "yarn build",
+    "prepublish": "npm build",
     "doc": "documentation build entry.js -f html -o doc",
     "prettier": "prettier ."
   },

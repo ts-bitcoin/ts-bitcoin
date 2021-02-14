@@ -20,8 +20,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: yarn install --frozen-lockfile
-      - run: yarn run lint
-      - run: yarn run prettier -- --list-different
-      - run: yarn run build
-      - run: yarn run test
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run prettier -- --list-different
+      - run: npm run build
+      - run: npm run test
