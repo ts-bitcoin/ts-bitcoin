@@ -16,12 +16,12 @@ import pbkdf2 from 'pbkdf2'
 
 // Dependencies, subject to change.
 const deps = {
-  aes,
-  bnjs,
-  bs58,
-  elliptic,
-  hashjs,
-  pbkdf2
+    aes,
+    bnjs,
+    bs58,
+    elliptic,
+    hashjs,
+    pbkdf2,
 }
 
 export { deps }

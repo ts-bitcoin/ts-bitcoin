@@ -1,55 +1,24 @@
 [
   ["Format is: [scriptSig, scriptPubKey, flags, ... comments]"],
-  [
-    "It is evaluated as if there was a crediting coinbase transaction with two 0"
-  ],
+  ["It is evaluated as if there was a crediting coinbase transaction with two 0"],
   ["pushes as scriptSig, and one output of 0 satoshi and given scriptPubKey,"],
-  [
-    "followed by a spending transaction which spends this output as only input (and"
-  ],
-  [
-    "correct prevout hash), using the given scriptSig. All nLockTimes are 0, all"
-  ],
+  ["followed by a spending transaction which spends this output as only input (and"],
+  ["correct prevout hash), using the given scriptSig. All nLockTimes are 0, all"],
   ["nSequences are max."],
 
-  [
-    "",
-    "DEPTH 0 EQUAL",
-    "P2SH,STRICTENC",
-    "Test the test: we should have an empty stack after scriptSig evaluation"
-  ],
-  [
-    "  ",
-    "DEPTH 0 EQUAL",
-    "P2SH,STRICTENC",
-    "and multiple spaces should not change that."
-  ],
+  ["", "DEPTH 0 EQUAL", "P2SH,STRICTENC", "Test the test: we should have an empty stack after scriptSig evaluation"],
+  ["  ", "DEPTH 0 EQUAL", "P2SH,STRICTENC", "and multiple spaces should not change that."],
   ["   ", "DEPTH 0 EQUAL", "P2SH,STRICTENC"],
   ["    ", "DEPTH 0 EQUAL", "P2SH,STRICTENC"],
-  [
-    "1 2",
-    "2 EQUALVERIFY 1 EQUAL",
-    "P2SH,STRICTENC",
-    "Similarly whitespace around and between symbols"
-  ],
+  ["1 2", "2 EQUALVERIFY 1 EQUAL", "P2SH,STRICTENC", "Similarly whitespace around and between symbols"],
   ["1  2", "2 EQUALVERIFY 1 EQUAL", "P2SH,STRICTENC"],
   ["  1  2", "2 EQUALVERIFY 1 EQUAL", "P2SH,STRICTENC"],
   ["1  2  ", "2 EQUALVERIFY 1 EQUAL", "P2SH,STRICTENC"],
   ["  1  2  ", "2 EQUALVERIFY 1 EQUAL", "P2SH,STRICTENC"],
 
   ["1", "", "P2SH,STRICTENC"],
-  [
-    "0x02 0x01 0x00",
-    "",
-    "P2SH,STRICTENC",
-    "all bytes are significant, not only the last one"
-  ],
-  [
-    "0x09 0x00000000 0x00000000 0x10",
-    "",
-    "P2SH,STRICTENC",
-    "equals zero when cast to Int64"
-  ],
+  ["0x02 0x01 0x00", "", "P2SH,STRICTENC", "all bytes are significant, not only the last one"],
+  ["0x09 0x00000000 0x00000000 0x10", "", "P2SH,STRICTENC", "equals zero when cast to Int64"],
 
   ["0x01 0x0b", "11 EQUAL", "P2SH,STRICTENC", "push 1 byte"],
   ["0x02 0x417a", "'Az' EQUAL", "P2SH,STRICTENC"],
@@ -68,31 +37,11 @@
   ["0x4d 0x0000", "0 EQUAL", "P2SH,STRICTENC"],
   ["0x4e 0x00000000", "0 EQUAL", "P2SH,STRICTENC"],
   ["0x4f 1000 ADD", "999 EQUAL", "P2SH,STRICTENC"],
-  [
-    "0",
-    "IF 0x50 ENDIF 1",
-    "P2SH,STRICTENC",
-    "0x50 is reserved (ok if not executed)"
-  ],
-  [
-    "0x51",
-    "0x5f ADD 0x60 EQUAL",
-    "P2SH,STRICTENC",
-    "0x51 through 0x60 push 1 through 16 onto stack"
-  ],
+  ["0", "IF 0x50 ENDIF 1", "P2SH,STRICTENC", "0x50 is reserved (ok if not executed)"],
+  ["0x51", "0x5f ADD 0x60 EQUAL", "P2SH,STRICTENC", "0x51 through 0x60 push 1 through 16 onto stack"],
   ["1", "NOP", "P2SH,STRICTENC"],
-  [
-    "0",
-    "IF VER ELSE 1 ENDIF",
-    "P2SH,STRICTENC",
-    "VER non-functional (ok if not executed)"
-  ],
-  [
-    "0",
-    "IF RESERVED RESERVED1 RESERVED2 ELSE 1 ENDIF",
-    "P2SH,STRICTENC",
-    "RESERVED ok in un-executed IF"
-  ],
+  ["0", "IF VER ELSE 1 ENDIF", "P2SH,STRICTENC", "VER non-functional (ok if not executed)"],
+  ["0", "IF RESERVED RESERVED1 RESERVED2 ELSE 1 ENDIF", "P2SH,STRICTENC", "RESERVED ok in un-executed IF"],
 
   ["1", "DUP IF ENDIF", "P2SH,STRICTENC"],
   ["1", "IF 1 ENDIF", "P2SH,STRICTENC"],
@@ -102,29 +51,13 @@
 
   ["1 1", "IF IF 1 ELSE 0 ENDIF ENDIF", "P2SH,STRICTENC"],
   ["1 0", "IF IF 1 ELSE 0 ENDIF ENDIF", "P2SH,STRICTENC"],
-  [
-    "1 1",
-    "IF IF 1 ELSE 0 ENDIF ELSE IF 0 ELSE 1 ENDIF ENDIF",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "0 0",
-    "IF IF 1 ELSE 0 ENDIF ELSE IF 0 ELSE 1 ENDIF ENDIF",
-    "P2SH,STRICTENC"
-  ],
+  ["1 1", "IF IF 1 ELSE 0 ENDIF ELSE IF 0 ELSE 1 ENDIF ENDIF", "P2SH,STRICTENC"],
+  ["0 0", "IF IF 1 ELSE 0 ENDIF ELSE IF 0 ELSE 1 ENDIF ENDIF", "P2SH,STRICTENC"],
 
   ["1 0", "NOTIF IF 1 ELSE 0 ENDIF ENDIF", "P2SH,STRICTENC"],
   ["1 1", "NOTIF IF 1 ELSE 0 ENDIF ENDIF", "P2SH,STRICTENC"],
-  [
-    "1 0",
-    "NOTIF IF 1 ELSE 0 ENDIF ELSE IF 0 ELSE 1 ENDIF ENDIF",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "0 1",
-    "NOTIF IF 1 ELSE 0 ENDIF ELSE IF 0 ELSE 1 ENDIF ENDIF",
-    "P2SH,STRICTENC"
-  ],
+  ["1 0", "NOTIF IF 1 ELSE 0 ENDIF ELSE IF 0 ELSE 1 ENDIF ENDIF", "P2SH,STRICTENC"],
+  ["0 1", "NOTIF IF 1 ELSE 0 ENDIF ELSE IF 0 ELSE 1 ENDIF ENDIF", "P2SH,STRICTENC"],
 
   [
     "0",
@@ -171,29 +104,15 @@
   ["0", "IF RETURN ENDIF 1", "P2SH,STRICTENC", "RETURN only works if executed"],
 
   ["1 1", "VERIFY", "P2SH,STRICTENC"],
-  [
-    "1 0x05 0x01 0x00 0x00 0x00 0x00",
-    "VERIFY",
-    "P2SH,STRICTENC",
-    "values >4 bytes can be cast to boolean"
-  ],
+  ["1 0x05 0x01 0x00 0x00 0x00 0x00", "VERIFY", "P2SH,STRICTENC", "values >4 bytes can be cast to boolean"],
   ["1 0x01 0x80", "IF 0 ENDIF", "P2SH,STRICTENC", "negative 0 is false"],
 
   ["10 0 11 TOALTSTACK DROP FROMALTSTACK", "ADD 21 EQUAL", "P2SH,STRICTENC"],
-  [
-    "'gavin_was_here' TOALTSTACK 11 FROMALTSTACK",
-    "'gavin_was_here' EQUALVERIFY 11 EQUAL",
-    "P2SH,STRICTENC"
-  ],
+  ["'gavin_was_here' TOALTSTACK 11 FROMALTSTACK", "'gavin_was_here' EQUALVERIFY 11 EQUAL", "P2SH,STRICTENC"],
 
   ["0 IFDUP", "DEPTH 1 EQUALVERIFY 0 EQUAL", "P2SH,STRICTENC"],
   ["1 IFDUP", "DEPTH 2 EQUALVERIFY 1 EQUALVERIFY 1 EQUAL", "P2SH,STRICTENC"],
-  [
-    "0x05 0x0100000000 IFDUP",
-    "DEPTH 2 EQUALVERIFY 0x05 0x0100000000 EQUAL",
-    "P2SH,STRICTENC",
-    "IFDUP dups non ints"
-  ],
+  ["0x05 0x0100000000 IFDUP", "DEPTH 2 EQUALVERIFY 0x05 0x0100000000 EQUAL", "P2SH,STRICTENC", "IFDUP dups non ints"],
   ["0 DROP", "DEPTH 0 EQUAL", "P2SH,STRICTENC"],
   ["0", "DUP 1 ADD 1 EQUALVERIFY 0 EQUAL", "P2SH,STRICTENC"],
   ["0 1", "NIP", "P2SH,STRICTENC"],
@@ -220,11 +139,7 @@
   ["1 0", "SWAP 1 EQUALVERIFY 0 EQUAL", "P2SH,STRICTENC"],
   ["0 1", "TUCK DEPTH 3 EQUALVERIFY SWAP 2DROP", "P2SH,STRICTENC"],
   ["13 14", "2DUP ROT EQUALVERIFY EQUAL", "P2SH,STRICTENC"],
-  [
-    "-1 0 1 2",
-    "3DUP DEPTH 7 EQUALVERIFY ADD ADD 3 EQUALVERIFY 2DROP 0 EQUALVERIFY",
-    "P2SH,STRICTENC"
-  ],
+  ["-1 0 1 2", "3DUP DEPTH 7 EQUALVERIFY ADD ADD 3 EQUALVERIFY 2DROP 0 EQUALVERIFY", "P2SH,STRICTENC"],
   ["1 2 3 5", "2OVER ADD ADD 8 EQUALVERIFY ADD ADD 6 EQUAL", "P2SH,STRICTENC"],
   ["1 3 5 7", "2SWAP ADD 4 EQUALVERIFY ADD 12 EQUAL", "P2SH,STRICTENC"],
   ["0", "SIZE 0 EQUAL", "P2SH,STRICTENC"],
@@ -254,12 +169,7 @@
   ["-9223372036854775807", "SIZE 8 EQUAL", "P2SH,STRICTENC"],
   ["'abcdefghijklmnopqrstuvwxyz'", "SIZE 26 EQUAL", "P2SH,STRICTENC"],
 
-  [
-    "42",
-    "SIZE 1 EQUALVERIFY 42 EQUAL",
-    "P2SH,STRICTENC",
-    "SIZE does not consume argument"
-  ],
+  ["42", "SIZE 1 EQUALVERIFY 42 EQUAL", "P2SH,STRICTENC", "SIZE does not consume argument"],
 
   ["2 -2 ADD", "0 EQUAL", "P2SH,STRICTENC"],
   ["2147483647 -2147483647 ADD", "0 EQUAL", "P2SH,STRICTENC"],
@@ -331,54 +241,17 @@
   ["2147483647 -100 100", "WITHIN NOT", "P2SH,STRICTENC"],
 
   ["2147483647 2147483647 SUB", "0 EQUAL", "P2SH,STRICTENC"],
-  [
-    "2147483647 DUP ADD",
-    "4294967294 EQUAL",
-    "P2SH,STRICTENC",
-    ">32 bit EQUAL is valid"
-  ],
+  ["2147483647 DUP ADD", "4294967294 EQUAL", "P2SH,STRICTENC", ">32 bit EQUAL is valid"],
   ["2147483647 NEGATE DUP ADD", "-4294967294 EQUAL", "P2SH,STRICTENC"],
 
-  [
-    "''",
-    "RIPEMD160 0x14 0x9c1185a5c5e9fc54612808977ee8f548b2258d31 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "'a'",
-    "RIPEMD160 0x14 0x0bdc9d2d256b3ee9daae347be6f4dc835a467ffe EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "'abcdefghijklmnopqrstuvwxyz'",
-    "RIPEMD160 0x14 0xf71c27109c692c1b56bbdceb5b9d2865b3708dbc EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "''",
-    "SHA1 0x14 0xda39a3ee5e6b4b0d3255bfef95601890afd80709 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "'a'",
-    "SHA1 0x14 0x86f7e437faa5a7fce15d1ddcb9eaeaea377667b8 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "'abcdefghijklmnopqrstuvwxyz'",
-    "SHA1 0x14 0x32d10c7b8cf96570ca04ce37f2a19d84240d3a89 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "''",
-    "SHA256 0x20 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "'a'",
-    "SHA256 0x20 0xca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb EQUAL",
-    "P2SH,STRICTENC"
-  ],
+  ["''", "RIPEMD160 0x14 0x9c1185a5c5e9fc54612808977ee8f548b2258d31 EQUAL", "P2SH,STRICTENC"],
+  ["'a'", "RIPEMD160 0x14 0x0bdc9d2d256b3ee9daae347be6f4dc835a467ffe EQUAL", "P2SH,STRICTENC"],
+  ["'abcdefghijklmnopqrstuvwxyz'", "RIPEMD160 0x14 0xf71c27109c692c1b56bbdceb5b9d2865b3708dbc EQUAL", "P2SH,STRICTENC"],
+  ["''", "SHA1 0x14 0xda39a3ee5e6b4b0d3255bfef95601890afd80709 EQUAL", "P2SH,STRICTENC"],
+  ["'a'", "SHA1 0x14 0x86f7e437faa5a7fce15d1ddcb9eaeaea377667b8 EQUAL", "P2SH,STRICTENC"],
+  ["'abcdefghijklmnopqrstuvwxyz'", "SHA1 0x14 0x32d10c7b8cf96570ca04ce37f2a19d84240d3a89 EQUAL", "P2SH,STRICTENC"],
+  ["''", "SHA256 0x20 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 EQUAL", "P2SH,STRICTENC"],
+  ["'a'", "SHA256 0x20 0xca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb EQUAL", "P2SH,STRICTENC"],
   [
     "'abcdefghijklmnopqrstuvwxyz'",
     "SHA256 0x20 0x71c480df93d6ae2f1efad1447c66c9525e316218cf51fc8d9ed832f2daf18b73 EQUAL",
@@ -386,54 +259,29 @@
   ],
   ["''", "DUP HASH160 SWAP SHA256 RIPEMD160 EQUAL", "P2SH,STRICTENC"],
   ["''", "DUP HASH256 SWAP SHA256 SHA256 EQUAL", "P2SH,STRICTENC"],
-  [
-    "''",
-    "NOP HASH160 0x14 0xb472a266d0bd89c13706a4132ccfb16f7c3b9fcb EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "'a'",
-    "HASH160 NOP 0x14 0x994355199e516ff76c4fa4aab39337b9d84cf12b EQUAL",
-    "P2SH,STRICTENC"
-  ],
+  ["''", "NOP HASH160 0x14 0xb472a266d0bd89c13706a4132ccfb16f7c3b9fcb EQUAL", "P2SH,STRICTENC"],
+  ["'a'", "HASH160 NOP 0x14 0x994355199e516ff76c4fa4aab39337b9d84cf12b EQUAL", "P2SH,STRICTENC"],
   [
     "'abcdefghijklmnopqrstuvwxyz'",
     "HASH160 0x4c 0x14 0xc286a1af0947f58d1ad787385b1c2c4a976f9e71 EQUAL",
     "P2SH,STRICTENC"
   ],
-  [
-    "''",
-    "HASH256 0x20 0x5df6e0e2761359d30a8275058e299fcc0381534545f55cf43e41983f5d4c9456 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "'a'",
-    "HASH256 0x20 0xbf5d3affb73efd2ec6c36ad3112dd933efed63c4e1cbffcfa88e2759c144f2d8 EQUAL",
-    "P2SH,STRICTENC"
-  ],
+  ["''", "HASH256 0x20 0x5df6e0e2761359d30a8275058e299fcc0381534545f55cf43e41983f5d4c9456 EQUAL", "P2SH,STRICTENC"],
+  ["'a'", "HASH256 0x20 0xbf5d3affb73efd2ec6c36ad3112dd933efed63c4e1cbffcfa88e2759c144f2d8 EQUAL", "P2SH,STRICTENC"],
   [
     "'abcdefghijklmnopqrstuvwxyz'",
     "HASH256 0x4c 0x20 0xca139bc10c2f660da42666f72e89a225936fc60f193c161124a672050c434671 EQUAL",
     "P2SH,STRICTENC"
   ],
 
-  [
-    "1",
-    "NOP1 CHECKLOCKTIMEVERIFY NOP3 NOP4 NOP5 NOP6 NOP7 NOP8 NOP9 NOP10 1 EQUAL",
-    "P2SH,STRICTENC"
-  ],
+  ["1", "NOP1 CHECKLOCKTIMEVERIFY NOP3 NOP4 NOP5 NOP6 NOP7 NOP8 NOP9 NOP10 1 EQUAL", "P2SH,STRICTENC"],
   [
     "'NOP_1_to_10' NOP1 CHECKLOCKTIMEVERIFY NOP3 NOP4 NOP5 NOP6 NOP7 NOP8 NOP9 NOP10",
     "'NOP_1_to_10' EQUAL",
     "P2SH,STRICTENC"
   ],
 
-  [
-    "1",
-    "NOP",
-    "P2SH,STRICTENC,DISCOURAGE_UPGRADABLE_NOPS",
-    "Discourage NOPx flag allows OP_NOP"
-  ],
+  ["1", "NOP", "P2SH,STRICTENC,DISCOURAGE_UPGRADABLE_NOPS", "Discourage NOPx flag allows OP_NOP"],
 
   [
     "0",
@@ -442,12 +290,7 @@
     "Discouraged NOPs are allowed if not executed"
   ],
 
-  [
-    "0",
-    "IF 0xba ELSE 1 ENDIF",
-    "P2SH,STRICTENC",
-    "opcodes above NOP10 invalid if executed"
-  ],
+  ["0", "IF 0xba ELSE 1 ENDIF", "P2SH,STRICTENC", "opcodes above NOP10 invalid if executed"],
   ["0", "IF 0xbb ELSE 1 ENDIF", "P2SH,STRICTENC"],
   ["0", "IF 0xbc ELSE 1 ENDIF", "P2SH,STRICTENC"],
   ["0", "IF 0xbd ELSE 1 ENDIF", "P2SH,STRICTENC"],
@@ -558,12 +401,7 @@
 
   ["NOP", "1", "P2SH,STRICTENC"],
 
-  [
-    "1",
-    "0x01 0x01 EQUAL",
-    "P2SH,STRICTENC",
-    "The following is useful for checking implementations of BN_bn2mpi"
-  ],
+  ["1", "0x01 0x01 EQUAL", "P2SH,STRICTENC", "The following is useful for checking implementations of BN_bn2mpi"],
   ["127", "0x01 0x7F EQUAL", "P2SH,STRICTENC"],
   ["128", "0x02 0x8000 EQUAL", "P2SH,STRICTENC", "Leave room for the sign bit"],
   ["32767", "0x02 0xFF7F EQUAL", "P2SH,STRICTENC"],
@@ -575,12 +413,7 @@
   ["549755813887", "0x05 0xFFFFFFFF7F EQUAL", "P2SH,STRICTENC"],
   ["549755813888", "0x06 0xFFFFFFFF7F EQUAL", "P2SH,STRICTENC"],
   ["9223372036854775807", "0x08 0xFFFFFFFFFFFFFF7F EQUAL", "P2SH,STRICTENC"],
-  [
-    "-1",
-    "0x01 0x81 EQUAL",
-    "P2SH,STRICTENC",
-    "Numbers are little-endian with the MSB being a sign bit"
-  ],
+  ["-1", "0x01 0x81 EQUAL", "P2SH,STRICTENC", "Numbers are little-endian with the MSB being a sign bit"],
   ["-127", "0x01 0xFF EQUAL", "P2SH,STRICTENC"],
   ["-128", "0x02 0x8080 EQUAL", "P2SH,STRICTENC"],
   ["-32767", "0x02 0xFFFF EQUAL", "P2SH,STRICTENC"],
@@ -603,55 +436,20 @@
   ["2147483647", "1ADD 1", "P2SH,STRICTENC"],
   ["-2147483647", "1ADD 1", "P2SH,STRICTENC"],
 
-  [
-    "1",
-    "0x02 0x0100 EQUAL NOT",
-    "P2SH,STRICTENC",
-    "Not the same byte array..."
-  ],
-  [
-    "1",
-    "0x02 0x0100 NUMEQUAL",
-    "P2SH,STRICTENC",
-    "... but they are numerically equal"
-  ],
+  ["1", "0x02 0x0100 EQUAL NOT", "P2SH,STRICTENC", "Not the same byte array..."],
+  ["1", "0x02 0x0100 NUMEQUAL", "P2SH,STRICTENC", "... but they are numerically equal"],
   ["11", "0x4c 0x03 0x0b0000 NUMEQUAL", "P2SH,STRICTENC"],
   ["0", "0x01 0x80 EQUAL NOT", "P2SH,STRICTENC"],
-  [
-    "0",
-    "0x01 0x80 NUMEQUAL",
-    "P2SH,STRICTENC",
-    "Zero numerically equals negative zero"
-  ],
+  ["0", "0x01 0x80 NUMEQUAL", "P2SH,STRICTENC", "Zero numerically equals negative zero"],
   ["0", "0x02 0x0080 NUMEQUAL", "P2SH,STRICTENC"],
   ["0x03 0x000080", "0x04 0x00000080 NUMEQUAL", "P2SH,STRICTENC"],
   ["0x03 0x100080", "0x04 0x10000080 NUMEQUAL", "P2SH,STRICTENC"],
   ["0x03 0x100000", "0x04 0x10000000 NUMEQUAL", "P2SH,STRICTENC"],
 
-  [
-    "NOP",
-    "NOP 1",
-    "P2SH,STRICTENC",
-    "The following tests check the if(stack.size() < N) tests in each opcode"
-  ],
-  [
-    "1",
-    "IF 1 ENDIF",
-    "P2SH,STRICTENC",
-    "They are here to catch copy-and-paste errors"
-  ],
-  [
-    "0",
-    "NOTIF 1 ENDIF",
-    "P2SH,STRICTENC",
-    "Most of them are duplicated elsewhere,"
-  ],
-  [
-    "1",
-    "VERIFY 1",
-    "P2SH,STRICTENC",
-    "but, hey, more is always better, right?"
-  ],
+  ["NOP", "NOP 1", "P2SH,STRICTENC", "The following tests check the if(stack.size() < N) tests in each opcode"],
+  ["1", "IF 1 ENDIF", "P2SH,STRICTENC", "They are here to catch copy-and-paste errors"],
+  ["0", "NOTIF 1 ENDIF", "P2SH,STRICTENC", "Most of them are duplicated elsewhere,"],
+  ["1", "VERIFY 1", "P2SH,STRICTENC", "but, hey, more is always better, right?"],
 
   ["0", "TOALTSTACK 1", "P2SH,STRICTENC"],
   ["1", "TOALTSTACK FROMALTSTACK", "P2SH,STRICTENC"],
@@ -679,12 +477,7 @@
 
   ["0 0", "EQUAL", "P2SH,STRICTENC"],
   ["0 0", "EQUALVERIFY 1", "P2SH,STRICTENC"],
-  [
-    "0 0 1",
-    "EQUAL EQUAL",
-    "P2SH,STRICTENC",
-    "OP_0 and bools must have identical byte representations"
-  ],
+  ["0 0 1", "EQUAL EQUAL", "P2SH,STRICTENC", "OP_0 and bools must have identical byte representations"],
 
   ["0", "1ADD", "P2SH,STRICTENC"],
   ["2", "1SUB", "P2SH,STRICTENC"],
@@ -733,12 +526,7 @@
     "CHECKMULTISIG is allowed to have zero keys and/or sigs"
   ],
   ["", "0 0 0 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
-  [
-    "",
-    "0 0 0 1 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC",
-    "Zero sigs means no sigs are checked"
-  ],
+  ["", "0 0 0 1 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC", "Zero sigs means no sigs are checked"],
   ["", "0 0 0 1 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
 
   [
@@ -748,12 +536,7 @@
     "CHECKMULTISIG is allowed to have zero keys and/or sigs"
   ],
   ["", "0 0 0 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
-  [
-    "",
-    "0 0 0 1 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC",
-    "Zero sigs means no sigs are checked"
-  ],
+  ["", "0 0 0 1 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC", "Zero sigs means no sigs are checked"],
   ["", "0 0 0 1 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
 
   [
@@ -762,56 +545,16 @@
     "P2SH,STRICTENC",
     "Test from up to 20 pubkeys, all not checked"
   ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 3 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 4 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 5 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 6 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 7 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 8 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 9 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 10 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 11 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 12 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
+  ["", "0 0 'a' 'b' 'c' 3 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 4 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 5 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 6 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 7 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 8 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 9 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 10 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 11 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 12 CHECKMULTISIG VERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
   [
     "",
     "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 13 CHECKMULTISIG VERIFY DEPTH 0 EQUAL",
@@ -855,51 +598,15 @@
   ["", "0 0 'a' 1 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
   ["", "0 0 'a' 'b' 2 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
   ["", "0 0 'a' 'b' 'c' 3 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 4 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 5 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 6 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 7 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 8 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 9 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 10 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 11 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
-  [
-    "",
-    "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 12 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
-    "P2SH,STRICTENC"
-  ],
+  ["", "0 0 'a' 'b' 'c' 'd' 4 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 5 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 6 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 7 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 8 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 9 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 10 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 11 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
+  ["", "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 12 CHECKMULTISIGVERIFY DEPTH 0 EQUAL", "P2SH,STRICTENC"],
   [
     "",
     "0 0 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 13 CHECKMULTISIGVERIFY DEPTH 0 EQUAL",
@@ -967,17 +674,8 @@
     "P2SH,STRICTENC"
   ],
 
-  [
-    "0 0x01 1",
-    "HASH160 0x14 0xda1745e9b549bd0bfa1a569971c77eba30cd5a4b EQUAL",
-    "P2SH,STRICTENC",
-    "Very basic P2SH"
-  ],
-  [
-    "0x4c 0 0x01 1",
-    "HASH160 0x14 0xda1745e9b549bd0bfa1a569971c77eba30cd5a4b EQUAL",
-    "P2SH,STRICTENC"
-  ],
+  ["0 0x01 1", "HASH160 0x14 0xda1745e9b549bd0bfa1a569971c77eba30cd5a4b EQUAL", "P2SH,STRICTENC", "Very basic P2SH"],
+  ["0x4c 0 0x01 1", "HASH160 0x14 0xda1745e9b549bd0bfa1a569971c77eba30cd5a4b EQUAL", "P2SH,STRICTENC"],
 
   [
     "0x40 0x42424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242424242",
@@ -1044,24 +742,9 @@
 
   ["Unevaluated non-minimal pushes are ignored"],
 
-  [
-    "0 IF 0x4c 0x00 ENDIF 1",
-    "",
-    "MINIMALDATA",
-    "non-minimal PUSHDATA1 ignored"
-  ],
-  [
-    "0 IF 0x4d 0x0000 ENDIF 1",
-    "",
-    "MINIMALDATA",
-    "non-minimal PUSHDATA2 ignored"
-  ],
-  [
-    "0 IF 0x4c 0x00000000 ENDIF 1",
-    "",
-    "MINIMALDATA",
-    "non-minimal PUSHDATA4 ignored"
-  ],
+  ["0 IF 0x4c 0x00 ENDIF 1", "", "MINIMALDATA", "non-minimal PUSHDATA1 ignored"],
+  ["0 IF 0x4d 0x0000 ENDIF 1", "", "MINIMALDATA", "non-minimal PUSHDATA2 ignored"],
+  ["0 IF 0x4c 0x00000000 ENDIF 1", "", "MINIMALDATA", "non-minimal PUSHDATA4 ignored"],
   ["0 IF 0x01 0x81 ENDIF 1", "", "MINIMALDATA", "1NEGATE equiv"],
   ["0 IF 0x01 0x01 ENDIF 1", "", "MINIMALDATA", "OP_1  equiv"],
   ["0 IF 0x01 0x02 ENDIF 1", "", "MINIMALDATA", "OP_2  equiv"],
@@ -1080,9 +763,7 @@
   ["0 IF 0x01 0x0f ENDIF 1", "", "MINIMALDATA", "OP_15 equiv"],
   ["0 IF 0x01 0x10 ENDIF 1", "", "MINIMALDATA", "OP_16 equiv"],
 
-  [
-    "Numeric minimaldata rules are only applied when a stack item is numerically evaluated; the push itself is allowed"
-  ],
+  ["Numeric minimaldata rules are only applied when a stack item is numerically evaluated; the push itself is allowed"],
 
   ["0x01 0x00", "1", "MINIMALDATA"],
   ["0x01 0x80", "1", "MINIMALDATA"],
@@ -1155,40 +836,22 @@
   ["0 0x02 0x0000 0", "CHECKMULTISIGVERIFY 1", ""],
 
   ["While not really correctly DER encoded, the empty signature is allowed by"],
-  [
-    "STRICTENC to provide a compact way to provide a delibrately invalid signature."
-  ],
-  [
-    "0",
-    "0x21 0x02865c40293a680cb9c020e7b1e106d8c1916d3cef99aa431a56d253e69256dac0 CHECKSIG NOT",
-    "STRICTENC"
-  ],
+  ["STRICTENC to provide a compact way to provide a delibrately invalid signature."],
+  ["0", "0x21 0x02865c40293a680cb9c020e7b1e106d8c1916d3cef99aa431a56d253e69256dac0 CHECKSIG NOT", "STRICTENC"],
   [
     "0 0",
     "1 0x21 0x02865c40293a680cb9c020e7b1e106d8c1916d3cef99aa431a56d253e69256dac0 1 CHECKMULTISIG NOT",
     "STRICTENC"
   ],
 
-  [
-    "CHECKMULTISIG evaluation order tests. CHECKMULTISIG evaluates signatures and"
-  ],
-  [
-    "pubkeys in a specific order, and will exit early if the number of signatures"
-  ],
-  [
-    "left to check is greater than the number of keys left. As STRICTENC fails the"
-  ],
-  [
-    "script when it reaches an invalidly encoded signature or pubkey, we can use it"
-  ],
+  ["CHECKMULTISIG evaluation order tests. CHECKMULTISIG evaluates signatures and"],
+  ["pubkeys in a specific order, and will exit early if the number of signatures"],
+  ["left to check is greater than the number of keys left. As STRICTENC fails the"],
+  ["script when it reaches an invalidly encoded signature or pubkey, we can use it"],
   ["to test the exact order in which signatures and pubkeys are evaluated by"],
-  [
-    "distinguishing CHECKMULTISIG returning false on the stack and the script as a"
-  ],
+  ["distinguishing CHECKMULTISIG returning false on the stack and the script as a"],
   ["whole failing."],
-  [
-    "See also the corresponding inverted versions of these tests in script_invalid.json"
-  ],
+  ["See also the corresponding inverted versions of these tests in script_invalid.json"],
   [
     "0 0x47 0x3044022044dc17b0887c161bb67ba9635bf758735bdde503e4b0a0987f587f14a4e1143d022009a215772d49a85dae40d8ca03955af26ad3978a0ff965faa12915e9586249a501 0x47 0x3044022044dc17b0887c161bb67ba9635bf758735bdde503e4b0a0987f587f14a4e1143d022009a215772d49a85dae40d8ca03955af26ad3978a0ff965faa12915e9586249a501",
     "2 0 0x21 0x02865c40293a680cb9c020e7b1e106d8c1916d3cef99aa431a56d253e69256dac0 2 CHECKMULTISIG NOT",
@@ -1233,12 +896,7 @@
     "",
     "Non-integer S is correctly encoded"
   ],
-  [
-    "0x17 0x3014020002107777777777777777777777777777777701",
-    "0 CHECKSIG NOT",
-    "",
-    "Zero-length R is correctly encoded"
-  ],
+  ["0x17 0x3014020002107777777777777777777777777777777701", "0 CHECKSIG NOT", "", "Zero-length R is correctly encoded"],
   [
     "0x17 0x3014021077777777777777777777777777777777020001",
     "0 CHECKSIG NOT",

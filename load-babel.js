@@ -1,3 +1,3 @@
 require('@babel/register')({
-  configFile: './.babelrc.test'
+    configFile: './.babelrc.test',
 })

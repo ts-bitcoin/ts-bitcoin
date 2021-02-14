@@ -9,5 +9,5 @@
 import { Workers } from '../lib/workers'
 
 after(function () {
-  Workers.endGlobalWorkers()
+    Workers.endGlobalWorkers()
 })

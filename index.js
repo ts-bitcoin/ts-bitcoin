@@ -15,7 +15,7 @@
  */
 'use strict'
 if (!global._babelPolyfill) {
-  require('babel-polyfill')
+    require('babel-polyfill')
 }
 require('./lib/config')
 
@@ -81,17 +81,13 @@ bsv.deps.pbkdf2compat = require('pbkdf2-compat')
 // Mainnet classes for your convenience (in case default is not what you want).
 const Mainnet = {}
 Object.keys(bsv).forEach(function (key) {
-  Mainnet[key] = bsv[key].Mainnet
-    ? bsv[key].Mainnet
-    : bsv[key]
+    Mainnet[key] = bsv[key].Mainnet ? bsv[key].Mainnet : bsv[key]
 })
 
 // Testnet classes for your convenience (in case default is not what you want).
 const Testnet = {}
 Object.keys(bsv).forEach(function (key) {
-  Testnet[key] = bsv[key].Testnet
-    ? bsv[key].Testnet
-    : bsv[key]
+    Testnet[key] = bsv[key].Testnet ? bsv[key].Testnet : bsv[key]
 })
 
 bsv.Mainnet = Mainnet

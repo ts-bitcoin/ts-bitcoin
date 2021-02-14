@@ -1,22 +1,12 @@
 [
-  [
-    "Format is: [[wit..., amount]?, scriptSig, scriptPubKey, flags, expected_scripterror, ... comments]"
-  ],
-  [
-    "It is evaluated as if there was a crediting coinbase transaction with two 0"
-  ],
+  ["Format is: [[wit..., amount]?, scriptSig, scriptPubKey, flags, expected_scripterror, ... comments]"],
+  ["It is evaluated as if there was a crediting coinbase transaction with two 0"],
   ["pushes as scriptSig, and one output of 0 satoshi and given scriptPubKey,"],
-  [
-    "followed by a spending transaction which spends this output as only input (and"
-  ],
-  [
-    "correct prevout hash), using the given scriptSig. All nLockTimes are 0, all"
-  ],
+  ["followed by a spending transaction which spends this output as only input (and"],
+  ["correct prevout hash), using the given scriptSig. All nLockTimes are 0, all"],
   ["nSequences are max."],
 
-  [
-    "For Yours Bitcoin, all tests except those relevant for Bitcoin ABC have been removed."
-  ],
+  ["For Yours Bitcoin, all tests except those relevant for Bitcoin ABC have been removed."],
 
   ["SIGHASH_FORKID"],
   [
