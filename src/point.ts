@@ -12,7 +12,7 @@
 'use strict'
 
 import { Bn } from './bn'
-import elliptic from 'bitcoin-elliptic'
+import * as elliptic from 'bitcoin-elliptic'
 
 const ec = elliptic.curves.secp256k1
 const _point = ec.curve.point()

@@ -1,3 +1,5 @@
+import { Bn } from './bn'
+
 /**
  * Buffer Writer
  * =============
@@ -6,19 +8,19 @@
  * VarInts and other basic number types. The way to use it is: buf =
  * new Bw().write(buf1).write(buf2).toBuffer()
  */
-'use strict'
+export class Bw {
+    public bufs: Buffer[]
 
-class Bw {
-    constructor(bufs) {
+    constructor(bufs?: Buffer[]) {
         this.fromObject({ bufs })
     }
 
-    fromObject(obj) {
+    public fromObject(obj: { bufs: Buffer[] }): Bw {
         this.bufs = obj.bufs || this.bufs || []
         return this
     }
 
-    getLength() {
+    public getLength(): number {
         let len = 0
         for (const i in this.bufs) {
             const buf = this.bufs[i]
@@ -27,16 +29,16 @@ class Bw {
         return len
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         return Buffer.concat(this.bufs)
     }
 
-    write(buf) {
+    public write(buf: Buffer): Bw {
         this.bufs.push(buf)
         return this
     }
 
-    writeReverse(buf) {
+    public writeReverse(buf: Buffer): Bw {
         const buf2 = Buffer.alloc(buf.length)
         for (let i = 0; i < buf2.length; i++) {
             buf2[i] = buf[buf.length - 1 - i]
@@ -45,102 +47,102 @@ class Bw {
         return this
     }
 
-    writeUInt8(n) {
+    public writeUInt8(n: number): Bw {
         const buf = Buffer.alloc(1)
         buf.writeUInt8(n, 0)
         this.write(buf)
         return this
     }
 
-    writeInt8(n) {
+    public writeInt8(n: number): Bw {
         const buf = Buffer.alloc(1)
         buf.writeInt8(n, 0)
         this.write(buf)
         return this
     }
 
-    writeUInt16BE(n) {
+    public writeUInt16BE(n: number): Bw {
         const buf = Buffer.alloc(2)
         buf.writeUInt16BE(n, 0)
         this.write(buf)
         return this
     }
 
-    writeInt16BE(n) {
+    public writeInt16BE(n: number): Bw {
         const buf = Buffer.alloc(2)
         buf.writeInt16BE(n, 0)
         this.write(buf)
         return this
     }
 
-    writeUInt16LE(n) {
+    public writeUInt16LE(n: number): Bw {
         const buf = Buffer.alloc(2)
         buf.writeUInt16LE(n, 0)
         this.write(buf)
         return this
     }
 
-    writeInt16LE(n) {
+    public writeInt16LE(n: number): Bw {
         const buf = Buffer.alloc(2)
         buf.writeInt16LE(n, 0)
         this.write(buf)
         return this
     }
 
-    writeUInt32BE(n) {
+    public writeUInt32BE(n: number): Bw {
         const buf = Buffer.alloc(4)
         buf.writeUInt32BE(n, 0)
         this.write(buf)
         return this
     }
 
-    writeInt32BE(n) {
+    public writeInt32BE(n: number): Bw {
         const buf = Buffer.alloc(4)
         buf.writeInt32BE(n, 0)
         this.write(buf)
         return this
     }
 
-    writeUInt32LE(n) {
+    public writeUInt32LE(n: number): Bw {
         const buf = Buffer.alloc(4)
         buf.writeUInt32LE(n, 0)
         this.write(buf)
         return this
     }
 
-    writeInt32LE(n) {
+    public writeInt32LE(n: number): Bw {
         const buf = Buffer.alloc(4)
         buf.writeInt32LE(n, 0)
         this.write(buf)
         return this
     }
 
-    writeUInt64BEBn(bn) {
+    public writeUInt64BEBn(bn: Bn): Bw {
         const buf = bn.toBuffer({ size: 8 })
         this.write(buf)
         return this
     }
 
-    writeUInt64LEBn(bn) {
+    public writeUInt64LEBn(bn: Bn): Bw {
         const buf = bn.toBuffer({ size: 8 })
         this.writeReverse(buf)
         return this
     }
 
-    writeVarIntNum(n) {
+    public writeVarIntNum(n: number): Bw {
         const buf = Bw.varIntBufNum(n)
         this.write(buf)
         return this
     }
 
-    writeVarIntBn(bn) {
+    public writeVarIntBn(bn: Bn): Bw {
         const buf = Bw.varIntBufBn(bn)
         this.write(buf)
         return this
     }
 
-    static varIntBufNum(n) {
-        let buf
+    public static varIntBufNum(n: number): Buffer {
+        let buf: Buffer
         if (n < 253) {
             buf = Buffer.alloc(1)
             buf.writeUInt8(n, 0)
@@ -161,8 +163,8 @@ class Bw {
         return buf
     }
 
-    static varIntBufBn(bn) {
-        let buf
+    public static varIntBufBn(bn: Bn): Buffer {
+        let buf: Buffer
         const n = bn.toNumber()
         if (n < 253) {
             buf = Buffer.alloc(1)
@@ -184,5 +186,3 @@ class Bw {
         return buf
     }
 }
-
-export { Bw }

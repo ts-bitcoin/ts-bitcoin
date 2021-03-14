@@ -6,7 +6,7 @@
  */
 'use strict'
 
-import bs58 from 'bs58'
+import * as bs58 from 'bs58'
 import { Struct } from './struct'
 
 class Base58 extends Struct {

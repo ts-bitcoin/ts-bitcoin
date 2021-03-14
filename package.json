@@ -101,6 +101,8 @@
     "@babel/preset-env": "^7.9.6",
     "@babel/register": "^7.9.0",
     "@babel/runtime": "^7.9.6",
+    "@types/bn.js": "^5.1.0",
+    "@types/randombytes": "^2.0.0",
     "babel-loader": "^8.1.0",
     "babel-polyfill": "^6.26.0",
     "documentation": "^13.0.2",

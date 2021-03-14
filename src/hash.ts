@@ -8,7 +8,7 @@
 'use strict'
 
 import { Workers } from './workers'
-import hashjs from 'hash.js'
+import * as hashjs from 'hash.js'
 
 class Hash {}
 

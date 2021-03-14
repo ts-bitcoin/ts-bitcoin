@@ -9,32 +9,33 @@
  * you find that you must reverse things. You probably want to use it like:
  * varInt = new Br(buf).readnew VarInt()
  */
-'use strict'
-
 import { Bn } from './bn'
 
-class Br {
+export class Br {
+    private buf: Buffer
+    private pos: number
+
     constructor(buf) {
         this.fromObject({ buf })
     }
 
-    fromObject(obj) {
+    public fromObject(obj): Br {
         this.buf = obj.buf || this.buf || undefined
         this.pos = obj.pos || this.pos || 0
         return this
     }
 
-    eof() {
+    public eof(): boolean {
         return this.pos >= this.buf.length
     }
 
-    read(len = this.buf.length) {
+    public read(len = this.buf.length): Buffer {
         const buf = this.buf.slice(this.pos, this.pos + len)
         this.pos = this.pos + len
         return buf
     }
 
-    readReverse(len = this.buf.length) {
+    public readReverse(len = this.buf.length): Buffer {
         const buf = this.buf.slice(this.pos, this.pos + len)
         this.pos = this.pos + len
         const buf2 = Buffer.alloc(buf.length)
@@ -44,80 +45,80 @@ class Br {
         return buf2
     }
 
-    readUInt8() {
+    public readUInt8(): number {
         const val = this.buf.readUInt8(this.pos)
         this.pos = this.pos + 1
         return val
     }
 
-    readInt8() {
+    public readInt8(): number {
         const val = this.buf.readInt8(this.pos)
         this.pos = this.pos + 1
         return val
     }
 
-    readUInt16BE() {
+    public readUInt16BE(): number {
         const val = this.buf.readUInt16BE(this.pos)
         this.pos = this.pos + 2
         return val
     }
 
-    readInt16BE() {
+    public readInt16BE(): number {
         const val = this.buf.readInt16BE(this.pos)
         this.pos = this.pos + 2
         return val
     }
 
-    readUInt16LE() {
+    public readUInt16LE(): number {
         const val = this.buf.readUInt16LE(this.pos)
         this.pos = this.pos + 2
         return val
     }
 
-    readInt16LE() {
+    public readInt16LE(): number {
         const val = this.buf.readInt16LE(this.pos)
         this.pos = this.pos + 2
         return val
     }
 
-    readUInt32BE() {
+    public readUInt32BE(): number {
         const val = this.buf.readUInt32BE(this.pos)
         this.pos = this.pos + 4
         return val
     }
 
-    readInt32BE() {
+    public readInt32BE(): number {
         const val = this.buf.readInt32BE(this.pos)
         this.pos = this.pos + 4
         return val
     }
 
-    readUInt32LE() {
+    public readUInt32LE(): number {
         const val = this.buf.readUInt32LE(this.pos)
         this.pos = this.pos + 4
         return val
     }
 
-    readInt32LE() {
+    public readInt32LE(): number {
         const val = this.buf.readInt32LE(this.pos)
         this.pos = this.pos + 4
         return val
     }
 
-    readUInt64BEBn() {
+    public readUInt64BEBn(): Bn {
         const buf = this.buf.slice(this.pos, this.pos + 8)
         const bn = new Bn().fromBuffer(buf)
         this.pos = this.pos + 8
         return bn
     }
 
-    readUInt64LEBn() {
+    public readUInt64LEBn(): Bn {
         const buf = this.readReverse(8)
         const bn = new Bn().fromBuffer(buf)
         return bn
     }
 
-    readVarIntNum() {
+    public readVarIntNum(): number {
         const first = this.readUInt8()
         let bn, n
         switch (first) {
@@ -138,7 +139,7 @@ class Br {
         }
     }
 
-    readVarIntBuf() {
+    public readVarIntBuf(): Buffer {
         const first = this.buf.readUInt8(this.pos)
         switch (first) {
             case 0xfd:
@@ -152,7 +153,7 @@ class Br {
         }
     }
 
-    readVarIntBn() {
+    public readVarIntBn(): Bn {
         const first = this.readUInt8()
         switch (first) {
             case 0xfd:
@@ -166,5 +167,3 @@ class Br {
         }
     }
 }
-
-export { Br }

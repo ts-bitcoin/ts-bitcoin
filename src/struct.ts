@@ -35,18 +35,16 @@
  * The "expect" method also facilitates deserializing a sequence of buffers
  * into an object.
  */
-'use strict'
-
 import { Br } from './br'
 import { Bw } from './bw'
-import isHex from 'is-hex'
+import * as isHex from 'is-hex'
 
-class Struct {
-    constructor(obj) {
+export class Struct {
+    constructor(obj?: Record<string, any>) {
         this.fromObject(obj)
     }
 
-    fromObject(obj) {
+    public fromObject(obj: Record<string, any>): this {
         if (!obj) {
             return this
         }
@@ -58,37 +56,37 @@ class Struct {
         return this
     }
 
-    static fromObject(obj) {
+    public static fromObject<T extends Struct>(this: (new () => T) & typeof Struct, obj: Record<string, any>): T {
         return new this().fromObject(obj)
     }
 
-    fromBr(br) {
+    public fromBr(br: Br, ...rest: any[]): this {
         if (!(br instanceof Br)) {
             throw new Error('br must be a buffer reader')
         }
         throw new Error('not implemented')
     }
 
-    static fromBr(br) {
+    public static fromBr<T extends Struct>(this: (new () => T) & typeof Struct, br: Br): T {
         return new this().fromBr(br)
     }
 
-    asyncFromBr(br) {
+    public asyncFromBr(br: Br, ...rest: any[]): Promise<this> {
         if (!(br instanceof Br)) {
             throw new Error('br must be a buffer reader')
         }
         throw new Error('not implemented')
     }
 
-    static asyncFromBr(br) {
+    public static asyncFromBr<T extends Struct>(this: (new () => T) & typeof Struct, br: Br): Promise<T> {
         return new this().asyncFromBr(br)
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         throw new Error('not implemented')
     }
 
-    asyncToBw(bw) {
+    public asyncToBw(bw?: Bw): Promise<Bw> {
         throw new Error('not implemented')
     }
 
@@ -101,7 +99,7 @@ class Struct {
      * to produce the object. In some cases it is able to yield the number of
      * bytes it is expecting, but that is not always known.
      */
-    *genFromBuffers() {
+    public *genFromBuffers() {
         throw new Error('not implemented')
     }
 
@@ -112,7 +110,7 @@ class Struct {
      * remaining, and returns an object containing a buffer of the expected
      * length, and, if any, the remainder buffer.
      */
-    *expect(len, startbuf) {
+    public *expect(len: number, startbuf: Buffer) {
         let buf = startbuf
         const bw = new Bw()
         let gotlen = 0
@@ -142,7 +140,7 @@ class Struct {
     /**
      * Convert a buffer into an object, i.e. deserialize the object.
      */
-    fromBuffer(buf, ...rest) {
+    public fromBuffer(buf: Buffer, ...rest: any[]): this {
         if (!Buffer.isBuffer(buf)) {
             throw new Error('buf must be a buffer')
         }
@@ -150,11 +148,11 @@ class Struct {
         return this.fromBr(br, ...rest)
     }
 
-    static fromBuffer(...rest) {
-        return new this().fromBuffer(...rest)
+    public static fromBuffer<T extends Struct>(this: (new () => T) & typeof Struct, buf: Buffer, ...rest: any[]): T {
+        return new this().fromBuffer(buf, ...rest)
     }
 
-    asyncFromBuffer(buf, ...rest) {
+    public asyncFromBuffer(buf: Buffer, ...rest: any[]): Promise<this> {
         if (!Buffer.isBuffer(buf)) {
             throw new Error('buf must be a buffer')
         }
@@ -162,14 +160,18 @@ class Struct {
         return this.asyncFromBr(br, ...rest)
     }
 
-    static asyncFromBuffer(buf, ...rest) {
+    public static asyncFromBuffer<T extends Struct>(
+        this: (new () => T) & typeof Struct,
+        buf: Buffer,
+        ...rest: any[]
+    ): Promise<T> {
         return new this().asyncFromBuffer(buf, ...rest)
     }
 
     /**
      * The complement of toFastBuffer - see description for toFastBuffer
      */
-    fromFastBuffer(buf, ...rest) {
+    public fromFastBuffer(buf: Buffer, ...rest: any[]): this {
         if (buf.length === 0) {
             return this
         } else {
@@ -177,20 +179,24 @@ class Struct {
         }
     }
 
-    static fromFastBuffer(...rest) {
-        return new this().fromFastBuffer(...rest)
+    public static fromFastBuffer<T extends Struct>(
+        this: (new () => T) & typeof Struct,
+        buf: Buffer,
+        ...rest: any[]
+    ): T {
+        return new this().fromFastBuffer(buf, ...rest)
     }
 
     /**
      * Convert the object into a buffer, i.e. serialize the object. This method
      * may block the main thread.
      */
-    toBuffer(...rest) {
-        return this.toBw(...rest).toBuffer()
+    public toBuffer(): Buffer {
+        return this.toBw().toBuffer()
     }
 
-    asyncToBuffer(...rest) {
-        return this.asyncToBw(...rest).then((bw) => bw.toBuffer())
+    public asyncToBuffer(): Promise<Buffer> {
+        return this.asyncToBw().then((bw) => bw.toBuffer())
     }
 
     /**
@@ -208,15 +214,14 @@ class Struct {
      * buffer, so we can transport a blank object to a worker. So that behavior
      * is included by default.
      */
-    toFastBuffer(...rest) {
+    public toFastBuffer(): Buffer {
         if (Object.keys(this).length === 0) {
             return Buffer.alloc(0)
-        } else {
-            return this.toBuffer(...rest)
         }
+        return this.toBuffer()
     }
 
-    fromHex(hex, ...rest) {
+    public fromHex(hex: string, ...rest: any[]): this {
         if (!isHex(hex)) {
             throw new Error('invalid hex string')
         }
@@ -224,11 +229,11 @@ class Struct {
         return this.fromBuffer(buf, ...rest)
     }
 
-    static fromHex(hex, ...rest) {
+    public static fromHex<T extends Struct>(this: (new () => T) & typeof Struct, hex: string, ...rest: any[]): T {
         return new this().fromHex(hex, ...rest)
     }
 
-    asyncFromHex(hex, ...rest) {
+    public asyncFromHex(hex: string, ...rest: any[]): Promise<this> {
         if (!isHex(hex)) {
             throw new Error('invalid hex string')
         }
@@ -236,11 +241,15 @@ class Struct {
         return this.asyncFromBuffer(buf, ...rest)
     }
 
-    static asyncFromHex(hex, ...rest) {
+    public static asyncFromHex<T extends Struct>(
+        this: (new () => T) & typeof Struct,
+        hex: string,
+        ...rest: any[]
+    ): Promise<T> {
         return new this().asyncFromHex(hex, ...rest)
     }
 
-    fromFastHex(hex, ...rest) {
+    public fromFastHex(hex: string, ...rest: any[]): this {
         if (!isHex(hex)) {
             throw new Error('invalid hex string')
         }
@@ -248,77 +257,81 @@ class Struct {
         return this.fromFastBuffer(buf, ...rest)
     }
 
-    static fromFastHex(hex, ...rest) {
+    public static fromFastHex<T extends Struct>(this: (new () => T) & typeof Struct, hex: string, ...rest: any[]): T {
         return new this().fromFastHex(hex, ...rest)
     }
 
-    toHex(...rest) {
-        return this.toBuffer(...rest).toString('hex')
+    public toHex(): string {
+        return this.toBuffer().toString('hex')
     }
 
-    asyncToHex(...rest) {
-        return this.asyncToBuffer(...rest).then((buf) => buf.toString('hex'))
+    public asyncToHex(): Promise<string> {
+        return this.asyncToBuffer().then((buf) => buf.toString('hex'))
     }
 
-    toFastHex(...rest) {
-        return this.toFastBuffer(...rest).toString('hex')
+    public toFastHex(): string {
+        return this.toFastBuffer().toString('hex')
     }
 
-    fromString(str, ...rest) {
+    public fromString(str: string, ...rest: any[]): this {
         if (typeof str !== 'string') {
             throw new Error('str must be a string')
         }
         return this.fromHex(str, ...rest)
     }
 
-    static fromString(str, ...rest) {
+    public static fromString<T extends Struct>(this: (new () => T) & typeof Struct, str: string, ...rest: any[]): T {
         return new this().fromString(str, ...rest)
     }
 
-    asyncFromString(str, ...rest) {
+    public asyncFromString(str: string, ...rest: any[]): Promise<this> {
         if (typeof str !== 'string') {
             throw new Error('str must be a string')
         }
         return this.asyncFromHex(str, ...rest)
     }
 
-    static asyncFromString(str, ...rest) {
+    public static asyncFromString<T extends Struct>(
+        this: (new () => T) & typeof Struct,
+        str: string,
+        ...rest: any[]
+    ): Promise<T> {
         return new this().asyncFromString(str, ...rest)
     }
 
-    toString(...rest) {
-        return this.toHex(...rest)
+    public toString(): string {
+        return this.toHex()
     }
 
-    asyncToString(...rest) {
-        return this.asyncToHex(...rest)
+    public asyncToString(): Promise<string> {
+        return this.asyncToHex()
     }
 
-    fromJSON(json) {
+    public fromJSON(json): this {
         throw new Error('not implemented')
     }
 
-    static fromJSON(json, ...rest) {
-        return new this().fromJSON(json, ...rest)
+    public static fromJSON<T extends Struct>(this: (new () => T) & typeof Struct, json): T {
+        return new this().fromJSON(json)
     }
 
-    asyncFromJSON(json, ...rest) {
+    public asyncFromJSON(json, ...rest): Promise<this> {
         throw new Error('not implemented')
     }
 
-    static asyncFromJSON(json, ...rest) {
+    public static asyncFromJSON<T extends Struct>(this: (new () => T) & typeof Struct, json, ...rest): Promise<T> {
         return new this().asyncFromJSON(json, ...rest)
     }
 
-    toJSON() {
-        var json = {}
+    public toJSON(): Record<string, any> {
+        var json: Record<string, any> = {}
         for (var val in this) {
             // arrays
             if (Array.isArray(this[val])) {
                 const arr = []
                 for (var i in this[val]) {
-                    if (typeof this[val][i].toJSON === 'function') {
-                        arr.push(this[val][i].toJSON())
+                    if (typeof (this[val][i] as any).toJSON === 'function') {
+                        arr.push((this[val][i] as any).toJSON())
                     } else {
                         arr.push(JSON.stringify(this[val][i]))
                     }
@@ -327,8 +340,8 @@ class Struct {
                 // objects
             } else if (this[val] === null) {
                 json[val] = this[val]
-            } else if (typeof this[val] === 'object' && typeof this[val].toJSON === 'function') {
-                json[val] = this[val].toJSON()
+            } else if (typeof this[val] === 'object' && typeof (this[val] as any).toJSON === 'function') {
+                json[val] = (this[val] as any).toJSON()
                 // booleans, numbers, and strings
             } else if (
                 typeof this[val] === 'boolean' ||
@@ -338,7 +351,7 @@ class Struct {
                 json[val] = this[val]
                 // buffers
             } else if (Buffer.isBuffer(this[val])) {
-                json[val] = this[val].toString('hex')
+                json[val] = (this[val] as any).toString('hex')
                 // map
             } else if (this[val] instanceof Map) {
                 json[val] = JSON.stringify(this[val])
@@ -351,35 +364,33 @@ class Struct {
         // throw new Error('not implemented')
     }
 
-    asyncToJSON() {
+    public asyncToJSON(): Promise<Record<keyof this, any>> {
         throw new Error('not implemented')
     }
 
-    clone() {
+    public clone<T extends Struct>(): T {
         // TODO: Should this be more intelligent about picking which clone method
         // to default to?
         return this.cloneByJSON()
     }
 
-    cloneByBuffer() {
-        return new this.constructor().fromBuffer(this.toBuffer())
+    public cloneByBuffer<T extends Struct>(): T {
+        return new (this.constructor as typeof Struct)().fromBuffer(this.toBuffer()) as any
     }
 
-    cloneByFastBuffer() {
-        return new this.constructor().fromFastBuffer(this.toFastBuffer())
+    public cloneByFastBuffer<T extends Struct>(): T {
+        return new (this.constructor as typeof Struct)().fromFastBuffer(this.toFastBuffer()) as any
     }
 
-    cloneByHex() {
-        return new this.constructor().fromHex(this.toHex())
+    public cloneByHex<T extends Struct>(): T {
+        return new (this.constructor as typeof Struct)().fromHex(this.toHex()) as any
     }
 
-    cloneByString() {
-        return new this.constructor().fromString(this.toString())
+    public cloneByString<T extends Struct>(): T {
+        return new (this.constructor as typeof Struct)().fromString(this.toString()) as any
     }
 
-    cloneByJSON() {
-        return new this.constructor().fromJSON(this.toJSON())
+    public cloneByJSON<T extends Struct>(): T {
+        return new (this.constructor as typeof Struct)().fromJSON(this.toJSON()) as any
     }
 }
-
-export { Struct }

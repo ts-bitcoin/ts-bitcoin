@@ -15,14 +15,10 @@
  * anything else to this random number in order to minimize possible errors in
  * this absolutely critical code.
  */
-'use strict'
+import * as randomBytes from 'randombytes'
 
-import randomBytes from 'randombytes'
-
-class Random {}
-
-Random.getRandomBuffer = function (size) {
-    return randomBytes(size)
+export class Random {
+    public static getRandomBuffer(size: number): Buffer {
+        return randomBytes(size)
+    }
 }
-
-export { Random }

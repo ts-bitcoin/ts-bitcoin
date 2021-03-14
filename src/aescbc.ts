@@ -12,27 +12,25 @@ import { Aes } from './aes'
 import { Cbc } from './cbc'
 import { Random } from './random'
 
-class Aescbc {}
+export class Aescbc {
+    public static encrypt(messageBuf: Buffer, cipherKeyBuf: Buffer, ivBuf: Buffer, concatIvBuf = true): Buffer {
+        ivBuf = ivBuf || Random.getRandomBuffer(128 / 8)
+        const ctBuf = Cbc.encrypt(messageBuf, ivBuf, Aes, cipherKeyBuf)
+        if (concatIvBuf) {
+            return Buffer.concat([ivBuf, ctBuf])
+        } else {
+            return ctBuf
+        }
+    }
 
-Aescbc.encrypt = function (messageBuf, cipherKeyBuf, ivBuf, concatIvBuf = true) {
-    ivBuf = ivBuf || Random.getRandomBuffer(128 / 8)
-    const ctBuf = Cbc.encrypt(messageBuf, ivBuf, Aes, cipherKeyBuf)
-    if (concatIvBuf) {
-        return Buffer.concat([ivBuf, ctBuf])
-    } else {
-        return ctBuf
+    public static decrypt(encBuf: Buffer, cipherKeyBuf: Buffer, ivBuf = false): Buffer {
+        if (!ivBuf) {
+            const ivBuf = encBuf.slice(0, 128 / 8)
+            const ctBuf = encBuf.slice(128 / 8)
+            return Cbc.decrypt(ctBuf, ivBuf, Aes, cipherKeyBuf)
+        } else {
+            const ctBuf = encBuf
+            return Cbc.decrypt(ctBuf, ivBuf, Aes, cipherKeyBuf)
+        }
     }
 }
-
-Aescbc.decrypt = function (encBuf, cipherKeyBuf, ivBuf = false) {
-    if (!ivBuf) {
-        const ivBuf = encBuf.slice(0, 128 / 8)
-        const ctBuf = encBuf.slice(128 / 8)
-        return Cbc.decrypt(ctBuf, ivBuf, Aes, cipherKeyBuf)
-    } else {
-        const ctBuf = encBuf
-        return Cbc.decrypt(ctBuf, ivBuf, Aes, cipherKeyBuf)
-    }
-}
-
-export { Aescbc }

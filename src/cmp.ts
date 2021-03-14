@@ -15,8 +15,7 @@
  *
  * https://groups.google.com/forum/#!topic/keyczar-discuss/VXHsoJSLKhM
  */
-'use strict'
-const cmp = (buf1, buf2) => {
+export function cmp(buf1: Buffer, buf2: Buffer): boolean {
     if (!Buffer.isBuffer(buf1) || !Buffer.isBuffer(buf2)) {
         throw new Error('buf1 and buf2 must be buffers')
     }
@@ -33,5 +32,3 @@ const cmp = (buf1, buf2) => {
 
     return d === 0
 }
-
-export { cmp }
