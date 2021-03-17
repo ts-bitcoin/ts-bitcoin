@@ -5,177 +5,169 @@
  * Some hash functions are used through out bitcoin. We expose them here as a
  * convenience.
  */
-'use strict'
-
 import { Workers } from './workers'
-import * as hashjs from 'hash.js'
+import { sha1, sha256, sha512, ripemd160 } from 'hash.js'
 
-class Hash {}
-
-Hash.sha1 = function (buf) {
-    if (!Buffer.isBuffer(buf)) {
-        throw new Error('sha1 hash must be of a buffer')
-    }
-    const Sha1 = hashjs.sha1
-    const hash = new Sha1().update(buf).digest()
-    return Buffer.from(hash)
-}
-
-Hash.sha1.blockSize = 512
-
-Hash.asyncSha1 = async function (buf) {
-    const args = [buf]
-    const workersResult = await Workers.asyncClassMethod(Hash, 'sha1', args)
-    return workersResult.resbuf
-}
-
-Hash.sha256 = function (buf) {
-    if (!Buffer.isBuffer(buf)) {
-        throw new Error('sha256 hash must be of a buffer')
-    }
-    const Sha256 = hashjs.sha256
-    const hash = new Sha256().update(buf).digest()
-    return Buffer.from(hash)
-}
-
-Hash.sha256.blockSize = 512
-
-Hash.asyncSha256 = async function (buf) {
-    const args = [buf]
-    const workersResult = await Workers.asyncClassMethod(Hash, 'sha256', args)
-    return workersResult.resbuf
-}
-
-Hash.sha256Sha256 = function (buf) {
-    try {
-        return Hash.sha256(Hash.sha256(buf))
-    } catch (e) {
-        throw new Error('sha256Sha256 hash must be of a buffer: ' + e)
-    }
-}
-
-Hash.asyncSha256Sha256 = async function (buf) {
-    const args = [buf]
-    const workersResult = await Workers.asyncClassMethod(Hash, 'sha256Sha256', args)
-    return workersResult.resbuf
-}
-
-Hash.ripemd160 = function (buf) {
-    if (!Buffer.isBuffer(buf)) {
-        throw new Error('ripemd160 hash must be of a buffer')
-    }
-    const Ripemd160 = hashjs.ripemd160
-    const hash = new Ripemd160().update(buf).digest()
-    return Buffer.from(hash)
-}
-
-Hash.asyncRipemd160 = async function (buf) {
-    const args = [buf]
-    const workersResult = await Workers.asyncClassMethod(Hash, 'ripemd160', args)
-    return workersResult.resbuf
-}
-
-Hash.sha256Ripemd160 = function (buf) {
-    try {
-        return Hash.ripemd160(Hash.sha256(buf))
-    } catch (e) {
-        throw new Error('sha256Ripemd160 hash must be of a buffer: ' + e)
-    }
-}
-
-Hash.asyncSha256Ripemd160 = async function (buf) {
-    const args = [buf]
-    const workersResult = await Workers.asyncClassMethod(Hash, 'sha256Ripemd160', args)
-    return workersResult.resbuf
-}
-
-Hash.sha512 = function (buf) {
-    if (!Buffer.isBuffer(buf)) {
-        throw new Error('sha512 hash must be of a buffer')
-    }
-    const Sha512 = hashjs.sha512
-    const hash = new Sha512().update(buf).digest()
-    return Buffer.from(hash)
-}
-
-Hash.asyncSha512 = async function (buf) {
-    const args = [buf]
-    const workersResult = await Workers.asyncClassMethod(Hash, 'sha512', args)
-    return workersResult.resbuf
-}
-
-Hash.sha512.blockSize = 1024
-
-Hash.hmac = function (hashFStr, data, key) {
-    if (hashFStr !== 'sha1' && hashFStr !== 'sha256' && hashFStr !== 'sha512') {
-        throw new Error('invalid choice of hash function')
+export class Hash {
+    public static readonly blockSize = {
+        sha1: 512,
+        sha256: 512,
+        sha512: 2014,
     }
 
-    const hashf = Hash[hashFStr]
-
-    if (!Buffer.isBuffer(data) || !Buffer.isBuffer(key)) {
-        throw new Error('data and key must be buffers')
+    public static sha1(buf: Buffer): Buffer {
+        if (!Buffer.isBuffer(buf)) {
+            throw new Error('sha1 hash must be of a buffer')
+        }
+        const hash = sha1().update(buf).digest()
+        return Buffer.from(hash)
     }
 
-    // http://en.wikipedia.org/wiki/Hash-based_message_authentication_code
-    // http://tools.ietf.org/html/rfc4868#section-2
-    const blockSize = hashf.blockSize / 8
-
-    if (key.length > blockSize) {
-        key = hashf(key)
+    public static async asyncSha1(buf: Buffer): Promise<Buffer> {
+        const args = [buf]
+        const workersResult = await Workers.asyncClassMethod(Hash, 'sha1', args)
+        return workersResult.resbuf
     }
 
-    if (key.length < blockSize) {
-        const fill = Buffer.alloc(blockSize)
-        fill.fill(0, key.length)
-        key.copy(fill)
-        key = fill
+    public static sha256(buf: Buffer): Buffer {
+        if (!Buffer.isBuffer(buf)) {
+            throw new Error('sha256 hash must be of a buffer')
+        }
+        const hash = sha256().update(buf).digest()
+        return Buffer.from(hash)
     }
 
-    const oKeyPad = Buffer.alloc(blockSize)
-    const iKeyPad = Buffer.alloc(blockSize)
-    for (let i = 0; i < blockSize; i++) {
-        oKeyPad[i] = 0x5c ^ key[i]
-        iKeyPad[i] = 0x36 ^ key[i]
+    public static async asyncSha256(buf: Buffer): Promise<Buffer> {
+        const args = [buf]
+        const workersResult = await Workers.asyncClassMethod(Hash, 'sha256', args)
+        return workersResult.resbuf
     }
 
-    return hashf(Buffer.concat([oKeyPad, hashf(Buffer.concat([iKeyPad, data]))]))
+    public static sha256Sha256(buf: Buffer): Buffer {
+        try {
+            return Hash.sha256(Hash.sha256(buf))
+        } catch (e) {
+            throw new Error('sha256Sha256 hash must be of a buffer: ' + e)
+        }
+    }
+
+    public static async asyncSha256Sha256(buf: Buffer): Promise<Buffer> {
+        const args = [buf]
+        const workersResult = await Workers.asyncClassMethod(Hash, 'sha256Sha256', args)
+        return workersResult.resbuf
+    }
+
+    public static ripemd160(buf: Buffer): Buffer {
+        if (!Buffer.isBuffer(buf)) {
+            throw new Error('ripemd160 hash must be of a buffer')
+        }
+        const hash = ripemd160().update(buf).digest()
+        return Buffer.from(hash)
+    }
+
+    public static async asyncRipemd160(buf: Buffer): Promise<Buffer> {
+        const args = [buf]
+        const workersResult = await Workers.asyncClassMethod(Hash, 'ripemd160', args)
+        return workersResult.resbuf
+    }
+
+    public static sha256Ripemd160(buf: Buffer): Buffer {
+        try {
+            return Hash.ripemd160(Hash.sha256(buf))
+        } catch (e) {
+            throw new Error('sha256Ripemd160 hash must be of a buffer: ' + e)
+        }
+    }
+
+    public static async asyncSha256Ripemd160(buf: Buffer): Promise<Buffer> {
+        const args = [buf]
+        const workersResult = await Workers.asyncClassMethod(Hash, 'sha256Ripemd160', args)
+        return workersResult.resbuf
+    }
+
+    public static sha512(buf: Buffer): Buffer {
+        if (!Buffer.isBuffer(buf)) {
+            throw new Error('sha512 hash must be of a buffer')
+        }
+        const hash = sha512().update(buf).digest()
+        return Buffer.from(hash)
+    }
+
+    public static async asyncSha512(buf: Buffer): Promise<Buffer> {
+        const args = [buf]
+        const workersResult = await Workers.asyncClassMethod(Hash, 'sha512', args)
+        return workersResult.resbuf
+    }
+
+    public static hmac(hashFStr: 'sha1' | 'sha256' | 'sha512', data: Buffer, key: Buffer): Buffer {
+        if (hashFStr !== 'sha1' && hashFStr !== 'sha256' && hashFStr !== 'sha512') {
+            throw new Error('invalid choice of hash function')
+        }
+
+        const hashf = Hash[hashFStr]
+
+        if (!Buffer.isBuffer(data) || !Buffer.isBuffer(key)) {
+            throw new Error('data and key must be buffers')
+        }
+
+        // http://en.wikipedia.org/wiki/Hash-based_message_authentication_code
+        // http://tools.ietf.org/html/rfc4868#section-2
+        const blockSize = Hash.blockSize[hashFStr] / 8
+
+        if (key.length > blockSize) {
+            key = hashf(key)
+        }
+
+        if (key.length < blockSize) {
+            const fill = Buffer.alloc(blockSize)
+            fill.fill(0, key.length)
+            key.copy(fill)
+            key = fill
+        }
+
+        const oKeyPad = Buffer.alloc(blockSize)
+        const iKeyPad = Buffer.alloc(blockSize)
+        for (let i = 0; i < blockSize; i++) {
+            oKeyPad[i] = 0x5c ^ key[i]
+            iKeyPad[i] = 0x36 ^ key[i]
+        }
+
+        return hashf(Buffer.concat([oKeyPad, hashf(Buffer.concat([iKeyPad, data]))]))
+    }
+
+    public static readonly bitsize = {
+        sha1Hmac: 160,
+        sha256Hmac: 256,
+        sha512Hmac: 512,
+    }
+
+    public static sha1Hmac(data: Buffer, key: Buffer): Buffer {
+        return Hash.hmac('sha1', data, key)
+    }
+
+    public static async asyncSha1Hmac(data: Buffer, key: Buffer): Promise<Buffer> {
+        const args = [data, key]
+        const workersResult = await Workers.asyncClassMethod(Hash, 'sha1Hmac', args)
+        return workersResult.resbuf
+    }
+
+    public static sha256Hmac(data: Buffer, key: Buffer): Buffer {
+        return Hash.hmac('sha256', data, key)
+    }
+
+    public static async asyncSha256Hmac(data: Buffer, key: Buffer): Promise<Buffer> {
+        const args = [data, key]
+        const workersResult = await Workers.asyncClassMethod(Hash, 'sha256Hmac', args)
+        return workersResult.resbuf
+    }
+
+    public static sha512Hmac(data: Buffer, key: Buffer): Buffer {
+        return Hash.hmac('sha512', data, key)
+    }
+
+    public static async asyncSha512Hmac(data: Buffer, key: Buffer): Promise<Buffer> {
+        const args = [data, key]
+        const workersResult = await Workers.asyncClassMethod(Hash, 'sha512Hmac', args)
+        return workersResult.resbuf
+    }
 }
-
-Hash.sha1Hmac = function (data, key) {
-    return Hash.hmac('sha1', data, key)
-}
-
-Hash.asyncSha1Hmac = async function (data, key) {
-    const args = [data, key]
-    const workersResult = await Workers.asyncClassMethod(Hash, 'sha1Hmac', args)
-    return workersResult.resbuf
-}
-
-Hash.sha1Hmac.bitsize = 160
-
-Hash.sha256Hmac = function (data, key) {
-    return Hash.hmac('sha256', data, key)
-}
-
-Hash.asyncSha256Hmac = async function (data, key) {
-    const args = [data, key]
-    const workersResult = await Workers.asyncClassMethod(Hash, 'sha256Hmac', args)
-    return workersResult.resbuf
-}
-
-Hash.sha256Hmac.bitsize = 256
-
-Hash.sha512Hmac = function (data, key) {
-    return Hash.hmac('sha512', data, key)
-}
-
-Hash.asyncSha512Hmac = async function (data, key) {
-    const args = [data, key]
-    const workersResult = await Workers.asyncClassMethod(Hash, 'sha512Hmac', args)
-    return workersResult.resbuf
-}
-
-Hash.sha512Hmac.bitsize = 512
-
-export { Hash }

@@ -8,21 +8,24 @@
  * using that method. Otherwise it is JSON serialized into a buffer. The result
  * can also be an error, in which case the isError flag is set.
  */
-'use strict'
-
+import { Br } from './br'
 import { Bw } from './bw'
 import { Struct } from './struct'
 
-class WorkersResult extends Struct {
-    constructor(resbuf, isError, id) {
+export class WorkersResult extends Struct {
+    public resbuf: Buffer
+    public isError: boolean
+    public id: number
+
+    constructor(resbuf?: Buffer, isError?: boolean, id?: number) {
         super({ resbuf, isError, id })
     }
 
-    fromResult(result, id) {
-        if (result.toFastBuffer) {
-            this.resbuf = result.toFastBuffer()
-        } else if (Buffer.isBuffer(result)) {
+    public fromResult(result: Buffer | Struct, id: number): this {
+        if (Buffer.isBuffer(result)) {
             this.resbuf = result
+        } else if (result.toFastBuffer) {
+            this.resbuf = result.toFastBuffer()
         } else {
             this.resbuf = Buffer.from(JSON.stringify(result))
         }
@@ -31,18 +34,18 @@ class WorkersResult extends Struct {
         return this
     }
 
-    static fromResult(result, id) {
+    public static fromResult(this: new () => WorkersResult, result: Buffer | Struct, id: number): WorkersResult {
         return new this().fromResult(result, id)
     }
 
-    fromError(error, id) {
+    public fromError(error: any, id: number): this {
         this.resbuf = Buffer.from(JSON.stringify(error.message))
         this.isError = true
         this.id = id
         return this
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -53,7 +56,7 @@ class WorkersResult extends Struct {
         return bw
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         const resbuflen = br.readVarIntNum()
         this.resbuf = br.read(resbuflen)
         this.isError = Boolean(br.readUInt8())
@@ -61,5 +64,3 @@ class WorkersResult extends Struct {
         return this
     }
 }
-
-export { WorkersResult }

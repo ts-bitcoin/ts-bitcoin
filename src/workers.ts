@@ -16,13 +16,16 @@
  * You probably don't need to use this class directly. Use Work, which will
  * automatically spawn new workers if needed.
  */
-'use strict'
-
 import { WorkersResult } from './workers-result'
 
-let globalWorkers
+let globalWorkers: Workers
 
-class Workers {
+export class Workers {
+    public nativeWorkers: any[]
+    public lastid: number
+    public incompconsteRes: any[]
+    public promisemap: Map<any, any>
+
     constructor(nativeWorkers = [], lastid = 0, incompconsteRes = [], promisemap = new Map()) {
         this.nativeWorkers = nativeWorkers
         this.lastid = lastid
@@ -30,7 +33,7 @@ class Workers {
         this.promisemap = promisemap
     }
 
-    asyncObjectMethod(obj, methodname, args, id = this.lastid + 1) {
+    public asyncObjectMethod(obj: any, methodname: string, args: any[], id = this.lastid + 1): WorkersResult {
         if (!args) {
             throw new Error('must specify args')
         }
@@ -39,14 +42,14 @@ class Workers {
         return workersResult
     }
 
-    static asyncObjectMethod(obj, methodname, args, id) {
+    public static asyncObjectMethod(obj: any, methodname: string, args: any[], id?: number): WorkersResult {
         if (!globalWorkers) {
             globalWorkers = new Workers()
         }
         return globalWorkers.asyncObjectMethod(obj, methodname, args, id)
     }
 
-    asyncClassMethod(classObj, methodname, args, id = this.lastid + 1) {
+    public asyncClassMethod(classObj: any, methodname: string, args: any[], id = this.lastid + 1): WorkersResult {
         if (!args) {
             throw new Error('must specify args')
         }
@@ -55,18 +58,16 @@ class Workers {
         return workersResult
     }
 
-    static asyncClassMethod(classObj, methodname, args, id) {
+    public static asyncClassMethod(classObj: any, methodname: string, args: any[], id?: number): WorkersResult {
         if (!globalWorkers) {
             globalWorkers = new Workers()
         }
         return globalWorkers.asyncClassMethod(classObj, methodname, args, id)
     }
 
-    static endGlobalWorkers() {
-        if (globalWorkers && !process.browser) {
+    public static endGlobalWorkers(): void {
+        if (globalWorkers && !(process as any).browser) {
             globalWorkers = undefined
         }
     }
 }
-
-export { Workers }

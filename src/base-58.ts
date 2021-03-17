@@ -4,56 +4,54 @@
  *
  * Base58 (no check)
  */
-'use strict'
-
 import * as bs58 from 'bs58'
 import { Struct } from './struct'
 
-class Base58 extends Struct {
-    constructor(buf) {
+export class Base58 extends Struct {
+    public buf: Buffer
+
+    constructor(buf: Buffer) {
         super({ buf })
     }
 
-    fromHex(hex) {
+    public fromHex(hex: string): this {
         return this.fromBuffer(Buffer.from(hex, 'hex'))
     }
 
-    toHex() {
+    public toHex(): string {
         return this.toBuffer().toString('hex')
     }
 
-    static encode(buf) {
+    public static encode(buf: Buffer): string {
         if (!Buffer.isBuffer(buf)) {
             throw new Error('Input should be a buffer')
         }
         return bs58.encode(buf)
     }
 
-    static decode(str) {
+    public static decode(str: string): Buffer {
         if (typeof str !== 'string') {
             throw new Error('Input should be a string')
         }
         return Buffer.from(bs58.decode(str))
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         this.buf = buf
         return this
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         const buf = Base58.decode(str)
         this.buf = buf
         return this
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         return this.buf
     }
 
-    toString() {
+    public toString(): string {
         return Base58.encode(this.buf)
     }
 }
-
-export { Base58 }

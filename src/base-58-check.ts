@@ -5,27 +5,27 @@
  * Base58 check encoding. The usual way to use it is
  * new Base58Check(buf).toString() or new Base58Check(str).toBuffer().
  */
-'use strict'
-
 import { Base58 } from './base-58'
 import { cmp } from './cmp'
 import { Hash } from './hash'
 import { Struct } from './struct'
 
-class Base58Check extends Struct {
-    constructor(buf) {
+export class Base58Check extends Struct {
+    public buf: Buffer
+
+    constructor(buf: Buffer) {
         super({ buf })
     }
 
-    fromHex(hex) {
+    public fromHex(hex: string): this {
         return this.fromBuffer(Buffer.from(hex, 'hex'))
     }
 
-    toHex() {
+    public toHex(): string {
         return this.toBuffer().toString('hex')
     }
 
-    static decode(s) {
+    public static decode(s: string): Buffer {
         if (typeof s !== 'string') {
             throw new Error('Input must be a string')
         }
@@ -49,7 +49,7 @@ class Base58Check extends Struct {
         return data
     }
 
-    static encode(buf) {
+    public static encode(buf: Buffer): string {
         if (!Buffer.isBuffer(buf)) {
             throw new Error('Input must be a buffer')
         }
@@ -60,24 +60,22 @@ class Base58Check extends Struct {
         return Base58.encode(checkedBuf)
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         this.buf = buf
         return this
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         const buf = Base58Check.decode(str)
         this.buf = buf
         return this
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         return this.buf
     }
 
-    toString() {
+    public toString(): string {
         return Base58Check.encode(this.buf)
     }
 }
-
-export { Base58Check }
