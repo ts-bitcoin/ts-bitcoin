@@ -5,33 +5,35 @@
  * A private key is used for signing transactions (or messages). The primary
  * way to use this is new PrivKey().fromRandom(), or new PrivKey().fromBuffer(buf).
  */
-'use strict'
-
 import { Bn } from './bn'
 import { Point } from './point'
-import { Constants } from './constants'
+import { Constants, NetworkConstants } from './constants'
 import { Base58Check } from './base-58-check'
 import { Random } from './random'
 import { Struct } from './struct'
 
-class PrivKey extends Struct {
-    constructor(bn, compressed, constants = null) {
+export class PrivKey extends Struct {
+    public bn: Bn
+    public compressed: boolean
+    public Constants: NetworkConstants['PrivKey']
+
+    constructor(bn?: Bn, compressed?: boolean, constants?: NetworkConstants['PrivKey']) {
         super({ bn, compressed })
         constants = constants || Constants.Default.PrivKey
         this.Constants = constants
     }
 
-    fromJSON(json) {
+    public fromJSON(json: string): this {
         this.fromHex(json)
         return this
     }
 
-    toJSON() {
+    public toJSON(): string {
         return this.toHex()
     }
 
-    fromRandom() {
-        let privBuf, bn, condition
+    public fromRandom(): this {
+        let privBuf: Buffer, bn: Bn, condition: boolean
 
         do {
             privBuf = Random.getRandomBuffer(32)
@@ -46,11 +48,11 @@ class PrivKey extends Struct {
         return this
     }
 
-    static fromRandom() {
+    public static fromRandom(): PrivKey {
         return new this().fromRandom()
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         let compressed = this.compressed
 
         if (compressed === undefined) {
@@ -68,7 +70,7 @@ class PrivKey extends Struct {
         return buf
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         if (buf.length === 1 + 32 + 1 && buf[1 + 32 + 1 - 1] === 1) {
             this.compressed = true
         } else if (buf.length === 1 + 32) {
@@ -84,20 +86,20 @@ class PrivKey extends Struct {
         return this.fromBn(new Bn().fromBuffer(buf.slice(1, 1 + 32)))
     }
 
-    toBn() {
+    public toBn(): Bn {
         return this.bn
     }
 
-    fromBn(bn) {
+    public fromBn(bn: Bn): this {
         this.bn = bn
         return this
     }
 
-    static fromBn(bn) {
+    public static fromBn(bn: Bn): PrivKey {
         return new this().fromBn(bn)
     }
 
-    validate() {
+    public validate(): this {
         if (!this.bn.lt(Point.getN())) {
             throw new Error('Number must be less than N')
         }
@@ -110,40 +112,38 @@ class PrivKey extends Struct {
     /**
      * Output the private key a Wallet Import Format (Wif) string.
      */
-    toWif() {
+    public toWif(): string {
         return Base58Check.encode(this.toBuffer())
     }
 
     /**
      * Input the private key from a Wallet Import Format (Wif) string.
      */
-    fromWif(str) {
+    public fromWif(str: string): this {
         return this.fromBuffer(Base58Check.decode(str))
     }
 
-    static fromWif(str) {
+    public static fromWif(str: string): PrivKey {
         return new this().fromWif(str)
     }
 
-    toString() {
+    public toString(): string {
         return this.toWif()
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         return this.fromWif(str)
     }
-}
 
-PrivKey.Mainnet = class extends PrivKey {
-    constructor(bn, compressed) {
-        super(bn, compressed, Constants.Mainnet.PrivKey)
+    public static readonly Mainnet = class extends PrivKey {
+        constructor(bn?: Bn, compressed?: boolean) {
+            super(bn, compressed, Constants.Mainnet.PrivKey)
+        }
+    }
+
+    public static readonly Testnet = class extends PrivKey {
+        constructor(bn?: Bn, compressed?: boolean) {
+            super(bn, compressed, Constants.Testnet.PrivKey)
+        }
     }
 }
-
-PrivKey.Testnet = class extends PrivKey {
-    constructor(bn, compressed) {
-        super(bn, compressed, Constants.Testnet.PrivKey)
-    }
-}
-
-export { PrivKey }

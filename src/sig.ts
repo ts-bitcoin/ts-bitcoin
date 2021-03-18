@@ -17,8 +17,6 @@
  * appended, and the final one is Compact, which is used by Bitcoin Signed
  * Message (Bsm).
  */
-'use strict'
-
 import { Bn } from './bn'
 import { Struct } from './struct'
 
@@ -28,12 +26,24 @@ import { Struct } from './struct'
  * recovery: public key recovery number
  * compressed: whether the recovered pubKey is compressed
  */
-class Sig extends Struct {
-    constructor(r, s, nHashType, recovery, compressed) {
+export class Sig extends Struct {
+    public static readonly SIGHASH_ALL = 0x00000001
+    public static readonly SIGHASH_NONE = 0x00000002
+    public static readonly SIGHASH_SINGLE = 0x00000003
+    public static readonly SIGHASH_FORKID = 0x00000040
+    public static readonly SIGHASH_ANYONECANPAY = 0x00000080
+
+    public r: Bn
+    public s: Bn
+    public nHashType: number
+    public recovery: number
+    public compressed: boolean
+
+    constructor(r?: Bn, s?: Bn, nHashType?: number, recovery?: number, compressed?: boolean) {
         super({ r, s, nHashType, recovery, compressed })
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         try {
             return this.fromDer(buf, true)
         } catch (e) {}
@@ -43,7 +53,7 @@ class Sig extends Struct {
         return this.fromTxFormat(buf)
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         if (this.nHashType !== undefined) {
             return this.toTxFormat()
         } else if (this.recovery !== undefined) {
@@ -53,7 +63,7 @@ class Sig extends Struct {
     }
 
     // The format used by "message"
-    fromCompact(buf) {
+    public fromCompact(buf: Buffer): this {
         let compressed = true
         let recovery = buf.slice(0, 1)[0] - 27 - 4
         if (recovery < 0) {
@@ -74,11 +84,11 @@ class Sig extends Struct {
         return this
     }
 
-    static fromCompact(buf) {
+    public static fromCompact(buf: Buffer): Sig {
         return new this().fromCompact(buf)
     }
 
-    fromRS(rsbuf) {
+    public fromRS(rsbuf: Buffer): this {
         const b2 = rsbuf.slice(0, 32)
         const b3 = rsbuf.slice(32, 64)
         if (b2.length !== 32) {
@@ -92,12 +102,12 @@ class Sig extends Struct {
         return this
     }
 
-    static fromRS(rsbuf) {
+    public static fromRS(rsbuf: Buffer): Sig {
         return new this().fromRS(rsbuf)
     }
 
     // The format used in a tx, except without the nHashType at the end
-    fromDer(buf, strict) {
+    public fromDer(buf: Buffer, strict?: boolean): this {
         const obj = Sig.parseDer(buf, strict)
         this.r = obj.r
         this.s = obj.s
@@ -105,12 +115,12 @@ class Sig extends Struct {
         return this
     }
 
-    static fromDer(buf, strict) {
+    public static fromDer(buf: Buffer, strict?: boolean): Sig {
         return new this().fromDer(buf, strict)
     }
 
     // The format used in a tx
-    fromTxFormat(buf) {
+    public fromTxFormat(buf: Buffer): this {
         if (buf.length === 0) {
             // allow setting a "blank" signature
             this.r = new Bn(1)
@@ -125,18 +135,18 @@ class Sig extends Struct {
         return this
     }
 
-    static fromTxFormat(buf) {
+    public static fromTxFormat(buf: Buffer): Sig {
         return new this().fromTxFormat(buf)
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         return this.fromHex(str)
     }
 
     /**
      * In order to mimic the non-strict DER encoding of OpenSSL, set strict = false.
      */
-    static parseDer(buf, strict) {
+    public static parseDer(buf: Buffer, strict?: boolean) {
         if (strict === undefined) {
             strict = true
         }
@@ -220,7 +230,7 @@ class Sig extends Struct {
      *
      * See https://bitcointalk.org/index.php?topic=8392.msg127623#msg127623
      */
-    static IsTxDer(buf) {
+    public static IsTxDer(buf: Buffer): boolean {
         if (buf.length < 9) {
             //  Non-canonical signature: too short
             return false
@@ -291,7 +301,7 @@ class Sig extends Struct {
      * See also Ecdsa signature algorithm which enforces this.
      * See also Bip 62, "low S values in signatures"
      */
-    hasLowS() {
+    public hasLowS(): boolean {
         if (
             this.s.lt(1) ||
             this.s.gt(
@@ -307,14 +317,14 @@ class Sig extends Struct {
      * Ensures the nHashType is exactly equal to one of the standard options or combinations thereof.
      * Translated from bitcoind's IsDefinedHashtypeSignature
      */
-    hasDefinedHashType() {
+    public hasDefinedHashType(): boolean {
         if (this.nHashType < Sig.SIGHASH_ALL || this.nHashType > Sig.SIGHASH_SINGLE) {
             return false
         }
         return true
     }
 
-    toCompact(recovery, compressed) {
+    public toCompact(recovery?: number, compressed?: boolean): Buffer {
         recovery = typeof recovery === 'number' ? recovery : this.recovery
         compressed = typeof compressed === 'boolean' ? compressed : this.compressed
 
@@ -332,11 +342,11 @@ class Sig extends Struct {
         return Buffer.concat([b1, b2, b3])
     }
 
-    toRS() {
+    public toRS(): Buffer {
         return Buffer.concat([this.r.toBuffer({ size: 32 }), this.s.toBuffer({ size: 32 })])
     }
 
-    toDer() {
+    public toDer(): Buffer {
         const rnbuf = this.r.toBuffer()
         const snbuf = this.s.toBuffer()
 
@@ -362,22 +372,14 @@ class Sig extends Struct {
         return der
     }
 
-    toTxFormat() {
+    public toTxFormat(): Buffer {
         const derbuf = this.toDer()
         const buf = Buffer.alloc(1)
         buf.writeUInt8(this.nHashType, 0)
         return Buffer.concat([derbuf, buf])
     }
 
-    toString() {
+    public toString(): string {
         return this.toHex()
     }
 }
-
-Sig.SIGHASH_ALL = 0x00000001
-Sig.SIGHASH_NONE = 0x00000002
-Sig.SIGHASH_SINGLE = 0x00000003
-Sig.SIGHASH_FORKID = 0x00000040
-Sig.SIGHASH_ANYONECANPAY = 0x00000080
-
-export { Sig }

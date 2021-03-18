@@ -12,9 +12,14 @@
 import { Bn } from './bn'
 import * as elliptic from 'bitcoin-elliptic'
 
+interface _Point {
+    isInfinity(): boolean
+    eq(point: _Point): boolean
+}
+
 const ec = elliptic.curves.secp256k1
 const _point = ec.curve.point()
-const _Point = _point.constructor
+const _Point: new (...rest: any[]) => _Point = _point.constructor
 
 export class Point extends _Point {
     constructor(x?: Bn, y?: Bn, isRed?: boolean) {

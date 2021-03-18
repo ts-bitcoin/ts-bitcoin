@@ -524,6 +524,11 @@ class BnDefinition {
     fromBuffer(buf: Buffer, opts?: { endian: 'big' | 'little' }): BnDefinition {
         return 0 as any
     }
+
+    static fromBuffer(buf: Buffer, opts?: { endian: 'big' | 'little' }): BnDefinition {
+        return 0 as any
+    }
+
     fromFastBuffer(buf: Buffer, opts?: { endian: 'big' | 'little' }): BnDefinition {
         return 0 as any
     }
@@ -701,7 +706,7 @@ class BnDefinition {
     /**
      * @description a less than b
      */
-    lt(b: BnDefinition): boolean {
+    lt(b: BnDefinition | number): boolean {
         return 0 as any
     }
 

@@ -5,29 +5,31 @@
  * A public key corresponds to a private key. If you have a private key, you
  * can find the corresponding public key with new PubKey().fromPrivKey(privKey).
  */
-'use strict'
-
 import { Point } from './point'
 import { Bn } from './bn'
 import { Bw } from './bw'
 import { Struct } from './struct'
 import { Workers } from './workers'
+import { PrivKey } from './priv-key'
 
-class PubKey extends Struct {
-    constructor(point, compressed) {
+export class PubKey extends Struct {
+    public point: Point
+    public compressed: boolean
+
+    constructor(point?: Point, compressed?: boolean) {
         super({ point, compressed })
     }
 
-    fromJSON(json) {
+    public fromJSON(json: string): this {
         this.fromFastHex(json)
         return this
     }
 
-    toJSON() {
+    public toJSON(): string {
         return this.toFastHex()
     }
 
-    fromPrivKey(privKey) {
+    public fromPrivKey(privKey: PrivKey): this {
         this.fromObject({
             point: Point.getG().mul(privKey.bn),
             compressed: privKey.compressed,
@@ -35,30 +37,30 @@ class PubKey extends Struct {
         return this
     }
 
-    static fromPrivKey(privKey) {
+    public static fromPrivKey(privKey: PrivKey): PubKey {
         return new this().fromPrivKey(privKey)
     }
 
-    async asyncFromPrivKey(privKey) {
+    public async asyncFromPrivKey(privKey: PrivKey): Promise<this> {
         const workersResult = await Workers.asyncObjectMethod(this, 'fromPrivKey', [privKey])
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    static asyncFromPrivKey(privKey) {
+    public static asyncFromPrivKey(privKey: PrivKey): Promise<PubKey> {
         return new this().asyncFromPrivKey(privKey)
     }
 
-    fromBuffer(buf, strict) {
+    public fromBuffer(buf: Buffer, strict?: boolean): this {
         return this.fromDer(buf, strict)
     }
 
-    async asyncFromBuffer(buf, strict) {
+    public async asyncFromBuffer(buf: Buffer, strict?: boolean): Promise<this> {
         const args = [buf, strict]
         const workersResult = await Workers.asyncObjectMethod(this, 'fromBuffer', args)
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    fromFastBuffer(buf) {
+    public fromFastBuffer(buf: Buffer): this {
         if (buf.length === 0) {
             return this
         }
@@ -76,7 +78,7 @@ class PubKey extends Struct {
      * where he discovered these "hybrid pubKeys" on the mailing list:
      * http://sourceforge.net/p/bitcoin/mailman/message/29416133/
      */
-    fromDer(buf, strict) {
+    public fromDer(buf: Buffer, strict?: boolean): this {
         if (strict === undefined) {
             strict = true
         } else {
@@ -108,33 +110,33 @@ class PubKey extends Struct {
         return this
     }
 
-    static fromDer(buf, strict) {
+    public static fromDer(buf: Buffer, strict?: boolean): PubKey {
         return new this().fromDer(buf, strict)
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         this.fromDer(Buffer.from(str, 'hex'))
         return this
     }
 
-    fromX(odd, x) {
+    public fromX(odd: boolean, x: Bn): this {
         if (typeof odd !== 'boolean') {
-            throw new Error('Must specify whether y is odd or not (true or false)')
+            throw new Error('Must specify whether x is odd or not (true or false)')
         }
         this.point = Point.fromX(odd, x)
         return this
     }
 
-    static fromX(odd, x) {
+    public static fromX(odd: boolean, x: Bn): PubKey {
         return new this().fromX(odd, x)
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         const compressed = this.compressed === undefined ? true : this.compressed
         return this.toDer(compressed)
     }
 
-    toFastBuffer() {
+    public toFastBuffer(): Buffer {
         if (!this.point) {
             return Buffer.alloc(0)
         }
@@ -145,7 +147,7 @@ class PubKey extends Struct {
         return bw.toBuffer()
     }
 
-    toDer(compressed) {
+    public toDer(compressed?: boolean): Buffer {
         compressed = compressed === undefined ? this.compressed : compressed
         if (typeof compressed !== 'boolean') {
             throw new Error('Must specify whether the public key is compressed or not (true or false)')
@@ -172,7 +174,7 @@ class PubKey extends Struct {
         }
     }
 
-    toString() {
+    public toString(): string {
         const compressed = this.compressed === undefined ? true : this.compressed
         return this.toDer(compressed).toString('hex')
     }
@@ -180,7 +182,7 @@ class PubKey extends Struct {
     /**
      * Translated from bitcoind's IsCompressedOrUncompressedPubKey
      */
-    static isCompressedOrUncompressed(buf) {
+    public static isCompressedOrUncompressed(buf: Buffer): boolean {
         if (buf.length < 33) {
             //  Non-canonical public key: too short
             return false
@@ -203,7 +205,7 @@ class PubKey extends Struct {
     }
 
     // https://www.iacr.org/archive/pkc2003/25670211/25670211.pdf
-    validate() {
+    public validate(): this {
         if (this.point.isInfinity()) {
             throw new Error('point: Point cannot be equal to Infinity')
         }
@@ -214,5 +216,3 @@ class PubKey extends Struct {
         return this
     }
 }
-
-export { PubKey }
