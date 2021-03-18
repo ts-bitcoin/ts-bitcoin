@@ -5,13 +5,35 @@
  * Every block contains a blockHeader. This is probably not something you will
  * personally use, but it's here if you need it.
  */
-'use strict'
-
+import { Br } from './br'
 import { Bw } from './bw'
 import { Struct } from './struct'
 
-class BlockHeader extends Struct {
-    constructor(versionBytesNum, prevBlockHashBuf, merkleRootBuf, time, bits, nonce) {
+export interface BlockHeaderLike {
+    versionBytesNum: number
+    prevBlockHashBuf: string
+    merkleRootBuf: string
+    time: number
+    bits: number
+    nonce: number
+}
+
+export class BlockHeader extends Struct {
+    public versionBytesNum: number
+    public prevBlockHashBuf: Buffer
+    public merkleRootBuf: Buffer
+    public time: number
+    public bits: number
+    public nonce: number
+
+    constructor(
+        versionBytesNum?: number,
+        prevBlockHashBuf?: Buffer,
+        merkleRootBuf?: Buffer,
+        time?: number,
+        bits?: number,
+        nonce?: number
+    ) {
         super({
             versionBytesNum,
             prevBlockHashBuf,
@@ -22,7 +44,7 @@ class BlockHeader extends Struct {
         })
     }
 
-    fromJSON(json) {
+    public fromJSON(json: BlockHeaderLike): this {
         this.fromObject({
             versionBytesNum: json.versionBytesNum,
             prevBlockHashBuf: Buffer.from(json.prevBlockHashBuf, 'hex'),
@@ -34,7 +56,7 @@ class BlockHeader extends Struct {
         return this
     }
 
-    toJSON() {
+    public toJSON(): BlockHeaderLike {
         return {
             versionBytesNum: this.versionBytesNum,
             prevBlockHashBuf: this.prevBlockHashBuf.toString('hex'),
@@ -45,7 +67,7 @@ class BlockHeader extends Struct {
         }
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         this.versionBytesNum = br.readUInt32LE()
         this.prevBlockHashBuf = br.read(32)
         this.merkleRootBuf = br.read(32)
@@ -55,7 +77,7 @@ class BlockHeader extends Struct {
         return this
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -68,5 +90,3 @@ class BlockHeader extends Struct {
         return bw
     }
 }
-
-export { BlockHeader }

@@ -14,7 +14,7 @@ import { Random } from './random'
 import { Workers } from './workers'
 import { cmp } from './cmp'
 
-class Ach {
+export class Ach {
     public static encrypt(messageBuf: Buffer, cipherKeyBuf: Buffer, ivBuf: Buffer): Buffer {
         const encBuf = Aescbc.encrypt(messageBuf, cipherKeyBuf, ivBuf)
         const hmacbuf = Hash.sha256Hmac(encBuf, cipherKeyBuf)
@@ -51,5 +51,3 @@ class Ach {
         return workersResult.resbuf
     }
 }
-
-export { Ach }

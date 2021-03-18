@@ -10,11 +10,9 @@
  * new Block().fromBuffer(buf), which will parse the block and prepare its insides
  * for you to inspect.
  */
-'use strict'
-
 import { Br } from './br'
 import { Bw } from './bw'
-import { BlockHeader } from './block-header'
+import { BlockHeader, BlockHeaderLike } from './block-header'
 import { Hash } from './hash'
 import { Merkle } from './merkle'
 import { Struct } from './struct'
@@ -22,12 +20,24 @@ import { Tx } from './tx'
 import { VarInt } from './var-int'
 import { Workers } from './workers'
 
-class Block extends Struct {
-    constructor(blockHeader, txsVi, txs) {
+export interface BlockLike {
+    blockHeader: BlockHeaderLike
+    txsVi: string
+    txs: Tx[] // TODO: Use TxLike
+}
+
+export class Block extends Struct {
+    public static readonly MAX_BLOCK_SIZE = 1000000
+
+    public blockHeader: BlockHeader
+    public txsVi: VarInt
+    public txs: Tx[]
+
+    constructor(blockHeader?: BlockHeader, txsVi?: VarInt, txs?: Tx[]) {
         super({ blockHeader, txsVi, txs })
     }
 
-    fromJSON(json) {
+    public fromJSON(json: BlockLike): this {
         const txs = []
         json.txs.forEach(function (tx) {
             txs.push(new Tx().fromJSON(tx))
@@ -40,7 +50,7 @@ class Block extends Struct {
         return this
     }
 
-    toJSON() {
+    public toJSON(): BlockLike {
         const txs = []
         this.txs.forEach(function (tx) {
             txs.push(tx.toJSON())
@@ -52,7 +62,7 @@ class Block extends Struct {
         }
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         this.blockHeader = new BlockHeader().fromBr(br)
         this.txsVi = new VarInt(br.readVarIntBuf())
         const txsNum = this.txsVi.toNumber()
@@ -63,7 +73,7 @@ class Block extends Struct {
         return this
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -76,25 +86,25 @@ class Block extends Struct {
         return bw
     }
 
-    hash() {
+    public hash(): Buffer {
         return Hash.sha256Sha256(this.blockHeader.toBuffer())
     }
 
-    async asyncHash() {
+    public async asyncHash(): Promise<Buffer> {
         const workersResult = await Workers.asyncObjectMethod(this, 'hash', [])
         return workersResult.resbuf
     }
 
-    id() {
+    public id(): string {
         return new Br(this.hash()).readReverse().toString('hex')
     }
 
-    async asyncId() {
+    public async asyncId(): Promise<string> {
         const workersResult = await Workers.asyncObjectMethod(this, 'id', [])
         return JSON.parse(workersResult.resbuf.toString())
     }
 
-    verifyMerkleRoot() {
+    public verifyMerkleRoot(): number {
         const txsbufs = this.txs.map((tx) => tx.toBuffer())
         const merkleRootBuf = Merkle.fromBuffers(txsbufs).hash()
         return Buffer.compare(merkleRootBuf, this.blockHeader.merkleRootBuf)
@@ -109,7 +119,7 @@ class Block extends Struct {
      *
      * @param {Buffer} blockBuf A buffer of a block.
      */
-    static iterateTxs(blockBuf) {
+    public static iterateTxs(blockBuf: Buffer) {
         const br = new Br(blockBuf)
         const blockHeader = new BlockHeader().fromBr(br)
         const txsVi = new VarInt(br.readVarIntBuf())
@@ -126,7 +136,3 @@ class Block extends Struct {
         }
     }
 }
-
-Block.MAX_BLOCK_SIZE = 1000000
-
-export { Block }
