@@ -12,7 +12,7 @@ export class Hash {
     public static readonly blockSize = {
         sha1: 512,
         sha256: 512,
-        sha512: 2014,
+        sha512: 1024,
     }
 
     public static sha1(buf: Buffer): Buffer {

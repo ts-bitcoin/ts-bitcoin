@@ -517,7 +517,7 @@ class BnDefinition {
         return 0 as any
     }
 
-    fromString(str: string, base: number): BnDefinition {
+    fromString(str: string, base?: number): BnDefinition {
         return 0 as any
     }
 
@@ -729,7 +729,7 @@ class BnDefinition {
     /**
      * @description a greater than b
      */
-    gt(b: BnDefinition): boolean {
+    gt(b: BnDefinition | number): boolean {
         return 0 as any
     }
 

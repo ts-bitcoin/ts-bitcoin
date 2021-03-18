@@ -7,67 +7,66 @@
  * in a compact format that can take up as little as 1 byte or as much as 9
  * bytes.
  */
-'use strict'
-
+import { Bn } from './bn'
 import { Br } from './br'
 import { Bw } from './bw'
 import { Struct } from './struct'
 
-class VarInt extends Struct {
-    constructor(buf) {
+export class VarInt extends Struct {
+    public buf: Buffer
+
+    constructor(buf?: Buffer) {
         super({ buf })
     }
 
-    fromJSON(json) {
+    public fromJSON(json: string): this {
         this.fromObject({
             buf: Buffer.from(json, 'hex'),
         })
         return this
     }
 
-    toJSON() {
+    public toJSON(): string {
         return this.buf.toString('hex')
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         this.buf = buf
         return this
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         this.buf = br.readVarIntBuf()
         return this
     }
 
-    fromBn(bn) {
+    public fromBn(bn: Bn): this {
         this.buf = new Bw().writeVarIntBn(bn).toBuffer()
         return this
     }
 
-    static fromBn(bn) {
+    public static fromBn(bn: Bn): VarInt {
         return new this().fromBn(bn)
     }
 
-    fromNumber(num) {
+    public fromNumber(num: number): this {
         this.buf = new Bw().writeVarIntNum(num).toBuffer()
         return this
     }
 
-    static fromNumber(num) {
+    public static fromNumber(num: number): VarInt {
         return new this().fromNumber(num)
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         return this.buf
     }
 
-    toBn() {
+    public toBn(): Bn {
         return new Br(this.buf).readVarIntBn()
     }
 
-    toNumber() {
+    public toNumber(): number {
         return new Br(this.buf).readVarIntNum()
     }
 }
-
-export { VarInt }

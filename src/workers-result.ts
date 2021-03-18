@@ -34,7 +34,7 @@ export class WorkersResult extends Struct {
         return this
     }
 
-    public static fromResult(this: new () => WorkersResult, result: Buffer | Struct, id: number): WorkersResult {
+    public static fromResult(result: Buffer | Struct, id: number): WorkersResult {
         return new this().fromResult(result, id)
     }
 

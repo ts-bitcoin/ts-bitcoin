@@ -323,7 +323,7 @@ export class Struct {
         return new this().asyncFromJSON(json, ...rest)
     }
 
-    public toJSON(): Record<string, any> {
+    public toJSON(): Record<string, any> | string {
         var json: Record<string, any> = {}
         for (var val in this) {
             // arrays
@@ -364,7 +364,7 @@ export class Struct {
         // throw new Error('not implemented')
     }
 
-    public asyncToJSON(): Promise<Record<keyof this, any>> {
+    public asyncToJSON(): Promise<Record<keyof this, any>> | string {
         throw new Error('not implemented')
     }
 

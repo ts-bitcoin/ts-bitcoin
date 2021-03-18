@@ -9,9 +9,9 @@ describe('Hash', function () {
     const str = 'test string'
 
     it('should have the blockSize for some hash functions', function () {
-        Hash.sha1.blockSize.should.equal(512)
-        Hash.sha256.blockSize.should.equal(512)
-        Hash.sha512.blockSize.should.equal(1024)
+        Hash.blockSize.sha1.should.equal(512)
+        Hash.blockSize.sha256.should.equal(512)
+        Hash.blockSize.sha512.should.equal(1024)
     })
 
     describe('@hmac', function () {
@@ -227,7 +227,7 @@ describe('Hash', function () {
 
     describe('@sha512Hmac', function () {
         it('should calculate this value where key size is the same as block size', function () {
-            const key = Buffer.alloc(Hash.sha512.blockSize / 8)
+            const key = Buffer.alloc(Hash.blockSize.sha512 / 8)
             key.fill(0)
             const data = Buffer.from([])
             // test vector calculated with node's createHmac
