@@ -435,9 +435,9 @@ decorate('lt')
 decorate('leq')
 
 /**
- * Use class hack to type legacy bn class.
+ * Use hack to type legacy bn class.
  *
- * TODO: Refactor by properly extend from bn.js.
+ * TODO: Refactor by properly extending from bn.js.
  */
 
 type Endianness = 'le' | 'be'

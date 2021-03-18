@@ -4,32 +4,34 @@
  *
  * For use in sighash.
  */
-'use strict'
-
 import { Struct } from './struct'
 
-class HashCache extends Struct {
-    constructor(prevoutsHashBuf, sequenceHashBuf, outputsHashBuf) {
+export class HashCache extends Struct {
+    public prevoutsHashBuf: Buffer
+    public sequenceHashBuf: Buffer
+    public outputsHashBuf: Buffer
+
+    constructor(prevoutsHashBuf?: Buffer, sequenceHashBuf?: Buffer, outputsHashBuf?: Buffer) {
         super()
         this.fromObject({ prevoutsHashBuf, sequenceHashBuf, outputsHashBuf })
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         return this.fromJSON(JSON.parse(buf.toString()))
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         return Buffer.from(JSON.stringify(this.toJSON()))
     }
 
-    fromJSON(json) {
+    public fromJSON(json: { prevoutsHashBuf?: string; sequenceHashBuf?: string; outputsHashBuf?: string }): this {
         this.prevoutsHashBuf = json.prevoutsHashBuf ? Buffer.from(json.prevoutsHashBuf, 'hex') : undefined
         this.sequenceHashBuf = json.sequenceHashBuf ? Buffer.from(json.sequenceHashBuf, 'hex') : undefined
         this.outputsHashBuf = json.outputsHashBuf ? Buffer.from(json.outputsHashBuf, 'hex') : undefined
         return this
     }
 
-    toJSON() {
+    public toJSON() {
         return {
             prevoutsHashBuf: this.prevoutsHashBuf ? this.prevoutsHashBuf.toString('hex') : undefined,
             sequenceHashBuf: this.sequenceHashBuf ? this.sequenceHashBuf.toString('hex') : undefined,
@@ -37,5 +39,3 @@ class HashCache extends Struct {
         }
     }
 }
-
-export { HashCache }

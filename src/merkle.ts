@@ -5,17 +5,20 @@
  * A node in a Merkle tree (possibly the root node, in which case it is the
  * Merkle root). A node either contains a buffer or links to two other nodes.
  */
-'use strict'
-
 import { Hash } from './hash'
 import { Struct } from './struct'
 
-class Merkle extends Struct {
-    constructor(hashBuf, buf, merkle1, merkle2) {
+export class Merkle extends Struct {
+    public hashBuf: Buffer
+    public buf: Buffer
+    public merkle1: Merkle
+    public merkle2: Merkle
+
+    constructor(hashBuf?: Buffer, buf?: Buffer, merkle1?: Merkle, merkle2?: Merkle) {
         super({ hashBuf, buf, merkle1, merkle2 })
     }
 
-    hash() {
+    public hash(): Buffer {
         if (this.hashBuf) {
             return this.hashBuf
         }
@@ -28,7 +31,7 @@ class Merkle extends Struct {
         return Hash.sha256Sha256(this.buf)
     }
 
-    fromBuffers(bufs) {
+    public fromBuffers(bufs: Buffer[]): this {
         if (bufs.length < 1) {
             throw new Error('buffers must have a length')
         }
@@ -51,7 +54,7 @@ class Merkle extends Struct {
         return this
     }
 
-    static fromBuffers(bufs) {
+    public static fromBuffers(bufs: Buffer[]): Merkle {
         return new this().fromBuffers(bufs)
     }
 
@@ -59,7 +62,7 @@ class Merkle extends Struct {
      * Takes two arrays, both of which *must* be of a length that is a power of
      * two.
      */
-    fromBufferArrays(bufs1, bufs2) {
+    public fromBufferArrays(bufs1: Buffer[], bufs2: Buffer[]): this {
         if (bufs1.length === 1) {
             this.merkle1 = new Merkle(undefined, bufs1[0])
             this.merkle2 = new Merkle(undefined, bufs2[0])
@@ -74,11 +77,11 @@ class Merkle extends Struct {
         return this
     }
 
-    static fromBufferArrays(bufs1, bufs2) {
+    public static fromBufferArrays(bufs1: Buffer[], bufs2: Buffer[]): Merkle {
         return new this().fromBufferArrays(bufs1, bufs2)
     }
 
-    leavesNum() {
+    public leavesNum(): number {
         if (this.merkle1) {
             return this.merkle1.leavesNum() + this.merkle2.leavesNum()
         }
@@ -88,5 +91,3 @@ class Merkle extends Struct {
         throw new Error('invalid number of leaves')
     }
 }
-
-export { Merkle }

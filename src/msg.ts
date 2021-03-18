@@ -4,31 +4,44 @@
  *
  * A message on the bitcoin p2p network.
  */
-'use strict'
-
 import { Br } from './br'
 import { Bw } from './bw'
-import { Constants, getConstants } from './constants'
+import { Constants, getConstants, NetworkConstants } from './constants'
 import { Hash } from './hash'
 import { Struct } from './struct'
 import { cmp } from './cmp'
 
-class Msg extends Struct {
-    constructor(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, constants = null) {
+export class Msg extends Struct {
+    public constants: NetworkConstants
+    public magicNum: number
+
+    public cmdbuf: Buffer
+    public datasize: number
+    public checksumbuf: Buffer
+    public dataBuf: Buffer
+
+    constructor(
+        magicNum: number,
+        cmdbuf: Buffer,
+        datasize: number,
+        checksumbuf: Buffer,
+        dataBuf: Buffer,
+        constants?: NetworkConstants
+    ) {
         super()
         this.constants = constants || Constants.Default
         this.magicNum = this.constants.Msg.magicNum
         this.fromObject({ magicNum, cmdbuf, datasize, checksumbuf, dataBuf })
     }
 
-    setCmd(cmdname) {
+    public setCmd(cmdname: string): this {
         this.cmdbuf = Buffer.alloc(12)
         this.cmdbuf.fill(0)
         this.cmdbuf.write(cmdname)
         return this
     }
 
-    getCmd() {
+    public getCmd(): string {
         let end = this.cmdbuf.length
         for (let i = end; i > 0; i--) {
             if (this.cmdbuf[i - 1] !== 0) {
@@ -39,23 +52,23 @@ class Msg extends Struct {
         return this.cmdbuf.toString('utf8', 0, end)
     }
 
-    static checksum(dataBuf) {
+    public static checksum(dataBuf: Buffer): Buffer {
         return Hash.sha256Sha256(dataBuf).slice(0, 4)
     }
 
-    static async asyncChecksum(dataBuf) {
+    public static async asyncChecksum(dataBuf: Buffer): Promise<Buffer> {
         const hashBuf = await Hash.asyncSha256Sha256(dataBuf)
         return hashBuf.slice(0, 4)
     }
 
-    setData(dataBuf) {
+    public setData(dataBuf: Buffer): this {
         this.dataBuf = dataBuf
         this.datasize = dataBuf.length
         this.checksumbuf = Msg.checksum(dataBuf)
         return this
     }
 
-    async asyncSetData(dataBuf) {
+    public async asyncSetData(dataBuf: Buffer): Promise<this> {
         this.dataBuf = dataBuf
         this.datasize = dataBuf.length
         this.checksumbuf = await Msg.asyncChecksum(dataBuf)
@@ -66,10 +79,8 @@ class Msg extends Struct {
      * An iterator to produce a message from a series of buffers. Set opts.strict
      * to throw an error if an invalid message occurs in stream.
      */
-    *genFromBuffers(opts) {
-        opts = opts === undefined ? {} : opts
-        let res
-        res = yield* this.expect(4)
+    public *genFromBuffers(opts: { strict?: boolean } = {}): Generator<number, any, Buffer> {
+        let res = yield* this.expect(4)
         this.magicNum = new Br(res.buf).readUInt32BE()
         if (opts.strict && this.magicNum !== this.constants.Msg.magicNum) {
             throw new Error('invalid magicNum')
@@ -88,7 +99,7 @@ class Msg extends Struct {
         return res.remainderbuf
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         this.magicNum = br.readUInt32BE()
         this.constants = getConstants(this.magicNum)
         this.cmdbuf = br.read(12)
@@ -98,7 +109,7 @@ class Msg extends Struct {
         return this
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -110,7 +121,13 @@ class Msg extends Struct {
         return bw
     }
 
-    fromJSON(json) {
+    public fromJSON(json: {
+        magicNum: number
+        cmdbuf: string
+        datasize: number
+        checksumbuf: string
+        dataBuf: string
+    }): this {
         this.magicNum = json.magicNum
         this.constants = getConstants(this.magicNum)
         this.cmdbuf = Buffer.from(json.cmdbuf, 'hex')
@@ -120,7 +137,7 @@ class Msg extends Struct {
         return this
     }
 
-    toJSON() {
+    public toJSON() {
         return {
             magicNum: this.magicNum,
             cmdbuf: this.cmdbuf.toString('hex'),
@@ -130,55 +147,53 @@ class Msg extends Struct {
         }
     }
 
-    isValid() {
+    public isValid(): boolean {
         // TODO: Add more checks
         const checksumbuf = Msg.checksum(this.dataBuf)
         return cmp(checksumbuf, this.checksumbuf)
     }
 
-    async asyncIsValid() {
+    public async asyncIsValid(): Promise<boolean> {
         // TODO: Add more checks
         const checksumbuf = await Msg.asyncChecksum(this.dataBuf)
         return cmp(checksumbuf, this.checksumbuf)
     }
 
-    validate() {
+    public validate(): this {
         if (!this.isValid()) {
             throw new Error('invalid message')
         }
         return this
     }
 
-    async asyncValidate() {
+    public async asyncValidate(): Promise<void> {
         const isValid = await this.asyncIsValid()
         if (isValid !== true) {
             throw new Error('invalid message')
         }
     }
-}
 
-Msg.Mainnet = class extends Msg {
-    constructor(magicNum, cmdbuf, datasize, checksumbuf, dataBuf) {
-        super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Mainnet)
+    public static readonly Mainnet = class extends Msg {
+        constructor(magicNum: number, cmdbuf: Buffer, datasize: number, checksumbuf: Buffer, dataBuf: Buffer) {
+            super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Mainnet)
+        }
+    }
+
+    public static readonly Testnet = class extends Msg {
+        constructor(magicNum: number, cmdbuf: Buffer, datasize: number, checksumbuf: Buffer, dataBuf: Buffer) {
+            super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Testnet)
+        }
+    }
+
+    public static readonly Regtest = class extends Msg {
+        constructor(magicNum: number, cmdbuf: Buffer, datasize: number, checksumbuf: Buffer, dataBuf: Buffer) {
+            super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Regtest)
+        }
+    }
+
+    public static readonly STN = class extends Msg {
+        constructor(magicNum: number, cmdbuf: Buffer, datasize: number, checksumbuf: Buffer, dataBuf: Buffer) {
+            super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.STN)
+        }
     }
 }
-
-Msg.Testnet = class extends Msg {
-    constructor(magicNum, cmdbuf, datasize, checksumbuf, dataBuf) {
-        super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Testnet)
-    }
-}
-
-Msg.Regtest = class extends Msg {
-    constructor(magicNum, cmdbuf, datasize, checksumbuf, dataBuf) {
-        super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Regtest)
-    }
-}
-
-Msg.STN = class extends Msg {
-    constructor(magicNum, cmdbuf, datasize, checksumbuf, dataBuf) {
-        super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.STN)
-    }
-}
-
-export { Msg }

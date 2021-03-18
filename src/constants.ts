@@ -4,10 +4,46 @@
  *
  * Constants used to distinguish mainnet from testnet.
  */
-'use strict'
 import { config } from './config'
 
-const Constants = {}
+export interface NetworkConstants {
+    MaxSize: number
+    Port: number
+    Address: {
+        pubKeyHash: number
+        payToScriptHash: number
+    }
+    Bip32: {
+        pubKey: number
+        privKey: number
+    }
+    Block: {
+        maxNBits: number
+        magicNum: number
+    }
+    Msg: {
+        magicNum: number
+        versionBytesNum: number
+    }
+    PrivKey: {
+        versionByteNum: number
+    }
+    TxBuilder: {
+        dust: number
+        feePerKbNum: number
+    }
+    Workers: {
+        timeout: number
+    }
+}
+
+const Constants: {
+    Mainnet: NetworkConstants
+    Testnet: NetworkConstants
+    Regtest: NetworkConstants
+    STN: NetworkConstants
+    Default: NetworkConstants
+} = {} as any
 
 Constants.Mainnet = {
     MaxSize: 0x02000000, // MAX_SIZE

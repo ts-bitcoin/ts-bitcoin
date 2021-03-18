@@ -99,7 +99,7 @@ export class Struct {
      * to produce the object. In some cases it is able to yield the number of
      * bytes it is expecting, but that is not always known.
      */
-    public *genFromBuffers() {
+    public *genFromBuffers(): Generator<any, any, any> {
         throw new Error('not implemented')
     }
 
@@ -110,7 +110,7 @@ export class Struct {
      * remaining, and returns an object containing a buffer of the expected
      * length, and, if any, the remainder buffer.
      */
-    public *expect(len: number, startbuf: Buffer) {
+    public *expect(len: number, startbuf?: Buffer): Generator<number, { buf: Buffer; remainderbuf: Buffer }, Buffer> {
         let buf = startbuf
         const bw = new Bw()
         let gotlen = 0

@@ -6,8 +6,6 @@
  * that does not include authentication. You should only use this if you are
  * authenticating your data somehow else.
  */
-'use strict'
-
 import { Aes } from './aes'
 import { Cbc } from './cbc'
 import { Random } from './random'
@@ -23,7 +21,7 @@ export class Aescbc {
         }
     }
 
-    public static decrypt(encBuf: Buffer, cipherKeyBuf: Buffer, ivBuf = false): Buffer {
+    public static decrypt(encBuf: Buffer, cipherKeyBuf: Buffer, ivBuf?: Buffer): Buffer {
         if (!ivBuf) {
             const ivBuf = encBuf.slice(0, 128 / 8)
             const ctBuf = encBuf.slice(128 / 8)

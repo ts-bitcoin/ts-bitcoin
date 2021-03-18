@@ -1,12 +1,15 @@
-'use strict'
-
 class Config {
-    constructor(values) {
-        this.keyDefined = (key) => key in values
-        this.getValue = (key) => values[key]
+    constructor(private values: Record<string, string>) {}
+
+    private keyDefined(key: string): boolean {
+        return key in this.values
     }
 
-    get(key) {
+    private getValue(key: string): string {
+        return this.values[key]
+    }
+
+    public get(key: string): string {
         if (this.keyDefined(key)) {
             return this.getValue(key)
         } else {
@@ -16,15 +19,13 @@ class Config {
 }
 
 class ConfigBuilder {
-    constructor() {
-        this.variables = {}
-    }
+    public variables: Record<string, string> = {}
 
-    build() {
+    public build(): Config {
         return new Config(this.variables)
     }
 
-    addValue(key, value) {
+    public addValue(key: string, value: string): this {
         if (value === undefined) {
             throw new Error(`Failed to add "${key}" property. The value cannot be undefined`)
         }
@@ -35,7 +36,7 @@ class ConfigBuilder {
         return this
     }
 
-    addValueWithDefault(key, value, defaultValue) {
+    public addValueWithDefault(key: string, value: string, defaultValue: string): this {
         if (defaultValue === undefined) {
             throw new Error(`Failed to add "${key}" property. Default value cannot be undefined`)
         }
@@ -43,6 +44,4 @@ class ConfigBuilder {
     }
 }
 
-const config = new ConfigBuilder().addValue('NETWORK', process.env.NETWORK || 'mainnet').build()
-
-export { config }
+export const config = new ConfigBuilder().addValue('NETWORK', process.env.NETWORK || 'mainnet').build()
