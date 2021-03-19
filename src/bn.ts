@@ -685,7 +685,7 @@ class BnDefinition {
     /**
      * @description compare numbers and return `-1 (a < b)`, `0 (a == b)`, or `1 (a > b)` depending on the comparison result
      */
-    cmp(b: BnDefinition): -1 | 0 | 1 {
+    cmp(b: BnDefinition | number): -1 | 0 | 1 {
         return 0 as any
     }
 

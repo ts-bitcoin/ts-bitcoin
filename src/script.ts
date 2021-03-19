@@ -13,8 +13,6 @@
  * and then write it again, you are likely to get back a different string, even
  * if you don't use OP_0, OP_FALSE, OP_1, or OP_TRUE).
  */
-'use strict'
-
 import { Bn } from './bn'
 import { Br } from './br'
 import { Bw } from './bw'
@@ -24,20 +22,28 @@ import { PubKey } from './pub-key'
 import { Sig } from './sig'
 import { Struct } from './struct'
 
-class Script extends Struct {
-    constructor(chunks = []) {
+interface ScriptChunk {
+    buf?: Buffer
+    len?: number
+    opCodeNum: number
+}
+
+export class Script extends Struct {
+    public chunks: ScriptChunk[]
+
+    constructor(chunks: ScriptChunk[] = []) {
         super({ chunks })
     }
 
-    fromJSON(json) {
+    public fromJSON(json: string): this {
         return this.fromString(json)
     }
 
-    toJSON() {
+    public toJSON(): string {
         return this.toString()
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         this.chunks = []
 
         const br = new Br(buf)
@@ -99,7 +105,7 @@ class Script extends Struct {
         return this
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         const bw = new Bw()
 
         for (let i = 0; i < this.chunks.length; i++) {
@@ -125,7 +131,7 @@ class Script extends Struct {
         return bw.toBuffer()
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         this.chunks = []
         if (str === '' || str === undefined) {
             return this
@@ -182,7 +188,7 @@ class Script extends Struct {
         return this
     }
 
-    toString() {
+    public toString(): string {
         let str = ''
 
         for (let i = 0; i < this.chunks.length; i++) {
@@ -213,7 +219,7 @@ class Script extends Struct {
     /**
      * Input the script from the script string format used in bitcoind data tests
      */
-    fromBitcoindString(str) {
+    public fromBitcoindString(str: string): this {
         const bw = new Bw()
         const tokens = str.split(' ')
         let i
@@ -251,14 +257,14 @@ class Script extends Struct {
         return this.fromBuffer(buf)
     }
 
-    static fromBitcoindString(str) {
+    public static fromBitcoindString(str: string): Script {
         return new this().fromBitcoindString(str)
     }
 
     /**
      * Output the script to the script string format used in bitcoind data tests.
      */
-    toBitcoindString() {
+    public toBitcoindString(): string {
         let str = ''
         for (let i = 0; i < this.chunks.length; i++) {
             const chunk = this.chunks[i]
@@ -279,7 +285,7 @@ class Script extends Struct {
     /**
      * Input the script from the script string format used in bitcoind data tests
      */
-    fromAsmString(str) {
+    public fromAsmString(str: string): this {
         this.chunks = []
 
         const tokens = str.split(' ')
@@ -341,14 +347,14 @@ class Script extends Struct {
         return this
     }
 
-    static fromAsmString(str) {
+    public static fromAsmString(str: string): Script {
         return new this().fromAsmString(str)
     }
 
     /**
      * Output the script to the script string format used in bitcoind data tests.
      */
-    toAsmString() {
+    public toAsmString(): string {
         var str = ''
         for (var i = 0; i < this.chunks.length; i++) {
             var chunk = this.chunks[i]
@@ -358,7 +364,7 @@ class Script extends Struct {
         return str.substr(1)
     }
 
-    _chunkToString(chunk, type) {
+    private _chunkToString(chunk: ScriptChunk): string {
         var opCodeNum = chunk.opCodeNum
         var str = ''
         if (!chunk.buf) {
@@ -391,28 +397,28 @@ class Script extends Struct {
         return str
     }
 
-    fromOpReturnData(dataBuf) {
+    public fromOpReturnData(dataBuf: Buffer): this {
         this.writeOpCode(OpCode.OP_RETURN)
         this.writeBuffer(dataBuf)
         return this
     }
 
-    static fromOpReturnData(dataBuf) {
+    public static fromOpReturnData(dataBuf: Buffer): Script {
         return new this().fromOpReturnData(dataBuf)
     }
 
-    fromSafeData(dataBuf) {
+    public fromSafeData(dataBuf: Buffer): this {
         this.writeOpCode(OpCode.OP_FALSE)
         this.writeOpCode(OpCode.OP_RETURN)
         this.writeBuffer(dataBuf)
         return this
     }
 
-    static fromSafeData(dataBuf) {
+    public static fromSafeData(dataBuf: Buffer): Script {
         return new this().fromSafeData(dataBuf)
     }
 
-    fromSafeDataArray(dataBufs) {
+    public fromSafeDataArray(dataBufs: Buffer[]): this {
         this.writeOpCode(OpCode.OP_FALSE)
         this.writeOpCode(OpCode.OP_RETURN)
         for (const i in dataBufs) {
@@ -422,11 +428,11 @@ class Script extends Struct {
         return this
     }
 
-    static fromSafeDataArray(dataBufs) {
+    public static fromSafeDataArray(dataBufs: Buffer[]): Script {
         return new this().fromSafeDataArray(dataBufs)
     }
 
-    getData() {
+    public getData(): Buffer[] {
         if (this.isSafeDataOut()) {
             const chunks = this.chunks.slice(2)
             const buffers = chunks.map((chunk) => chunk.buf)
@@ -443,7 +449,7 @@ class Script extends Struct {
     /**
      * Turn script into a standard pubKeyHash output script
      */
-    fromPubKeyHash(hashBuf) {
+    public fromPubKeyHash(hashBuf: Buffer): this {
         if (hashBuf.length !== 20) {
             throw new Error('hashBuf must be a 20 byte buffer')
         }
@@ -455,11 +461,11 @@ class Script extends Struct {
         return this
     }
 
-    static fromPubKeyHash(hashBuf) {
+    public static fromPubKeyHash(hashBuf: Buffer): Script {
         return new this().fromPubKeyHash(hashBuf)
     }
 
-    static sortPubKeys(pubKeys) {
+    public static sortPubKeys(pubKeys: PubKey[]): PubKey[] {
         return pubKeys.slice().sort((pubKey1, pubKey2) => {
             const buf1 = pubKey1.toBuffer()
             const buf2 = pubKey2.toBuffer()
@@ -488,7 +494,7 @@ class Script extends Struct {
      * defaults to true. If sort is true, the pubKeys are sorted
      * lexicographically.
      */
-    fromPubKeys(m, pubKeys, sort = true) {
+    public fromPubKeys(m: number, pubKeys: PubKey[], sort = true): this {
         if (typeof m !== 'number') {
             throw new Error('m must be a number')
         }
@@ -504,11 +510,11 @@ class Script extends Struct {
         return this
     }
 
-    static fromPubKeys(m, pubKeys, sort) {
+    public static fromPubKeys(m: number, pubKeys: PubKey[], sort = true): Script {
         return new this().fromPubKeys(m, pubKeys, sort)
     }
 
-    removeCodeseparators() {
+    public removeCodeseparators(): this {
         const chunks = []
         for (let i = 0; i < this.chunks.length; i++) {
             if (this.chunks[i].opCodeNum !== OpCode.OP_CODESEPARATOR) {
@@ -519,7 +525,7 @@ class Script extends Struct {
         return this
     }
 
-    isPushOnly() {
+    public isPushOnly(): boolean {
         for (let i = 0; i < this.chunks.length; i++) {
             const chunk = this.chunks[i]
             const opCodeNum = chunk.opCodeNum
@@ -530,7 +536,7 @@ class Script extends Struct {
         return true
     }
 
-    isOpReturn() {
+    public isOpReturn(): boolean {
         if (
             this.chunks[0].opCodeNum === OpCode.OP_RETURN &&
             this.chunks.filter((chunk) => Buffer.isBuffer(chunk.buf)).length === this.chunks.slice(1).length
@@ -541,7 +547,7 @@ class Script extends Struct {
         }
     }
 
-    isSafeDataOut() {
+    public isSafeDataOut(): boolean {
         if (this.chunks.length < 2) {
             return false
         }
@@ -553,7 +559,7 @@ class Script extends Struct {
         return script2.isOpReturn()
     }
 
-    isPubKeyHashOut() {
+    public isPubKeyHashOut(): boolean {
         if (
             this.chunks[0] &&
             this.chunks[0].opCodeNum === OpCode.OP_DUP &&
@@ -576,7 +582,7 @@ class Script extends Struct {
      * operation may be OP_0, which means the signature is missing, which is true
      * for some partially signed (and invalid) transactions.
      */
-    isPubKeyHashIn() {
+    public isPubKeyHashIn(): boolean {
         if (
             this.chunks.length === 2 &&
             (this.chunks[0].buf || this.chunks[0].opCodeNum === OpCode.OP_0) &&
@@ -588,7 +594,7 @@ class Script extends Struct {
         }
     }
 
-    isScriptHashOut() {
+    public isScriptHashOut(): boolean {
         const buf = this.toBuffer()
         return buf.length === 23 && buf[0] === OpCode.OP_HASH160 && buf[1] === 0x14 && buf[22] === OpCode.OP_EQUAL
     }
@@ -596,7 +602,7 @@ class Script extends Struct {
     /**
      * Note that these are frequently indistinguishable from pubKeyHashin
      */
-    isScriptHashIn() {
+    public isScriptHashIn(): boolean {
         if (!this.isPushOnly()) {
             return false
         }
@@ -608,7 +614,7 @@ class Script extends Struct {
         return true
     }
 
-    isMultiSigOut() {
+    public isMultiSigOut(): boolean {
         const m = this.chunks[0].opCodeNum - OpCode.OP_1 + 1
         if (!(m >= 1 && m <= 16)) {
             return false
@@ -638,7 +644,7 @@ class Script extends Struct {
         return true
     }
 
-    isMultiSigIn() {
+    public isMultiSigIn(): boolean {
         if (this.chunks[0].opCodeNum !== OpCode.OP_0) {
             return false
         }
@@ -657,7 +663,7 @@ class Script extends Struct {
      * pushdata op, then when you try to remove the data it is pushing, it will not
      * be removed, because they do not use the same pushdata op.
      */
-    findAndDelete(script) {
+    public findAndDelete(script: Script): this {
         const buf = script.toBuffer()
         for (let i = 0; i < this.chunks.length; i++) {
             const script2 = new Script([this.chunks[i]])
@@ -669,41 +675,41 @@ class Script extends Struct {
         return this
     }
 
-    writeScript(script) {
+    public writeScript(script: Script): this {
         this.chunks = this.chunks.concat(script.chunks)
         return this
     }
 
-    static writeScript(script) {
+    public static writeScript(script: Script): Script {
         return new this().writeScript(script)
     }
 
-    writeString(str) {
+    public writeString(str: string): this {
         const script = new Script().fromString(str)
         this.chunks = this.chunks.concat(script.chunks)
         return this
     }
 
-    static writeString(str) {
+    public static writeString(str: string): Script {
         return new this().writeString(str)
     }
 
-    writeOpCode(opCodeNum) {
+    public writeOpCode(opCodeNum: number): this {
         this.chunks.push({ opCodeNum })
         return this
     }
 
-    static writeOpCode(opCodeNum) {
+    public static writeOpCode(opCodeNum: number): Script {
         return new this().writeOpCode(opCodeNum)
     }
 
-    setChunkOpCode(i, opCodeNum) {
+    public setChunkOpCode(i: number, opCodeNum: number): this {
         this.chunks[i] = { opCodeNum }
         return this
     }
 
     // write a big number in the minimal way
-    writeBn(bn) {
+    public writeBn(bn: Bn): this {
         if (bn.cmp(0) === OpCode.OP_0) {
             this.chunks.push({
                 opCodeNum: OpCode.OP_0,
@@ -724,27 +730,27 @@ class Script extends Struct {
         return this
     }
 
-    static writeBn(bn) {
+    public static writeBn(bn: Bn): Script {
         return new this().writeBn(bn)
     }
 
-    writeNumber(number) {
+    public writeNumber(number: number): this {
         this.writeBn(new Bn().fromNumber(number))
         return this
     }
 
-    static writeNumber(number) {
+    public static writeNumber(number: number): Script {
         return new this().writeNumber(number)
     }
 
-    setChunkBn(i, bn) {
+    public setChunkBn(i: number, bn: Bn): this {
         this.chunks[i] = new Script().writeBn(bn).chunks[0]
         return this
     }
 
     // note: this does not necessarily write buffers in the minimal way
     // to write numbers in the minimal way, see writeBn
-    writeBuffer(buf) {
+    public writeBuffer(buf: Buffer): this {
         let opCodeNum
         const len = buf.length
         if (buf.length > 0 && buf.length < OpCode.OP_PUSHDATA1) {
@@ -768,18 +774,18 @@ class Script extends Struct {
         return this
     }
 
-    static writeBuffer(buf) {
+    public static writeBuffer(buf: Buffer): Script {
         return new this().writeBuffer(buf)
     }
 
-    setChunkBuffer(i, buf) {
+    public setChunkBuffer(i: number, buf: Buffer): this {
         this.chunks[i] = new Script().writeBuffer(buf).chunks[0]
         return this
     }
 
     // make sure a push is the smallest way to push that particular data
     // comes from bitcoind's script interpreter CheckMinimalPush function
-    checkMinimalPush(i) {
+    public checkMinimalPush(i: number): boolean {
         const chunk = this.chunks[i]
         const buf = chunk.buf
         const opCodeNum = chunk.opCodeNum
@@ -808,5 +814,3 @@ class Script extends Struct {
         return true
     }
 }
-
-export { Script }

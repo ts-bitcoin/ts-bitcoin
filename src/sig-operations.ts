@@ -13,17 +13,25 @@
  * but may not have access to the private key until the entire tx is sent to
  * where the private keys are.
  */
-'use strict'
-
 import { Struct } from './struct'
 import { Sig } from './sig'
 
-class SigOperations extends Struct {
-    constructor(map = new Map()) {
+interface SigOperationsMapItem {
+    nScriptChunk: number
+    type: 'sig' | 'pubKey'
+    addressStr: string
+    nHashType: number
+    log?: any
+}
+
+export class SigOperations extends Struct {
+    public map: Map<string, SigOperationsMapItem[]>
+
+    constructor(map: Map<string, SigOperationsMapItem[]> = new Map()) {
         super({ map })
     }
 
-    toJSON() {
+    public toJSON(): { [label: string]: SigOperationsMapItem[] } {
         const json = {}
         this.map.forEach((arr, label) => {
             json[label] = arr.map((obj) => ({
@@ -37,7 +45,7 @@ class SigOperations extends Struct {
         return json
     }
 
-    fromJSON(json) {
+    public fromJSON(json: { [label: string]: SigOperationsMapItem[] }): this {
         Object.keys(json).forEach((label) => {
             this.map.set(
                 label,
@@ -66,14 +74,14 @@ class SigOperations extends Struct {
      * signature or public key.
      * @param {Number} nHashType Usually = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID
      */
-    setOne(
-        txHashBuf,
-        txOutNum,
-        nScriptChunk,
-        type = 'sig',
-        addressStr,
-        nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID
-    ) {
+    public setOne(
+        txHashBuf: Buffer,
+        txOutNum: number,
+        nScriptChunk: number,
+        type: 'sig' | 'pubKey' = 'sig',
+        addressStr: string,
+        nHashType: number = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID
+    ): this {
         const label = txHashBuf.toString('hex') + ':' + txOutNum
         const obj = { nScriptChunk, type, addressStr, nHashType }
         this.map.set(label, [obj])
@@ -88,7 +96,7 @@ class SigOperations extends Struct {
      * @param {Number} txOutNum The output number, a.k.a. the "vout".
      * @param {Array} arr Must take the form of [{nScriptChunk, type, addressStr, nHashType}, ...]
      */
-    setMany(txHashBuf, txOutNum, arr) {
+    public setMany(txHashBuf: Buffer, txOutNum: number, arr: SigOperationsMapItem[]): this {
         const label = txHashBuf.toString('hex') + ':' + txOutNum
         arr = arr.map((obj) => ({
             type: obj.type || 'sig',
@@ -99,14 +107,14 @@ class SigOperations extends Struct {
         return this
     }
 
-    addOne(
-        txHashBuf,
-        txOutNum,
-        nScriptChunk,
-        type = 'sig',
-        addressStr,
-        nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID
-    ) {
+    public addOne(
+        txHashBuf: Buffer,
+        txOutNum: number,
+        nScriptChunk: number,
+        type: 'sig' | 'pubKey' = 'sig',
+        addressStr: string,
+        nHashType: number = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID
+    ): this {
         const arr = this.get(txHashBuf, txOutNum) || []
         arr.push({
             nScriptChunk,
@@ -126,12 +134,9 @@ class SigOperations extends Struct {
      * @param {Number} txOutNum The output number, a.k.a. the "vout".
      * @param {Number} nScriptChunk The index of the chunk of the script where
      * we are going to place the signature.
-     * @returns {PubKey}
      */
-    get(txHashBuf, txOutNum) {
+    public get(txHashBuf: Buffer, txOutNum: number): SigOperationsMapItem[] {
         const label = txHashBuf.toString('hex') + ':' + txOutNum
         return this.map.get(label)
     }
 }
-
-export { SigOperations }
