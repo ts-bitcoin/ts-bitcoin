@@ -8,20 +8,28 @@
  * const privKey = keyPair.privKey
  * const pubKey = keyPair.pubKey
  */
-'use strict'
-
-import { PrivKey as DefaultPrivKey } from './priv-key'
+import { PrivKey as DefaultPrivKey, PrivKey } from './priv-key'
 import { PubKey } from './pub-key'
 import { Struct } from './struct'
 import { Bw } from './bw'
+import { Br } from './br'
 
-class KeyPair extends Struct {
-    constructor(privKey, pubKey, PrivKey = DefaultPrivKey) {
+interface KeyPairLike {
+    privKey: string
+    pubKey: string
+}
+
+export class KeyPair extends Struct {
+    public privKey: DefaultPrivKey
+    public pubKey: PubKey
+    public PrivKey: typeof DefaultPrivKey
+
+    constructor(privKey?: DefaultPrivKey, pubKey?: PubKey, PrivKey = DefaultPrivKey) {
         super({ privKey, pubKey })
         this.PrivKey = PrivKey
     }
 
-    fromJSON(json) {
+    public fromJSON(json: KeyPairLike): this {
         if (json.privKey) {
             this.privKey = this.PrivKey.fromJSON(json.privKey)
         }
@@ -31,7 +39,7 @@ class KeyPair extends Struct {
         return this
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         const buflen1 = br.readUInt8()
         if (buflen1 > 0) {
             this.privKey = new this.PrivKey().fromFastBuffer(br.read(buflen1))
@@ -43,7 +51,7 @@ class KeyPair extends Struct {
         return this
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -64,70 +72,68 @@ class KeyPair extends Struct {
         return bw
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         return this.fromJSON(JSON.parse(str))
     }
 
-    toString() {
+    public toString(): string {
         return JSON.stringify(this.toJSON())
     }
 
-    toPublic() {
+    public toPublic(): KeyPair {
         const keyPair = new KeyPair().fromObject(this)
         keyPair.privKey = undefined
         return keyPair
     }
 
-    fromPrivKey(privKey) {
+    public fromPrivKey(privKey: PrivKey): this {
         this.privKey = privKey
         this.pubKey = new PubKey().fromPrivKey(privKey)
         return this
     }
 
-    static fromPrivKey(privKey) {
+    public static fromPrivKey(privKey: PrivKey): KeyPair {
         return new this().fromPrivKey(privKey)
     }
 
-    async asyncFromPrivKey(privKey) {
+    public async asyncFromPrivKey(privKey: PrivKey): Promise<this> {
         this.privKey = privKey
         this.pubKey = await new PubKey().asyncFromPrivKey(privKey)
         return this
     }
 
-    static asyncFromPrivKey(privKey) {
+    public static asyncFromPrivKey(privKey: PrivKey): Promise<KeyPair> {
         return new this().asyncFromPrivKey(privKey)
     }
 
-    fromRandom() {
+    public fromRandom(): this {
         this.privKey = new this.PrivKey().fromRandom()
         this.pubKey = new PubKey().fromPrivKey(this.privKey)
         return this
     }
 
-    static fromRandom() {
+    public static fromRandom(): KeyPair {
         return new this().fromRandom()
     }
 
-    async asyncFromRandom() {
+    public async asyncFromRandom(): Promise<this> {
         this.privKey = new this.PrivKey().fromRandom()
         return this.asyncFromPrivKey(this.privKey)
     }
 
-    static asyncFromRandom() {
+    public static asyncFromRandom(): Promise<KeyPair> {
         return new this().asyncFromRandom()
     }
-}
 
-KeyPair.Mainnet = class extends KeyPair {
-    constructor(privKey, pubKey) {
-        super(privKey, pubKey, DefaultPrivKey.Mainnet)
+    public static readonly Mainnet = class extends KeyPair {
+        constructor(privKey?: DefaultPrivKey, pubKey?: PubKey) {
+            super(privKey, pubKey, DefaultPrivKey.Mainnet)
+        }
+    }
+
+    public static readonly Testnet = class extends KeyPair {
+        constructor(privKey?: DefaultPrivKey, pubKey?: PubKey) {
+            super(privKey, pubKey, DefaultPrivKey.Testnet)
+        }
     }
 }
-
-KeyPair.Testnet = class extends KeyPair {
-    constructor(privKey, pubKey) {
-        super(privKey, pubKey, DefaultPrivKey.Testnet)
-    }
-}
-
-export { KeyPair }

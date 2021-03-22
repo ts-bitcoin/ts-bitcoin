@@ -16,8 +16,6 @@
  * can derive your private key. Deterministic k prevents this without needing
  * an entropy pool.
  */
-'use strict'
-
 import { Bn } from './bn'
 import { Br } from './br'
 import { Hash } from './hash'
@@ -29,12 +27,28 @@ import { Sig } from './sig'
 import { Struct } from './struct'
 import { Workers } from './workers'
 
-class Ecdsa extends Struct {
-    constructor(sig, keyPair, hashBuf, k, endian, verified) {
+interface EcdsaLike {
+    sig: string
+    keyPair: string
+    hashBuf: string
+    k: string
+    endian: 'big' | 'little'
+    verified: boolean
+}
+
+export class Ecdsa extends Struct {
+    public sig: Sig
+    public keyPair: KeyPair
+    public hashBuf: Buffer
+    public k: Bn
+    public endian: 'big' | 'little'
+    public verified: boolean
+
+    constructor(sig?: Sig, keyPair?: KeyPair, hashBuf?: Buffer, k?: Bn, endian?: 'big' | 'little', verified?: boolean) {
         super({ sig, keyPair, hashBuf, k, endian, verified })
     }
 
-    toJSON() {
+    public toJSON(): EcdsaLike {
         return {
             sig: this.sig ? this.sig.toString() : undefined,
             keyPair: this.keyPair ? this.keyPair.toBuffer().toString('hex') : undefined,
@@ -45,7 +59,7 @@ class Ecdsa extends Struct {
         }
     }
 
-    fromJSON(json) {
+    public fromJSON(json: EcdsaLike): this {
         this.sig = json.sig ? new Sig().fromString(json.sig) : undefined
         this.keyPair = json.keyPair ? new KeyPair().fromBuffer(Buffer.from(json.keyPair, 'hex')) : undefined
         this.hashBuf = json.hashBuf ? Buffer.from(json.hashBuf, 'hex') : undefined
@@ -55,17 +69,17 @@ class Ecdsa extends Struct {
         return this
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         const str = JSON.stringify(this.toJSON())
         return Buffer.from(str)
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         const json = JSON.parse(buf.toString())
         return this.fromJSON(json)
     }
 
-    calcrecovery() {
+    public calcrecovery(): this {
         for (let recovery = 0; recovery < 4; recovery++) {
             let Qprime
             this.sig.recovery = recovery
@@ -86,7 +100,7 @@ class Ecdsa extends Struct {
         throw new Error('Unable to find valid recovery factor')
     }
 
-    async asyncCalcrecovery() {
+    public async asyncCalcrecovery(): Promise<this> {
         const workersResult = await Workers.asyncObjectMethod(this, 'calcrecovery', [])
         return this.fromFastBuffer(workersResult.resbuf)
     }
@@ -96,7 +110,7 @@ class Ecdsa extends Struct {
      * the recovery factor and the "compressed" variable. Throws an exception on
      * failure.
      */
-    static calcrecovery(sig, pubKey, hashBuf) {
+    public static calcrecovery(sig: Sig, pubKey: PubKey, hashBuf: Buffer): Sig {
         const ecdsa = new Ecdsa().fromObject({
             sig: sig,
             keyPair: new KeyPair().fromObject({ pubKey: pubKey }),
@@ -105,12 +119,12 @@ class Ecdsa extends Struct {
         return ecdsa.calcrecovery().sig
     }
 
-    static async asyncCalcrecovery(sig, pubKey, hashBuf) {
+    public static async asyncCalcrecovery(sig: Sig, pubKey: PubKey, hashBuf: Buffer): Promise<Sig> {
         const workersResult = await Workers.asyncClassMethod(Ecdsa, 'calcrecovery', [sig, pubKey, hashBuf])
         return new Sig().fromFastBuffer(workersResult.resbuf)
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         const obj = JSON.parse(str)
         if (obj.hashBuf) {
             this.hashBuf = Buffer.from(obj.hashBuf, 'hex')
@@ -127,7 +141,7 @@ class Ecdsa extends Struct {
         return this
     }
 
-    randomK() {
+    public randomK(): this {
         const N = Point.getN()
         let k
         do {
@@ -151,7 +165,7 @@ class Ecdsa extends Struct {
      *
      * https://tools.ietf.org/html/rfc6979#section-3.2
      */
-    deterministicK(badrs) {
+    public deterministicK(badrs: number): this {
         let v = Buffer.alloc(32)
         v.fill(0x01)
         let k = Buffer.alloc(32)
@@ -189,7 +203,7 @@ class Ecdsa extends Struct {
      * http://stackoverflow.com/questions/19665491/how-do-i-get-an-ecdsa-public-key-from-just-a-bitcoin-signature-sec1-4-1-6-k
      * This code was originally taken from BitcoinJS
      */
-    sig2PubKey() {
+    public sig2PubKey(): PubKey {
         const recovery = this.sig.recovery
         if (!(recovery === 0 || recovery === 1 || recovery === 2 || recovery === 3)) {
             throw new Error('i must be equal to 0, 1, 2, or 3')
@@ -200,7 +214,7 @@ class Ecdsa extends Struct {
         const s = this.sig.s
 
         // A set LSB signifies that the y-coordinate is odd
-        const isYOdd = recovery & 1
+        const isYOdd = !!(recovery & 1)
 
         // The more significant bit specifies whether we should use the
         // first or second candidate key.
@@ -241,12 +255,12 @@ class Ecdsa extends Struct {
         return pubKey
     }
 
-    async asyncSig2PubKey() {
+    public async asyncSig2PubKey(): Promise<PubKey> {
         const workersResult = await Workers.asyncObjectMethod(this, 'sig2PubKey', [])
         return PubKey.fromFastBuffer(workersResult.resbuf)
     }
 
-    static sig2PubKey(sig, hashBuf) {
+    public static sig2PubKey(sig: Sig, hashBuf: Buffer): PubKey {
         const ecdsa = new Ecdsa().fromObject({
             sig: sig,
             hashBuf: hashBuf,
@@ -254,7 +268,7 @@ class Ecdsa extends Struct {
         return ecdsa.sig2PubKey()
     }
 
-    static async asyncSig2PubKey(sig, hashBuf) {
+    public static async asyncSig2PubKey(sig: Sig, hashBuf: Buffer): Promise<PubKey> {
         const ecdsa = new Ecdsa().fromObject({
             sig: sig,
             hashBuf: hashBuf,
@@ -263,7 +277,7 @@ class Ecdsa extends Struct {
         return pubKey
     }
 
-    verifyStr(enforceLowS = true) {
+    public verifyStr(enforceLowS = true): boolean | string {
         if (!Buffer.isBuffer(this.hashBuf) || this.hashBuf.length !== 32) {
             return 'hashBuf must be a 32 byte buffer'
         }
@@ -305,7 +319,7 @@ class Ecdsa extends Struct {
         }
     }
 
-    sign() {
+    public sign(): this {
         const hashBuf = this.endian === 'little' ? new Br(this.hashBuf).readReverse() : this.hashBuf
 
         const privKey = this.keyPair.privKey
@@ -360,18 +374,18 @@ class Ecdsa extends Struct {
         return this
     }
 
-    async asyncSign() {
+    public async asyncSign(): Promise<this> {
         const workersResult = await Workers.asyncObjectMethod(this, 'sign', [])
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    signRandomK() {
+    public signRandomK(): this {
         this.randomK()
         return this.sign()
     }
 
-    toString() {
-        const obj = {}
+    public toString(): string {
+        const obj: EcdsaLike = {} as any
         if (this.hashBuf) {
             obj.hashBuf = this.hashBuf.toString('hex')
         }
@@ -387,7 +401,7 @@ class Ecdsa extends Struct {
         return JSON.stringify(obj)
     }
 
-    verify(enforceLowS = true) {
+    public verify(enforceLowS = true): this {
         if (!this.verifyStr(enforceLowS)) {
             this.verified = true
         } else {
@@ -396,12 +410,12 @@ class Ecdsa extends Struct {
         return this
     }
 
-    async asyncVerify(enforceLowS = true) {
+    public async asyncVerify(enforceLowS = true): Promise<this> {
         const workersResult = await Workers.asyncObjectMethod(this, 'verify', [enforceLowS])
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    static sign(hashBuf, keyPair, endian) {
+    public static sign(hashBuf: Buffer, keyPair: KeyPair, endian: 'big' | 'little'): Sig {
         return new Ecdsa()
             .fromObject({
                 hashBuf: hashBuf,
@@ -411,7 +425,7 @@ class Ecdsa extends Struct {
             .sign().sig
     }
 
-    static async asyncSign(hashBuf, keyPair, endian) {
+    public static async asyncSign(hashBuf: Buffer, keyPair: KeyPair, endian: 'big' | 'little'): Promise<Sig> {
         const ecdsa = new Ecdsa().fromObject({
             hashBuf: hashBuf,
             endian: endian,
@@ -421,7 +435,13 @@ class Ecdsa extends Struct {
         return ecdsa.sig
     }
 
-    static verify(hashBuf, sig, pubKey, endian, enforceLowS = true) {
+    public static verify(
+        hashBuf: Buffer,
+        sig: Sig,
+        pubKey: PubKey,
+        endian: 'big' | 'little',
+        enforceLowS = true
+    ): boolean {
         return new Ecdsa()
             .fromObject({
                 hashBuf: hashBuf,
@@ -432,7 +452,13 @@ class Ecdsa extends Struct {
             .verify(enforceLowS).verified
     }
 
-    static async asyncVerify(hashBuf, sig, pubKey, endian, enforceLowS = true) {
+    public static async asyncVerify(
+        hashBuf: Buffer,
+        sig: Sig,
+        pubKey: PubKey,
+        endian: 'big' | 'little',
+        enforceLowS = true
+    ): Promise<boolean> {
         const ecdsa = new Ecdsa().fromObject({
             hashBuf: hashBuf,
             endian: endian,
@@ -443,5 +469,3 @@ class Ecdsa extends Struct {
         return ecdsa.verified
     }
 }
-
-export { Ecdsa }

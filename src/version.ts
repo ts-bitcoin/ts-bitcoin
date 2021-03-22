@@ -5,8 +5,8 @@
  * This data structure is used to specify details about what version of the
  * p2p network is supported by this or other nodes.
  */
-'use strict'
-
+import { Bn } from './bn'
+import { Br } from './br'
 import { Bw } from './bw'
 import { Constants as Cst } from './constants'
 import { Struct } from './struct'
@@ -14,22 +14,37 @@ import { VarInt } from './var-int'
 
 const Constants = Cst.Default
 
-class Version extends Struct {
+export class Version extends Struct {
+    public versionBytesNum: number
+    public servicesBuf: Buffer
+    public timeBn: Bn
+    public addrRecvServicesBuf: Buffer
+    public addrRecvIpAddrBuf: Buffer
+    public addrRecvPort: number
+    public addrTransServicesBuf: Buffer
+    public addrTransIpAddrBuf: Buffer
+    public addrTransPort: number
+    public nonceBuf: Buffer
+    public userAgentVi: VarInt
+    public userAgentBuf: Buffer
+    public startHeightNum: number
+    public relay: boolean
+
     constructor(
         versionBytesNum = Constants.Msg.versionBytesNum,
-        servicesBuf,
-        timeBn,
-        addrRecvServicesBuf,
-        addrRecvIpAddrBuf,
-        addrRecvPort,
-        addrTransServicesBuf,
-        addrTransIpAddrBuf,
-        addrTransPort,
-        nonceBuf,
-        userAgentVi,
-        userAgentBuf,
-        startHeightNum,
-        relay
+        servicesBuf?: Buffer,
+        timeBn?: Bn,
+        addrRecvServicesBuf?: Buffer,
+        addrRecvIpAddrBuf?: Buffer,
+        addrRecvPort?: number,
+        addrTransServicesBuf?: Buffer,
+        addrTransIpAddrBuf?: Buffer,
+        addrTransPort?: number,
+        nonceBuf?: Buffer,
+        userAgentVi?: VarInt,
+        userAgentBuf?: Buffer,
+        startHeightNum?: number,
+        relay?: boolean
     ) {
         super({
             versionBytesNum,
@@ -49,7 +64,7 @@ class Version extends Struct {
         })
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -70,7 +85,7 @@ class Version extends Struct {
         return bw
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         this.versionBytesNum = br.readUInt32LE()
         this.servicesBuf = br.read(8)
         this.timeBn = br.readUInt64LEBn()
@@ -88,5 +103,3 @@ class Version extends Struct {
         return this
     }
 }
-
-export { Version }
