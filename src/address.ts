@@ -16,10 +16,8 @@
  * Address is what you send bitcoin to. An Addr is an ip address and port that
  * you connect to over the internet.
  */
-'use strict'
-
 import { Base58Check } from './base-58-check'
-import { Constants } from './constants'
+import { Constants, NetworkConstants } from './constants'
 import { Hash } from './hash'
 import { OpCode } from './op-code'
 import { PubKey } from './pub-key'
@@ -28,14 +26,22 @@ import { Script } from './script'
 import { Struct } from './struct'
 import { Workers } from './workers'
 
-class Address extends Struct {
-    constructor(versionByteNum, hashBuf, constants = null) {
+interface AddressLike {
+    versionByteNum: number
+    hashBuf: string
+}
+
+export class Address extends Struct {
+    public versionByteNum: number
+    public hashBuf: Buffer
+    public Constants: NetworkConstants['Address']
+
+    constructor(versionByteNum?: number, hashBuf?: Buffer, constants?: NetworkConstants['Address']) {
         super({ versionByteNum, hashBuf })
-        constants = constants || Constants.Default.Address
-        this.Constants = constants
+        this.Constants = constants || Constants.Default.Address
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         if (buf.length !== 1 + 20) {
             throw new Error('address buffers must be exactly 21 bytes')
         }
@@ -47,90 +53,86 @@ class Address extends Struct {
         return this
     }
 
-    fromPubKeyHashBuf(hashBuf) {
+    public fromPubKeyHashBuf(hashBuf: Buffer): this {
         this.hashBuf = hashBuf
         this.versionByteNum = this.Constants.pubKeyHash
         return this
     }
 
-    static fromPubKeyHashBuf(hashBuf) {
+    public static fromPubKeyHashBuf(hashBuf: Buffer): Address {
         return new this().fromPubKeyHashBuf(hashBuf)
     }
 
-    fromPubKey(pubKey) {
+    public fromPubKey(pubKey: PubKey): this {
         const hashBuf = Hash.sha256Ripemd160(pubKey.toBuffer())
         return this.fromPubKeyHashBuf(hashBuf)
     }
 
-    static fromPubKey(pubKey) {
+    public static fromPubKey(pubKey: PubKey): Address {
         return new this().fromPubKey(pubKey)
     }
 
-    async asyncFromPubKey(pubKey) {
+    public async asyncFromPubKey(pubKey: PubKey): Promise<this> {
         const args = [pubKey]
         const workersResult = await Workers.asyncObjectMethod(this, 'fromPubKey', args)
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    static asyncFromPubKey(pubKey) {
+    public static asyncFromPubKey(pubKey: PubKey): Promise<Address> {
         return new this().asyncFromPubKey(pubKey)
     }
 
-    fromPrivKey(privKey) {
+    public fromPrivKey(privKey: PrivKey): this {
         const pubKey = new PubKey().fromPrivKey(privKey)
         const hashBuf = Hash.sha256Ripemd160(pubKey.toBuffer())
         return this.fromPubKeyHashBuf(hashBuf)
     }
 
-    static fromPrivKey(privKey) {
+    public static fromPrivKey(privKey): Address {
         return new this().fromPrivKey(privKey)
     }
 
-    async asyncFromPrivKey(privKey) {
+    public async asyncFromPrivKey(privKey: PrivKey): Promise<this> {
         const args = [privKey]
         const workersResult = await Workers.asyncObjectMethod(this, 'fromPrivKey', args)
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    static asyncFromPrivKey(privKey) {
+    public static asyncFromPrivKey(privKey: PrivKey): Address {
         return new this().fromPrivKey(privKey)
     }
 
-    fromRandom() {
+    public fromRandom(): this {
         const randomPrivKey = new PrivKey().fromRandom()
         return this.fromPrivKey(randomPrivKey)
     }
 
-    static fromRandom() {
+    public static fromRandom(): Address {
         return new this().fromRandom()
     }
 
-    async asyncFromRandom() {
+    public async asyncFromRandom(): Promise<this> {
         const args = []
         const workersResult = await Workers.asyncObjectMethod(this, 'fromRandom', args)
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    static asyncFromRandom() {
+    public static asyncFromRandom(): Address {
         return new this().fromRandom()
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         const buf = Base58Check.decode(str)
         return this.fromBuffer(buf)
     }
 
-    async asyncFromString(str) {
+    public async asyncFromString(str: string): Promise<this> {
         const args = [str]
         const workersResult = await Workers.asyncObjectMethod(this, 'fromString', args)
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    static asyncFromString(str) {
-        return new this().asyncFromString(str)
-    }
-
-    static isValid(addrstr) {
+    public static isValid(addrstr: string): boolean {
         let address
         try {
             address = new Address().fromString(addrstr)
@@ -140,7 +142,7 @@ class Address extends Struct {
         return address.isValid()
     }
 
-    isValid() {
+    public isValid(): boolean {
         try {
             this.validate()
             return true
@@ -149,7 +151,7 @@ class Address extends Struct {
         }
     }
 
-    toTxOutScript() {
+    public toTxOutScript(): Script {
         const script = new Script()
         script.writeOpCode(OpCode.OP_DUP)
         script.writeOpCode(OpCode.OP_HASH160)
@@ -160,31 +162,31 @@ class Address extends Struct {
         return script
     }
 
-    fromTxInScript(script) {
+    public fromTxInScript(script: Script): this {
         const pubKeyHashBuf = Hash.sha256Ripemd160(script.chunks[1].buf || Buffer.from('00'.repeat(32), 'hex'))
         return this.fromPubKeyHashBuf(pubKeyHashBuf)
     }
 
-    static fromTxInScript(script) {
+    public static fromTxInScript(script: Script): Address {
         return new this().fromTxInScript(script)
     }
 
-    fromTxOutScript(script) {
+    public fromTxOutScript(script: Script): this {
         return this.fromPubKeyHashBuf(script.chunks[2].buf)
     }
 
-    static fromTxOutScript(script) {
+    public static fromTxOutScript(script: Script): Address {
         return new this().fromTxOutScript(script)
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         const versionByteBuf = Buffer.from([this.versionByteNum])
         const buf = Buffer.concat([versionByteBuf, this.hashBuf])
         return buf
     }
 
-    toJSON() {
-        const json = {}
+    public toJSON(): AddressLike {
+        const json: AddressLike = {} as any
         if (this.hashBuf) {
             json.hashBuf = this.hashBuf.toString('hex')
         }
@@ -194,7 +196,7 @@ class Address extends Struct {
         return json
     }
 
-    fromJSON(json) {
+    public fromJSON(json: AddressLike): this {
         if (json.hashBuf) {
             this.hashBuf = Buffer.from(json.hashBuf, 'hex')
         }
@@ -204,17 +206,17 @@ class Address extends Struct {
         return this
     }
 
-    toString() {
+    public toString(): string {
         return Base58Check.encode(this.toBuffer())
     }
 
-    async asyncToString() {
+    public async asyncToString(): Promise<string> {
         const args = []
         const workersResult = await Workers.asyncObjectMethod(this, 'toString', args)
         return JSON.parse(workersResult.resbuf.toString())
     }
 
-    validate() {
+    public validate(): this {
         if (!Buffer.isBuffer(this.hashBuf) || this.hashBuf.length !== 20) {
             throw new Error('hashBuf must be a buffer of 20 bytes')
         }
@@ -223,18 +225,16 @@ class Address extends Struct {
         }
         return this
     }
-}
 
-Address.Mainnet = class extends Address {
-    constructor(versionByteNum, hashBuf) {
-        super(versionByteNum, hashBuf, Constants.Mainnet.Address)
+    public static readonly Mainnet = class extends Address {
+        constructor(versionByteNum?: number, hashBuf?: Buffer) {
+            super(versionByteNum, hashBuf, Constants.Mainnet.Address)
+        }
+    }
+
+    public static readonly Testnet = class extends Address {
+        constructor(versionByteNum?: number, hashBuf?: Buffer) {
+            super(versionByteNum, hashBuf, Constants.Testnet.Address)
+        }
     }
 }
-
-Address.Testnet = class extends Address {
-    constructor(versionByteNum, hashBuf) {
-        super(versionByteNum, hashBuf, Constants.Testnet.Address)
-    }
-}
-
-export { Address }
