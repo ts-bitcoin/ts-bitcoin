@@ -15,12 +15,10 @@
  *
  * It has faced mostly cosmetic alterations since it was copied.
  */
-'use strict'
-
 import { Bn } from './bn'
 import { Bw } from './bw'
 import { Base58Check } from './base-58-check'
-import { Constants } from './constants'
+import { Constants, NetworkConstants } from './constants'
 import { Hash } from './hash'
 import { Point } from './point'
 import { PrivKey as PrivKeyClass } from './priv-key'
@@ -29,16 +27,26 @@ import { Random } from './random'
 import { Struct } from './struct'
 import { Workers } from './workers'
 
-class Bip32 extends Struct {
+export class Bip32 extends Struct {
+    public versionBytesNum: number
+    public depth: number
+    public parentFingerPrint: Buffer
+    public childIndex: number
+    public chainCode: Buffer
+    public privKey: PrivKeyClass
+    public pubKey: PubKey
+    public Constants: NetworkConstants['Bip32']
+    public PrivKey: typeof PrivKeyClass
+
     constructor(
-        versionBytesNum,
-        depth,
-        parentFingerPrint,
-        childIndex,
-        chainCode,
-        privKey,
-        pubKey,
-        constants = null,
+        versionBytesNum?: number,
+        depth?: number,
+        parentFingerPrint?: Buffer,
+        childIndex?: number,
+        chainCode?: Buffer,
+        privKey?: PrivKeyClass,
+        pubKey?: PubKey,
+        constants?: NetworkConstants['Bip32'],
         PrivKey = PrivKeyClass
     ) {
         super({
@@ -50,12 +58,11 @@ class Bip32 extends Struct {
             privKey,
             pubKey,
         })
-        constants = constants || Constants.Default.Bip32
-        this.Constants = constants
+        this.Constants = constants || Constants.Default.Bip32
         this.PrivKey = PrivKey
     }
 
-    fromRandom() {
+    public fromRandom(): this {
         this.versionBytesNum = this.Constants.privKey
         this.depth = 0x00
         this.parentFingerPrint = Buffer.from([0, 0, 0, 0])
@@ -66,11 +73,11 @@ class Bip32 extends Struct {
         return this
     }
 
-    static fromRandom() {
+    public static fromRandom(): Bip32 {
         return new this().fromRandom()
     }
 
-    fromString(str) {
+    public fromString(str: string): this {
         return this.fromBuffer(Base58Check.decode(str))
     }
 
@@ -78,13 +85,13 @@ class Bip32 extends Struct {
      * Use workers to convert a bip32 string into a bip32 object without
      * blocking.
      */
-    async asyncFromString(str) {
+    public async asyncFromString(str: string): Promise<this> {
         const args = [str]
         const workersResult = await Workers.asyncObjectMethod(this, 'fromString', args)
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    fromSeed(bytes) {
+    public fromSeed(bytes: Buffer): this {
         if (!Buffer.isBuffer(bytes)) {
             throw new Error('bytes must be a buffer')
         }
@@ -101,26 +108,26 @@ class Bip32 extends Struct {
         this.childIndex = 0
         this.chainCode = hash.slice(32, 64)
         this.versionBytesNum = this.Constants.privKey
-        this.privKey = new this.PrivKey().fromBn(Bn().fromBuffer(hash.slice(0, 32)))
+        this.privKey = new this.PrivKey().fromBn(new Bn().fromBuffer(hash.slice(0, 32)))
         this.pubKey = new PubKey().fromPrivKey(this.privKey)
 
         return this
     }
 
-    static fromSeed(bytes) {
+    public static fromSeed(bytes: Buffer): Bip32 {
         return new this().fromSeed(bytes)
     }
 
-    async asyncFromSeed(bytes) {
+    public async asyncFromSeed(bytes: Buffer): Promise<this> {
         const workersResult = await Workers.asyncObjectMethod(this, 'fromSeed', [bytes])
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    static asyncFromSeed(bytes) {
+    public static asyncFromSeed(bytes: Buffer): Promise<Bip32> {
         return new this().asyncFromSeed(bytes)
     }
 
-    fromBuffer(buf) {
+    public fromBuffer(buf: Buffer): this {
         // Both pub and private extended keys are 78 buf
         if (buf.length !== 78) {
             throw new Error('incorrect bip32 data length')
@@ -137,7 +144,7 @@ class Bip32 extends Struct {
         const isPublic = this.versionBytesNum === this.Constants.pubKey
 
         if (isPrivate && keyBytes[0] === 0) {
-            this.privKey = new this.PrivKey().fromBn(Bn().fromBuffer(keyBytes.slice(1, 33)))
+            this.privKey = new this.PrivKey().fromBn(new Bn().fromBuffer(keyBytes.slice(1, 33)))
             this.pubKey = new PubKey().fromPrivKey(this.privKey)
         } else if (isPublic && (keyBytes[0] === 0x02 || keyBytes[0] === 0x03)) {
             this.pubKey = new PubKey().fromDer(keyBytes)
@@ -159,7 +166,7 @@ class Bip32 extends Struct {
      * .fromFastBuffer transmit the public key in uncompressed form, we want it
      * to be set to compressed when stored in memory.
      */
-    fromFastBuffer(buf) {
+    public fromFastBuffer(buf: Buffer): this {
         if (buf.length === 0) {
             return this
         }
@@ -179,7 +186,7 @@ class Bip32 extends Struct {
         const isPublic = this.versionBytesNum === this.Constants.pubKey
 
         if (isPrivate && keyBytes[0] === 0 && buf.length === 78) {
-            this.privKey = new this.PrivKey().fromBn(Bn().fromBuffer(keyBytes.slice(1, 33)))
+            this.privKey = new this.PrivKey().fromBn(new Bn().fromBuffer(keyBytes.slice(1, 33)))
             this.pubKey = new PubKey().fromPrivKey(this.privKey)
         } else if (isPublic && buf.length === 78 + 33) {
             this.pubKey = new PubKey().fromFastBuffer(keyBytes)
@@ -191,14 +198,14 @@ class Bip32 extends Struct {
         return this
     }
 
-    derive(path) {
+    public derive(path: string): Bip32 {
         const e = path.split('/')
 
         if (path === 'm') {
             return this
         }
 
-        let bip32 = this
+        let bip32: Bip32 = this
         for (const i in e) {
             const c = e[i]
 
@@ -224,22 +231,22 @@ class Bip32 extends Struct {
         return bip32
     }
 
-    async asyncDerive(path) {
+    public async asyncDerive(path: string): Promise<Bip32> {
         const workersResult = await Workers.asyncObjectMethod(this, 'derive', [path])
-        return new this.constructor().fromFastBuffer(workersResult.resbuf)
+        return new (this.constructor as typeof Bip32)().fromFastBuffer(workersResult.resbuf)
     }
 
-    deriveChild(i) {
+    public deriveChild(i: number): Bip32 {
         if (typeof i !== 'number') {
             throw new Error('i must be a number')
         }
 
-        let ib = []
-        ib.push((i >> 24) & 0xff)
-        ib.push((i >> 16) & 0xff)
-        ib.push((i >> 8) & 0xff)
-        ib.push(i & 0xff)
-        ib = Buffer.from(ib)
+        let ibc: number[] = []
+        ibc.push((i >> 24) & 0xff)
+        ibc.push((i >> 16) & 0xff)
+        ibc.push((i >> 8) & 0xff)
+        ibc.push(i & 0xff)
+        const ib = Buffer.from(ibc)
 
         const usePrivate = (i & 0x80000000) !== 0
 
@@ -256,17 +263,17 @@ class Bip32 extends Struct {
             if (usePrivate) {
                 data = Buffer.concat([Buffer.from([0]), this.privKey.bn.toBuffer({ size: 32 }), ib])
             } else {
-                data = Buffer.concat([this.pubKey.toBuffer({ size: 32 }), ib])
+                data = Buffer.concat([this.pubKey.toBuffer(), ib])
             }
 
             const hash = Hash.sha512Hmac(data, this.chainCode)
-            const il = Bn().fromBuffer(hash.slice(0, 32), { size: 32 })
+            const il = new Bn().fromBuffer(hash.slice(0, 32))
             const ir = hash.slice(32, 64)
 
             // ki = IL + kpar (mod n).
             const k = il.add(this.privKey.bn).mod(Point.getN())
 
-            ret = new this.constructor()
+            ret = new Bip32()
             ret.chainCode = ir
 
             ret.privKey = new this.PrivKey().fromBn(k)
@@ -274,7 +281,7 @@ class Bip32 extends Struct {
         } else {
             const data = Buffer.concat([this.pubKey.toBuffer(), ib])
             const hash = Hash.sha512Hmac(data, this.chainCode)
-            const il = Bn().fromBuffer(hash.slice(0, 32))
+            const il = new Bn().fromBuffer(hash.slice(0, 32))
             const ir = hash.slice(32, 64)
 
             // Ki = (IL + kpar)*G = IL*G + Kpar
@@ -284,7 +291,7 @@ class Bip32 extends Struct {
             const newpub = new PubKey()
             newpub.point = Ki
 
-            ret = new this.constructor()
+            ret = new Bip32()
             ret.chainCode = ir
 
             ret.pubKey = newpub
@@ -299,14 +306,14 @@ class Bip32 extends Struct {
         return ret
     }
 
-    toPublic() {
-        const bip32 = new this.constructor().fromObject(this)
+    public toPublic(): Bip32 {
+        const bip32 = new Bip32().fromObject(this)
         bip32.versionBytesNum = this.Constants.pubKey
         bip32.privKey = undefined
         return bip32
     }
 
-    toBuffer() {
+    public toBuffer(): Buffer {
         const isPrivate = this.versionBytesNum === this.Constants.privKey
         const isPublic = this.versionBytesNum === this.Constants.pubKey
         if (isPrivate) {
@@ -344,7 +351,7 @@ class Bip32 extends Struct {
      * fancy, slow point multiplication to derive the y value of the public key.
      * Thus, although .toFastBuffer is not any faster, .fromFastBuffer is faster.
      */
-    toFastBuffer() {
+    public toFastBuffer(): Buffer {
         if (!this.versionBytesNum) {
             return Buffer.alloc(0)
         }
@@ -374,7 +381,7 @@ class Bip32 extends Struct {
         }
     }
 
-    toString() {
+    public toString(): string {
         return Base58Check.encode(this.toBuffer())
     }
 
@@ -382,54 +389,68 @@ class Bip32 extends Struct {
      * Use workers to convert a bip32 object into a bip32 string without
      * blocking.
      */
-    async asyncToString() {
+    public async asyncToString(): Promise<string> {
         const workersResult = await Workers.asyncObjectMethod(this, 'toString', [])
         return JSON.parse(workersResult.resbuf.toString())
     }
 
-    toJSON() {
+    public toJSON(): string {
         return this.toFastHex()
     }
 
-    fromJSON(json) {
+    public fromJSON(json: string): this {
         return this.fromFastHex(json)
     }
 
-    isPrivate() {
+    public isPrivate(): boolean {
         return this.versionBytesNum === this.Constants.privKey
     }
-}
 
-Bip32.Mainnet = class extends Bip32 {
-    constructor(versionBytesNum, depth, parentFingerPrint, childIndex, chainCode, privKey, pubKey) {
-        super(
-            versionBytesNum,
-            depth,
-            parentFingerPrint,
-            childIndex,
-            chainCode,
-            privKey,
-            pubKey,
-            Constants.Mainnet.Bip32,
-            PrivKeyClass.Mainnet
-        )
+    public static readonly Mainnet = class extends Bip32 {
+        constructor(
+            versionBytesNum?: number,
+            depth?: number,
+            parentFingerPrint?: Buffer,
+            childIndex?: number,
+            chainCode?: Buffer,
+            privKey?: PrivKeyClass,
+            pubKey?: PubKey
+        ) {
+            super(
+                versionBytesNum,
+                depth,
+                parentFingerPrint,
+                childIndex,
+                chainCode,
+                privKey,
+                pubKey,
+                Constants.Mainnet.Bip32,
+                PrivKeyClass.Mainnet
+            )
+        }
+    }
+
+    public static readonly Testnet = class extends Bip32 {
+        constructor(
+            versionBytesNum?: number,
+            depth?: number,
+            parentFingerPrint?: Buffer,
+            childIndex?: number,
+            chainCode?: Buffer,
+            privKey?: PrivKeyClass,
+            pubKey?: PubKey
+        ) {
+            super(
+                versionBytesNum,
+                depth,
+                parentFingerPrint,
+                childIndex,
+                chainCode,
+                privKey,
+                pubKey,
+                Constants.Testnet.Bip32,
+                PrivKeyClass.Testnet
+            )
+        }
     }
 }
-
-Bip32.Testnet = class extends Bip32 {
-    constructor(versionBytesNum, depth, parentFingerPrint, childIndex, chainCode, privKey, pubKey) {
-        super(
-            versionBytesNum,
-            depth,
-            parentFingerPrint,
-            childIndex,
-            chainCode,
-            privKey,
-            pubKey,
-            Constants.Testnet.Bip32,
-            PrivKeyClass.Testnet
-        )
-    }
-}
-
-export { Bip32 }
