@@ -20,8 +20,8 @@ describe('Bip39', function () {
     })
 
     it('should have a wordlist of length 2048', function () {
-        enWordList.length.should.equal(2048)
-        jpWordList.length.should.equal(2048)
+        enWordList.value.length.should.equal(2048)
+        jpWordList.value.length.should.equal(2048)
     })
 
     it('should handle this community-derived test vector', function () {

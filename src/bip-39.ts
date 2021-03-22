@@ -14,8 +14,6 @@
  *
  * const seed = new Bip39().fromString(mnemonic).toSeed()
  */
-'use strict'
-
 import { Bw } from './bw'
 import { Hash } from './hash'
 import * as pbkdf2 from 'pbkdf2'
@@ -23,14 +21,19 @@ import { Random } from './random'
 import { Struct } from './struct'
 import { wordList } from './bip-39-en-wordlist'
 import { Workers } from './workers'
+import { Br } from './br'
 
-class Bip39 extends Struct {
-    constructor(mnemonic, seed, wordlist = wordList) {
+export class Bip39 extends Struct {
+    public mnemonic: string
+    public seed: Buffer
+    public Wordlist: { value: string[]; space: string }
+
+    constructor(mnemonic?: string, seed?: Buffer, wordlist = wordList) {
         super({ mnemonic, seed })
         this.Wordlist = wordlist
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -50,7 +53,7 @@ class Bip39 extends Struct {
         return bw
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         const mnemoniclen = br.readVarIntNum()
         if (mnemoniclen > 0) {
             this.mnemonic = br.read(mnemoniclen).toString()
@@ -65,7 +68,7 @@ class Bip39 extends Struct {
     /**
      * Generate a random new mnemonic from the wordlist.
      */
-    fromRandom(bits) {
+    public fromRandom(bits: number): this {
         if (!bits) {
             bits = 128
         }
@@ -81,11 +84,11 @@ class Bip39 extends Struct {
         return this
     }
 
-    static fromRandom(bits) {
+    public static fromRandom(bits: number): Bip39 {
         return new this().fromRandom(bits)
     }
 
-    async asyncFromRandom(bits) {
+    public async asyncFromRandom(bits: number): Promise<this> {
         if (!bits) {
             bits = 128
         }
@@ -96,43 +99,43 @@ class Bip39 extends Struct {
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    static asyncFromRandom(bits) {
+    public static asyncFromRandom(bits: number): Promise<Bip39> {
         return new this().asyncFromRandom(bits)
     }
 
-    fromEntropy(buf) {
+    public fromEntropy(buf: Buffer): this {
         this.entropy2Mnemonic(buf)
         return this
     }
 
-    static fromEntropy(buf) {
+    public static fromEntropy(buf: Buffer): Bip39 {
         return new this().fromEntropy(buf)
     }
 
-    async asyncFromEntropy(buf) {
+    public async asyncFromEntropy(buf: Buffer): Promise<this> {
         const workersResult = await Workers.asyncObjectMethod(this, 'fromEntropy', [buf])
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    static asyncFromEntropy(buf) {
+    public static asyncFromEntropy(buf: Buffer): Promise<Bip39> {
         return new this().asyncFromEntropy(buf)
     }
 
-    fromString(mnemonic) {
+    public fromString(mnemonic: string): this {
         this.mnemonic = mnemonic
         return this
     }
 
-    toString() {
+    public toString(): string {
         return this.mnemonic
     }
 
-    toSeed(passphrase) {
+    public toSeed(passphrase: string): Buffer {
         this.mnemonic2Seed(passphrase)
         return this.seed
     }
 
-    async asyncToSeed(passphrase) {
+    public async asyncToSeed(passphrase: string): Promise<Buffer> {
         if (passphrase === undefined) {
             passphrase = ''
         }
@@ -145,7 +148,7 @@ class Bip39 extends Struct {
      * Generate a new mnemonic from some entropy generated somewhere else. The
      * entropy must be at least 128 bits.
      */
-    entropy2Mnemonic(buf) {
+    public entropy2Mnemonic(buf: Buffer): this {
         if (!Buffer.isBuffer(buf) || buf.length < 128 / 8) {
             throw new Error('Entropy is less than 128 bits. It must be 128 bits or more.')
         }
@@ -170,7 +173,7 @@ class Bip39 extends Struct {
                 mnemonic = mnemonic + this.Wordlist.space
             }
             const wi = parseInt(bin.slice(i * 11, (i + 1) * 11), 2)
-            mnemonic = mnemonic + this.Wordlist[wi]
+            mnemonic = mnemonic + this.Wordlist.value[wi]
         }
 
         this.mnemonic = mnemonic
@@ -181,14 +184,14 @@ class Bip39 extends Struct {
      * Check that a mnemonic is valid. This means there should be no superfluous
      * whitespace, no invalid words, and the checksum should match.
      */
-    check() {
+    public check(): boolean {
         const mnemonic = this.mnemonic
 
         // confirm no invalid words
         const words = mnemonic.split(this.Wordlist.space)
         let bin = ''
         for (let i = 0; i < words.length; i++) {
-            const ind = this.Wordlist.indexOf(words[i])
+            const ind = this.Wordlist.value.indexOf(words[i])
             if (ind < 0) {
                 return false
             }
@@ -218,7 +221,7 @@ class Bip39 extends Struct {
      * Convert a mnemonic to a seed. Does not check for validity of the mnemonic -
      * for that, you should manually run check() first.
      */
-    mnemonic2Seed(passphrase = '') {
+    public mnemonic2Seed(passphrase = ''): this {
         let mnemonic = this.mnemonic
         if (!this.check()) {
             throw new Error(
@@ -236,7 +239,7 @@ class Bip39 extends Struct {
         return this
     }
 
-    isValid(passphrase = '') {
+    public isValid(passphrase = ''): boolean {
         let isValid
         try {
             isValid = !!this.mnemonic2Seed(passphrase)
@@ -246,9 +249,7 @@ class Bip39 extends Struct {
         return isValid
     }
 
-    static isValid(mnemonic, passphrase = '') {
+    public static isValid(mnemonic: string, passphrase = ''): boolean {
         return new Bip39(mnemonic).isValid(passphrase)
     }
 }
-
-export { Bip39 }
