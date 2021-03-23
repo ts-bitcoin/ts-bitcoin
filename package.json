@@ -15,8 +15,7 @@
     "test:mocha": "mocha",
     "test:karma": "karma start --single-run",
     "test": "npm run test:mocha && npm run test:karma",
-    "build": "webpack && microbundle --target node -f modern,cjs",
-    "ts": "tsc",
+    "build": "tsc",
     "prepublish": "npm build",
     "doc": "documentation build entry.js -f html -o doc",
     "prettier": "prettier --write '{lib,test}/**/*.+(js|json)'"
@@ -45,6 +44,10 @@
     {
       "name": "Matias Alejo Garcia",
       "email": "ematiu@gmail.com"
+    },
+    {
+      "name": "Philipp Petzold",
+      "email": "ppetzold@protonmail.com"
     },
     {
       "name": "Ryan X. Charles",
