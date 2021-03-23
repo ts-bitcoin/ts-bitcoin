@@ -1,4 +1,0 @@
-require:
-  - './load-babel.js'
-reporter: 'progress'
-recursive: true

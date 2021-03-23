@@ -68,7 +68,7 @@ export class Bip39 extends Struct {
     /**
      * Generate a random new mnemonic from the wordlist.
      */
-    public fromRandom(bits: number): this {
+    public fromRandom(bits?: number): this {
         if (!bits) {
             bits = 128
         }
@@ -84,11 +84,11 @@ export class Bip39 extends Struct {
         return this
     }
 
-    public static fromRandom(bits: number): Bip39 {
+    public static fromRandom(bits?: number): Bip39 {
         return new this().fromRandom(bits)
     }
 
-    public async asyncFromRandom(bits: number): Promise<this> {
+    public async asyncFromRandom(bits?: number): Promise<this> {
         if (!bits) {
             bits = 128
         }
@@ -99,7 +99,7 @@ export class Bip39 extends Struct {
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    public static asyncFromRandom(bits: number): Promise<Bip39> {
+    public static asyncFromRandom(bits?: number): Promise<Bip39> {
         return new this().asyncFromRandom(bits)
     }
 
@@ -130,12 +130,12 @@ export class Bip39 extends Struct {
         return this.mnemonic
     }
 
-    public toSeed(passphrase: string): Buffer {
+    public toSeed(passphrase?: string): Buffer {
         this.mnemonic2Seed(passphrase)
         return this.seed
     }
 
-    public async asyncToSeed(passphrase: string): Promise<Buffer> {
+    public async asyncToSeed(passphrase?: string): Promise<Buffer> {
         if (passphrase === undefined) {
             passphrase = ''
         }

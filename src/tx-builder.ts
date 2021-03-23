@@ -197,7 +197,13 @@ export class TxBuilder extends Struct {
     /**
      * Pay "from" a script - in other words, add an input to the transaction.
      */
-    public inputFromScript(txHashBuf: Buffer, txOutNum: number, txOut: TxOut, script: Script, nSequence: number): this {
+    public inputFromScript(
+        txHashBuf: Buffer,
+        txOutNum: number,
+        txOut: TxOut,
+        script: Script,
+        nSequence?: number
+    ): this {
         if (
             !Buffer.isBuffer(txHashBuf) ||
             !(typeof txOutNum === 'number') ||
@@ -231,9 +237,9 @@ export class TxBuilder extends Struct {
         txHashBuf: Buffer,
         txOutNum: number,
         txOut: TxOut,
-        pubKey: PubKey,
-        nSequence: number,
-        nHashType: number
+        pubKey?: PubKey,
+        nSequence?: number,
+        nHashType?: number
     ): this {
         if (!Buffer.isBuffer(txHashBuf) || typeof txOutNum !== 'number' || !(txOut instanceof TxOut)) {
             throw new Error('invalid one of: txHashBuf, txOutNum, txOut')

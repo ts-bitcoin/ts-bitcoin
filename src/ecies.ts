@@ -80,7 +80,7 @@ export class Ecies {
         return Aescbc.decrypt(ciphertext, kE, iv)
     }
 
-    public static bitcoreEncrypt(messageBuf: Buffer, toPubKey: PubKey, fromKeyPair: KeyPair, ivBuf: Buffer): Buffer {
+    public static bitcoreEncrypt(messageBuf: Buffer, toPubKey: PubKey, fromKeyPair?: KeyPair, ivBuf?: Buffer): Buffer {
         if (!fromKeyPair) {
             fromKeyPair = KeyPair.fromRandom()
         }
@@ -103,8 +103,8 @@ export class Ecies {
     public static async asyncBitcoreEncrypt(
         messageBuf: Buffer,
         toPubKey: PubKey,
-        fromKeyPair: KeyPair,
-        ivBuf: Buffer
+        fromKeyPair?: KeyPair,
+        ivBuf?: Buffer
     ): Promise<Buffer> {
         if (!fromKeyPair) {
             fromKeyPair = await KeyPair.asyncFromRandom()

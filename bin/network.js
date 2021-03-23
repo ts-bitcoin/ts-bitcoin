@@ -1,11 +1,11 @@
 'use strict'
-const Random = require('../lib/random')
+const Random = require('../src/random')
 const net = require('net')
-const MsgVersion = require('../lib/msg-version')
-const Constants = require('../lib/constants').Default
-const Version = require('../lib/version')
-const VarInt = require('../lib/var-int')
-const Bn = require('../lib/bn')
+const MsgVersion = require('../src/msg-version')
+const Constants = require('../src/constants').Default
+const Version = require('../src/version')
+const VarInt = require('../src/var-int')
+const Bn = require('../src/bn')
 
 const client = net.createConnection({ port: 8333, host: '192.168.0.105' }, () => {
     // const hashBuf = Buffer.alloc(32)

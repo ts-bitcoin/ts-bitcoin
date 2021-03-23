@@ -1,9 +1,9 @@
 {
-  "name": "bsv",
-  "description": "Javascript library for Bitcoin SV (BSV).",
-  "version": "2.0.4",
+  "name": "bitcoin-ts",
+  "description": "TypeScript library for Bitcoin SV (BSV).",
+  "version": "1.0.0",
   "author": "Yours Inc.",
-  "homepage": "https://github.com/moneybutton/bsv",
+  "homepage": "https://github.com/bitcoin-ts/bitcoin-ts",
   "source": "entry.js",
   "main": "dist/bsv.js",
   "module": "dist/bsv.modern.js",
@@ -11,13 +11,10 @@
   "library": "bsvjs",
   "scripts": {
     "clean": "rm -rf dist",
-    "lint": "standard *.js lib/**/*.js bin/**/*.js test/**/*.js",
     "test:mocha": "mocha",
     "test:karma": "karma start --single-run",
-    "test": "npm run test:mocha && npm run test:karma",
+    "test": "npm run test:mocha",
     "build": "tsc",
-    "prepublish": "npm build",
-    "doc": "documentation build entry.js -f html -o doc",
     "prettier": "prettier --write '{lib,test}/**/*.+(js|json)'"
   },
   "contributors": [
@@ -99,37 +96,32 @@
     "randombytes": "^2.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/plugin-transform-runtime": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "@babel/register": "^7.9.0",
-    "@babel/runtime": "^7.9.6",
     "@types/bn.js": "^5.1.0",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^14.14.35",
     "@types/randombytes": "^2.0.0",
-    "babel-loader": "^8.1.0",
-    "babel-polyfill": "^6.26.0",
-    "documentation": "^13.0.2",
+    "@types/sinon": "^9.0.11",
     "karma": "^5.0.7",
     "karma-chrome-launcher": "^3.1.0",
     "karma-firefox-launcher": "^1.3.0",
     "karma-mocha": "^2.0.1",
     "karma-webpack": "^4.0.2",
     "microbundle": "^0.12.0",
-    "mocha": "^7.1.2",
+    "mocha": "^8.3.2",
     "npm-link-shared": "^0.5.6",
     "prettier": "^2.2.1",
     "should": "^13.2.3",
     "sinon": "^9.0.2",
-    "standard": "^14.3.4",
+    "ts-node": "^9.1.1",
     "typescript": "^4.1.5",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
   },
   "license": "MIT",
-  "standard": {
-    "ignore": [
-      "lib/interp.js",
-      "dist/*"
-    ]
+  "mocha": {
+    "spec": "test/**/*.test.ts",
+    "require": "ts-node/register",
+    "reporter": "progress",
+    "recursive": true
   }
 }

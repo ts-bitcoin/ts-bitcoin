@@ -21,11 +21,11 @@ export class Msg extends Struct {
     public dataBuf: Buffer
 
     constructor(
-        magicNum: number,
-        cmdbuf: Buffer,
-        datasize: number,
-        checksumbuf: Buffer,
-        dataBuf: Buffer,
+        magicNum?: number,
+        cmdbuf?: Buffer,
+        datasize?: number,
+        checksumbuf?: Buffer,
+        dataBuf?: Buffer,
         constants?: NetworkConstants
     ) {
         super()
@@ -180,19 +180,19 @@ export class Msg extends Struct {
     }
 
     public static readonly Testnet = class extends Msg {
-        constructor(magicNum: number, cmdbuf: Buffer, datasize: number, checksumbuf: Buffer, dataBuf: Buffer) {
+        constructor(magicNum?: number, cmdbuf?: Buffer, datasize?: number, checksumbuf?: Buffer, dataBuf?: Buffer) {
             super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Testnet)
         }
     }
 
     public static readonly Regtest = class extends Msg {
-        constructor(magicNum: number, cmdbuf: Buffer, datasize: number, checksumbuf: Buffer, dataBuf: Buffer) {
+        constructor(magicNum?: number, cmdbuf?: Buffer, datasize?: number, checksumbuf?: Buffer, dataBuf?: Buffer) {
             super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Regtest)
         }
     }
 
     public static readonly STN = class extends Msg {
-        constructor(magicNum: number, cmdbuf: Buffer, datasize: number, checksumbuf: Buffer, dataBuf: Buffer) {
+        constructor(magicNum?: number, cmdbuf?: Buffer, datasize?: number, checksumbuf?: Buffer, dataBuf?: Buffer) {
             super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.STN)
         }
     }

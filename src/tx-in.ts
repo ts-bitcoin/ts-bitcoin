@@ -76,7 +76,7 @@ export class TxIn extends Struct {
         return this
     }
 
-    public static fromProperties(txHashBuf: Buffer, txOutNum: number, script: Script, nSequence: number): TxIn {
+    public static fromProperties(txHashBuf: Buffer, txOutNum: number, script: Script, nSequence?: number): TxIn {
         return new this().fromProperties(txHashBuf, txOutNum, script, nSequence)
     }
 

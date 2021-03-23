@@ -12,10 +12,10 @@
 import { Bn } from './bn'
 
 export class Br {
-    private buf: Buffer
-    private pos: number
+    public buf: Buffer
+    public pos: number
 
-    constructor(buf) {
+    constructor(buf?: Buffer) {
         this.fromObject({ buf })
     }
 
