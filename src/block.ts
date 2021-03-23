@@ -16,14 +16,14 @@ import { BlockHeader, BlockHeaderLike } from './block-header'
 import { Hash } from './hash'
 import { Merkle } from './merkle'
 import { Struct } from './struct'
-import { Tx } from './tx'
+import { Tx, TxLike } from './tx'
 import { VarInt } from './var-int'
 import { Workers } from './workers'
 
 export interface BlockLike {
     blockHeader: BlockHeaderLike
     txsVi: string
-    txs: Tx[] // TODO: Use TxLike
+    txs: TxLike[]
 }
 
 export class Block extends Struct {
