@@ -346,7 +346,6 @@ describe('Bip32', function () {
                 chainCode: bip32.chainCode,
                 privKey: bip32.privKey,
                 pubKey: bip32.pubKey,
-                hasPrivKey: bip32.hasPrivKey,
             })
             bip322.toString().should.equal(bip32.toString())
             bip322.fromObject({}).toString().should.equal(bip32.toString())
@@ -372,7 +371,7 @@ describe('Bip32', function () {
     describe('#fromSeed', function () {
         it('should initialize a new Bip32 correctly from test vector 1 seed', function () {
             const hex = vector1master
-            const bip32 = new Bip32().fromSeed(Buffer.from(hex, 'hex'), 'mainnet')
+            const bip32 = new Bip32().fromSeed(Buffer.from(hex, 'hex'))
             should.exist(bip32)
             bip32.toString().should.equal(vector1mPrivate)
             bip32.toPublic().toString().should.equal(vector1mPublic)
@@ -380,7 +379,7 @@ describe('Bip32', function () {
 
         it('should initialize a new Bip32 correctly from test vector 2 seed', function () {
             const hex = vector2master
-            const bip32 = new Bip32().fromSeed(Buffer.from(hex, 'hex'), 'mainnet')
+            const bip32 = new Bip32().fromSeed(Buffer.from(hex, 'hex'))
             should.exist(bip32)
             bip32.toString().should.equal(vector2mPrivate)
             bip32.toPublic().toString().should.equal(vector2mPublic)
@@ -390,7 +389,7 @@ describe('Bip32', function () {
     describe('@fromSeed', function () {
         it('should initialize a new Bip32 correctly from test vector 1 seed', function () {
             const hex = vector1master
-            const bip32 = Bip32.fromSeed(Buffer.from(hex, 'hex'), 'mainnet')
+            const bip32 = Bip32.fromSeed(Buffer.from(hex, 'hex'))
             should.exist(bip32)
             bip32.toString().should.equal(vector1mPrivate)
             bip32.toPublic().toString().should.equal(vector1mPublic)
@@ -398,7 +397,7 @@ describe('Bip32', function () {
 
         it('should initialize a new Bip32 correctly from test vector 2 seed', function () {
             const hex = vector2master
-            const bip32 = Bip32.fromSeed(Buffer.from(hex, 'hex'), 'mainnet')
+            const bip32 = Bip32.fromSeed(Buffer.from(hex, 'hex'))
             should.exist(bip32)
             bip32.toString().should.equal(vector2mPrivate)
             bip32.toPublic().toString().should.equal(vector2mPublic)
@@ -408,7 +407,7 @@ describe('Bip32', function () {
     describe('#asyncFromSeed', function () {
         it('should initialize a new Bip32 correctly from test vector 1 seed', async function () {
             const hex = vector1master
-            const bip32 = await new Bip32().asyncFromSeed(Buffer.from(hex, 'hex'), 'mainnet')
+            const bip32 = await new Bip32().asyncFromSeed(Buffer.from(hex, 'hex'))
             should.exist(bip32)
             bip32.toString().should.equal(vector1mPrivate)
             bip32.toPublic().toString().should.equal(vector1mPublic)
@@ -416,7 +415,7 @@ describe('Bip32', function () {
 
         it('should initialize a new Bip32 correctly from test vector 2 seed', async function () {
             const hex = vector2master
-            const bip32 = await new Bip32().asyncFromSeed(Buffer.from(hex, 'hex'), 'mainnet')
+            const bip32 = await new Bip32().asyncFromSeed(Buffer.from(hex, 'hex'))
             should.exist(bip32)
             bip32.toString().should.equal(vector2mPrivate)
             bip32.toPublic().toString().should.equal(vector2mPublic)
@@ -426,7 +425,7 @@ describe('Bip32', function () {
     describe('@asyncFromSeed', function () {
         it('should initialize a new Bip32 correctly from test vector 1 seed', async function () {
             const hex = vector1master
-            const bip32 = await Bip32.asyncFromSeed(Buffer.from(hex, 'hex'), 'mainnet')
+            const bip32 = await Bip32.asyncFromSeed(Buffer.from(hex, 'hex'))
             should.exist(bip32)
             bip32.toString().should.equal(vector1mPrivate)
             bip32.toPublic().toString().should.equal(vector1mPublic)
@@ -434,7 +433,7 @@ describe('Bip32', function () {
 
         it('should initialize a new Bip32 correctly from test vector 2 seed', async function () {
             const hex = vector2master
-            const bip32 = await Bip32.asyncFromSeed(Buffer.from(hex, 'hex'), 'mainnet')
+            const bip32 = await Bip32.asyncFromSeed(Buffer.from(hex, 'hex'))
             should.exist(bip32)
             bip32.toString().should.equal(vector2mPrivate)
             bip32.toPublic().toString().should.equal(vector2mPublic)

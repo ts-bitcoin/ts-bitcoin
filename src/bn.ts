@@ -501,11 +501,11 @@ class BnDefinition {
         return 0 as any
     }
 
-    fromHex(hex: string, opts): BnDefinition {
+    fromHex(hex: string, opts?: { endian: 'big' | 'little' }): BnDefinition {
         return 0 as any
     }
 
-    toHex(opts): string {
+    toHex(opts?: { size?: number; endian?: 'big' | 'little' }): string {
         return 0 as any
     }
 
@@ -549,7 +549,7 @@ class BnDefinition {
      * Produce a BnDefinition from the "bits" value in a blockheader. Analagous to Bitcoin
      * Core's uint256 SetCompact method. bits is assumed to be UInt32.
      */
-    fromBits(bits: number, opts?: { strict: false }): BnDefinition {
+    fromBits(bits: number, opts?: { strict: boolean }): BnDefinition {
         return 0 as any
     }
 
@@ -1196,10 +1196,20 @@ class BnDefinition {
     neq(b: BnDefinition | number): boolean {
         return 0 as any
     }
-    geq(b: BnDefinition): boolean {
+    geq(b: BnDefinition | number): boolean {
         return 0 as any
     }
-    leq(b: BnDefinition): boolean {
+    leq(b: BnDefinition | number): boolean {
+        return 0 as any
+    }
+
+    copy(b: BnDefinition): void {}
+
+    static _prime(name: 'k256' | 'p224' | 'p192' | 'p25519'): MPrime {
+        return 0 as any
+    }
+
+    toRed(reductionContext: ReductionContext): any {
         return 0 as any
     }
 }

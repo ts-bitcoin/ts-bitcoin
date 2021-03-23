@@ -13,7 +13,7 @@ import { Struct } from './struct'
 export class Base58Check extends Struct {
     public buf: Buffer
 
-    constructor(buf: Buffer) {
+    constructor(buf?: Buffer) {
         super({ buf })
     }
 

@@ -6,6 +6,7 @@
     "experimentalDecorators": true,
     "target": "es2018",
     "outDir": "./lib",
+    "resolveJsonModule": true
   },
   "include": ["src"]
 }

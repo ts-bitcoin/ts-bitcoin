@@ -1,6 +1,6 @@
 import should = require('should')
 import { Aescbc } from '../src/aescbc'
-import vectors from './vectors/aescbc.json'
+import * as vectors from './vectors/aescbc.json'
 
 describe('Aescbc', function () {
     should.exist(Aescbc)

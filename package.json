@@ -118,7 +118,7 @@
   },
   "license": "MIT",
   "mocha": {
-    "spec": "test/address.test.ts",
+    "spec": "test/bn.test.ts",
     "require": "ts-node/register",
     "reporter": "progress",
     "recursive": true

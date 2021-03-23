@@ -1,7 +1,7 @@
 import should = require('should')
 import { Hash } from '../src/hash'
 import { Aes } from '../src/aes'
-import vectors from './vectors/aes.json'
+import * as vectors from './vectors/aes.json'
 
 describe('Aes', function () {
     const m128 = Hash.sha256(Buffer.from('test1')).slice(0, 128 / 8)

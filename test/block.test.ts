@@ -4,7 +4,7 @@ import { Block } from '../src/block'
 import { BlockHeader } from '../src/block-header'
 import { Tx } from '../src/tx'
 import { VarInt } from '../src/var-int'
-import largesttxblockvector from './vectors/largesttxblock'
+import * as largesttxblockvector from './vectors/largesttxblock.json'
 import should = require('should')
 
 describe('Block', function () {
@@ -46,14 +46,10 @@ describe('Block', function () {
     describe('#fromObject', function () {
         it('should set these known values', function () {
             const block = new Block().fromObject({
-                magicNum: magicNum,
-                blockSize: blockSize,
                 blockHeader: bh,
                 txsVi: txsVi,
                 txs: txs,
             })
-            should.exist(block.magicNum)
-            should.exist(block.blockSize)
             should.exist(block.blockHeader)
             should.exist(block.txsVi)
             should.exist(block.txs)
@@ -63,8 +59,6 @@ describe('Block', function () {
     describe('#fromJSON', function () {
         it('should set these known values', function () {
             const block = new Block().fromJSON({
-                magicNum: magicNum,
-                blockSize: blockSize,
                 blockHeader: bh.toJSON(),
                 txsVi: txsVi.toJSON(),
                 txs: [txs[0].toJSON()],

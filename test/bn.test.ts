@@ -1,5 +1,5 @@
 import should = require('should')
-import assert from 'assert'
+import * as assert from 'assert'
 import { Bn } from '../src/bn'
 
 describe('Bn', function () {
@@ -317,27 +317,21 @@ describe('Bn', function () {
         })
 
         it('should work with little endian if we specify the size', function () {
-            const bn = Bn.fromBuffer(Buffer.from('0100', 'hex'), {
-                size: 2,
-                endian: 'little',
-            })
+            const bn = Bn.fromBuffer(Buffer.from('0100', 'hex'), { endian: 'little' })
             bn.toString().should.equal('1')
         })
     })
 
     describe('#fromHex', function () {
         it('should create bn from known hex', function () {
-            const bn = new Bn().fromHex('0100', { size: 2, endian: 'little' })
+            const bn = new Bn().fromHex('0100', { endian: 'little' })
             bn.toString().should.equal('1')
         })
     })
 
     describe('#fromBuffer', function () {
         it('should work as a prototype method', function () {
-            const bn = new Bn().fromBuffer(Buffer.from('0100', 'hex'), {
-                size: 2,
-                endian: 'little',
-            })
+            const bn = new Bn().fromBuffer(Buffer.from('0100', 'hex'), { endian: 'little' })
             bn.toString().should.equal('1')
         })
     })
