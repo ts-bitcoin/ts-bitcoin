@@ -1,9 +1,9 @@
 {
-  "name": "bsv",
-  "description": "Javascript library for Bitcoin SV (BSV).",
-  "version": "2.0.4",
+  "name": "bitcoin-ts",
+  "description": "TypeScript library for Bitcoin SV (BSV).",
+  "version": "1.0.0",
   "author": "Yours Inc.",
-  "homepage": "https://github.com/moneybutton/bsv",
+  "homepage": "https://github.com/bitcoin-ts/bitcoin-ts",
   "source": "entry.js",
   "main": "dist/bsv.js",
   "module": "dist/bsv.modern.js",
