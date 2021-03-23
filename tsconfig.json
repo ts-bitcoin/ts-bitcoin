@@ -6,7 +6,6 @@
     "experimentalDecorators": true,
     "target": "es2018",
     "outDir": "./lib",
-    "incremental": true
   },
   "include": ["src"]
 }

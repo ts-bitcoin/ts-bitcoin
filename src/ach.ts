@@ -15,13 +15,13 @@ import { Workers } from './workers'
 import { cmp } from './cmp'
 
 export class Ach {
-    public static encrypt(messageBuf: Buffer, cipherKeyBuf: Buffer, ivBuf: Buffer): Buffer {
+    public static encrypt(messageBuf: Buffer, cipherKeyBuf: Buffer, ivBuf?: Buffer): Buffer {
         const encBuf = Aescbc.encrypt(messageBuf, cipherKeyBuf, ivBuf)
         const hmacbuf = Hash.sha256Hmac(encBuf, cipherKeyBuf)
         return Buffer.concat([hmacbuf, encBuf])
     }
 
-    public static async asyncEncrypt(messageBuf: Buffer, cipherKeyBuf: Buffer, ivBuf: Buffer): Promise<Buffer> {
+    public static async asyncEncrypt(messageBuf: Buffer, cipherKeyBuf: Buffer, ivBuf?: Buffer): Promise<Buffer> {
         if (!ivBuf) {
             ivBuf = Random.getRandomBuffer(128 / 8)
         }

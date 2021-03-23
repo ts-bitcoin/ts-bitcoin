@@ -40,11 +40,11 @@ import { Bw } from './bw'
 import * as isHex from 'is-hex'
 
 export class Struct {
-    constructor(obj?: Record<string, any>) {
+    constructor(obj?: any) {
         this.fromObject(obj)
     }
 
-    public fromObject(obj: Record<string, any>): this {
+    public fromObject(obj: any): this {
         if (!obj) {
             return this
         }
@@ -56,8 +56,8 @@ export class Struct {
         return this
     }
 
-    public static fromObject<T extends Struct>(this: (new () => T) & typeof Struct, obj: Record<string, any>): T {
-        return new this().fromObject(obj)
+    public static fromObject<T extends Struct>(this: (new () => T) & typeof Struct, obj: any): T {
+        return new this().fromObject(obj) as T
     }
 
     public fromBr(br: Br, ...rest: any[]): this {
@@ -68,7 +68,7 @@ export class Struct {
     }
 
     public static fromBr<T extends Struct>(this: (new () => T) & typeof Struct, br: Br): T {
-        return new this().fromBr(br)
+        return new this().fromBr(br) as T
     }
 
     public asyncFromBr(br: Br, ...rest: any[]): Promise<this> {
@@ -79,7 +79,7 @@ export class Struct {
     }
 
     public static asyncFromBr<T extends Struct>(this: (new () => T) & typeof Struct, br: Br): Promise<T> {
-        return new this().asyncFromBr(br)
+        return new this().asyncFromBr(br) as Promise<T>
     }
 
     public toBw(bw?: Bw): Bw {
@@ -149,7 +149,7 @@ export class Struct {
     }
 
     public static fromBuffer<T extends Struct>(this: (new () => T) & typeof Struct, buf: Buffer, ...rest: any[]): T {
-        return new this().fromBuffer(buf, ...rest)
+        return new this().fromBuffer(buf, ...rest) as T
     }
 
     public asyncFromBuffer(buf: Buffer, ...rest: any[]): Promise<this> {
@@ -165,7 +165,7 @@ export class Struct {
         buf: Buffer,
         ...rest: any[]
     ): Promise<T> {
-        return new this().asyncFromBuffer(buf, ...rest)
+        return new this().asyncFromBuffer(buf, ...rest) as Promise<T>
     }
 
     /**
@@ -184,7 +184,7 @@ export class Struct {
         buf: Buffer,
         ...rest: any[]
     ): T {
-        return new this().fromFastBuffer(buf, ...rest)
+        return new this().fromFastBuffer(buf, ...rest) as T
     }
 
     /**
@@ -230,7 +230,7 @@ export class Struct {
     }
 
     public static fromHex<T extends Struct>(this: (new () => T) & typeof Struct, hex: string, ...rest: any[]): T {
-        return new this().fromHex(hex, ...rest)
+        return new this().fromHex(hex, ...rest) as T
     }
 
     public asyncFromHex(hex: string, ...rest: any[]): Promise<this> {
@@ -246,7 +246,7 @@ export class Struct {
         hex: string,
         ...rest: any[]
     ): Promise<T> {
-        return new this().asyncFromHex(hex, ...rest)
+        return new this().asyncFromHex(hex, ...rest) as Promise<T>
     }
 
     public fromFastHex(hex: string, ...rest: any[]): this {
@@ -258,7 +258,7 @@ export class Struct {
     }
 
     public static fromFastHex<T extends Struct>(this: (new () => T) & typeof Struct, hex: string, ...rest: any[]): T {
-        return new this().fromFastHex(hex, ...rest)
+        return new this().fromFastHex(hex, ...rest) as T
     }
 
     public toHex(): string {
@@ -281,7 +281,7 @@ export class Struct {
     }
 
     public static fromString<T extends Struct>(this: (new () => T) & typeof Struct, str: string, ...rest: any[]): T {
-        return new this().fromString(str, ...rest)
+        return new this().fromString(str, ...rest) as T
     }
 
     public asyncFromString(str: string, ...rest: any[]): Promise<this> {
@@ -312,7 +312,7 @@ export class Struct {
     }
 
     public static fromJSON<T extends Struct>(this: (new () => T) & typeof Struct, json): T {
-        return new this().fromJSON(json)
+        return new this().fromJSON(json) as T
     }
 
     public asyncFromJSON(json, ...rest): Promise<this> {
@@ -320,10 +320,10 @@ export class Struct {
     }
 
     public static asyncFromJSON<T extends Struct>(this: (new () => T) & typeof Struct, json, ...rest): Promise<T> {
-        return new this().asyncFromJSON(json, ...rest)
+        return new this().asyncFromJSON(json, ...rest) as Promise<T>
     }
 
-    public toJSON(): Record<string, any> | string {
+    public toJSON(): any {
         var json: Record<string, any> = {}
         for (var val in this) {
             // arrays
@@ -364,7 +364,7 @@ export class Struct {
         // throw new Error('not implemented')
     }
 
-    public asyncToJSON(): Promise<Record<keyof this, any>> | string {
+    public asyncToJSON(): Promise<any> {
         throw new Error('not implemented')
     }
 
