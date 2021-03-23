@@ -2,19 +2,31 @@
   "name": "bitcoin-ts",
   "description": "TypeScript library for Bitcoin SV (BSV).",
   "version": "1.0.0",
-  "author": "Yours Inc.",
-  "homepage": "https://github.com/bitcoin-ts/bitcoin-ts",
-  "source": "entry.js",
-  "main": "dist/bsv.js",
-  "module": "dist/bsv.modern.js",
-  "unpkg": "dist/bsv.bundle.js",
-  "library": "bsvjs",
+  "author": "bitcoin-ts",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "module": "lib/bundle.esm.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitcoin-ts/bitcoin-ts.git"
+  },
+  "homepage": "https://github.com/bitcoin-ts/bitcoin-ts#readme",
+  "bugs": {
+    "url": "https://github.com/bitcoin-ts/bitcoin-ts/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "clean": "rm -rf dist",
+    "clean": "rm -rf lib",
     "test:mocha": "mocha",
     "test:karma": "karma start --single-run",
     "test": "npm run test:mocha",
-    "build": "tsc",
+    "build": "npm run clean && tsc",
     "prettier": "prettier --write '{lib,test}/**/*.+(js|json)'"
   },
   "contributors": [
@@ -77,13 +89,6 @@
     "multisig",
     "ecies"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/moneybutton/bsv.git"
-  },
-  "engines": {
-    "node": ">=8.0.0"
-  },
   "dependencies": {
     "aes": "0.1.0",
     "bitcoin-elliptic": "^7.0.1",
@@ -117,7 +122,6 @@
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
   },
-  "license": "MIT",
   "mocha": {
     "spec": "test/**/*.test.ts",
     "require": "ts-node/register",

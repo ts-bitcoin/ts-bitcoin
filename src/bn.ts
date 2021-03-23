@@ -1205,7 +1205,7 @@ class BnDefinition {
 
     copy(b: BnDefinition): void {}
 
-    static _prime(name: 'k256' | 'p224' | 'p192' | 'p25519'): MPrime {
+    static _prime(name: IPrimeName): MPrime {
         return 0 as any
     }
 

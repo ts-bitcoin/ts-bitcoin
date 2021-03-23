@@ -349,7 +349,7 @@ export class TxBuilder extends Struct {
         return Math.round(size)
     }
 
-    public estimateFee(extraFeeAmount = new Bn(0)): Bn {
+    public estimateFee(extraFeeAmount: Bn = new Bn(0)): Bn {
         // old style rounding up per kb - pays too high fees:
         // const fee = Math.ceil(this.estimateSize() / 1000) * this.feePerKbNum
 

@@ -1,5 +1,5 @@
 import { PrivKey } from './priv-key'
 
-const MainnetPrivKey = PrivKey.Testnet
+const MainnetPrivKey: typeof PrivKey = PrivKey.Testnet
 
 export { MainnetPrivKey }

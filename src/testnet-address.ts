@@ -1,5 +1,5 @@
 import { Address } from './address'
 
-const MainnetAddress = Address.Testnet
+const MainnetAddress: typeof Address = Address.Testnet
 
 export { MainnetAddress }

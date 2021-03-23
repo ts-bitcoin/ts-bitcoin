@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
+    "target": "es2019",
     "module": "commonjs",
     "moduleResolution": "node",
+    "outDir": "./lib",
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2018",
-    "outDir": "./lib",
     "resolveJsonModule": true,
-    "incremental": true
   },
   "include": ["src"]
 }

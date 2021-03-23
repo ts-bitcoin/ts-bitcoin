@@ -144,7 +144,7 @@ export class Interp extends Struct {
         ifStack: boolean[] = [],
         errStr = '',
         flags = Interp.defaultFlags,
-        valueBn = new Bn(0)
+        valueBn: Bn = new Bn(0)
     ) {
         super({
             script,

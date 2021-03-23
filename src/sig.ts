@@ -146,7 +146,23 @@ export class Sig extends Struct {
     /**
      * In order to mimic the non-strict DER encoding of OpenSSL, set strict = false.
      */
-    public static parseDer(buf: Buffer, strict?: boolean) {
+    public static parseDer(
+        buf: Buffer,
+        strict?: boolean
+    ): {
+        header: number
+        length: number
+        rheader: number
+        rlength: number
+        rneg: boolean
+        rbuf: Buffer
+        r: Bn
+        sheader: number
+        slength: number
+        sneg: boolean
+        sbuf: Buffer
+        s: Bn
+    } {
         if (strict === undefined) {
             strict = true
         }

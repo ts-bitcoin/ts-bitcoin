@@ -1,5 +1,5 @@
 import { KeyPair } from './key-pair'
 
-const MainnetKeyPair = KeyPair.Mainnet
+const MainnetKeyPair: typeof KeyPair = KeyPair.Mainnet
 
 export { MainnetKeyPair }
