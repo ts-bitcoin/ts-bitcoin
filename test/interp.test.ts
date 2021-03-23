@@ -5,10 +5,10 @@ import { Script } from '../src/script'
 import { Bn } from '../src/bn'
 import { KeyPair } from '../src/key-pair'
 import { Sig } from '../src/sig'
-import bitcoindScriptValid from './vectors/bitcoind/script_valid.json'
-import bitcoindScriptInvalid from './vectors/bitcoind/script_invalid.json'
-import bitcoinABCScriptTests from './vectors/bitcoin-abc/script_tests.json'
-import bitcoinSVScriptTests from './vectors/bitcoin-sv/script_tests.json'
+import * as bitcoindScriptValid from './vectors/bitcoind/script_valid.json'
+import * as bitcoindScriptInvalid from './vectors/bitcoind/script_invalid.json'
+import * as bitcoinABCScriptTests from './vectors/bitcoin-abc/script_tests.json'
+import * as bitcoinSVScriptTests from './vectors/bitcoin-sv/script_tests.json'
 
 describe('Interp', function () {
     it('should make a new interp', function () {
@@ -273,7 +273,7 @@ describe('Interp', function () {
             spendtx.addTxIn(idbuf, 0, new Script(), 0xffffffff)
             spendtx.addTxOut(new Bn(0), new Script())
 
-            const sig = spendtx.sign(keyPair, Sig.SIGHASH_ALL, 0, scriptPubKey)
+            const sig = spendtx.sign(keyPair, Sig.SIGHASH_ALL, 0, scriptPubKey, new Bn(0))
             const scriptSig = new Script().writeBuffer(sig.toTxFormat())
             spendtx.txIns[0].setScript(scriptSig)
 
@@ -346,7 +346,7 @@ describe('Interp', function () {
                     }
                 } catch (err) {
                     console.log(vector)
-                    throw new Error('failure', err)
+                    throw new Error('failure' + err.message)
                 }
             })
         })
@@ -386,7 +386,7 @@ describe('Interp', function () {
                     }
                 } catch (err) {
                     console.log(vector)
-                    throw new Error('failure', err)
+                    throw new Error('failure' + err.message)
                 }
             })
         })

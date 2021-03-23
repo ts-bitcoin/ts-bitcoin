@@ -111,14 +111,14 @@ describe('KeyPair', function () {
         it('should convert this known PrivKey to known PubKey', function () {
             const privhex = '906977a061af29276e40bf377042ffbde414e496ae2260bbf1fa9d085637bfff'
             const pubhex = '02a1633cafcc01ebfb6d78e39f687a1f0995c62fc95f51ead10a02ee0be551b5dc'
-            const privKey = new PrivKey().fromBn(Bn(Buffer.from(privhex, 'hex')))
+            const privKey = new PrivKey().fromBn(new Bn(Buffer.from(privhex, 'hex')))
             const key = new KeyPair().fromPrivKey(privKey)
             key.pubKey.toString().should.equal(pubhex)
         })
 
         it('should convert this known PrivKey to known PubKey and preserve compressed=false', function () {
             const privhex = '906977a061af29276e40bf377042ffbde414e496ae2260bbf1fa9d085637bfff'
-            const privKey = new PrivKey().fromBn(Bn(Buffer.from(privhex, 'hex')))
+            const privKey = new PrivKey().fromBn(new Bn(Buffer.from(privhex, 'hex')))
             privKey.compressed = false
             const key = new KeyPair().fromPrivKey(privKey)
             key.pubKey.compressed.should.equal(false)
@@ -133,14 +133,14 @@ describe('KeyPair', function () {
         it('should convert this known PrivKey to known PubKey', function () {
             const privhex = '906977a061af29276e40bf377042ffbde414e496ae2260bbf1fa9d085637bfff'
             const pubhex = '02a1633cafcc01ebfb6d78e39f687a1f0995c62fc95f51ead10a02ee0be551b5dc'
-            const privKey = new PrivKey().fromBn(Bn(Buffer.from(privhex, 'hex')))
+            const privKey = new PrivKey().fromBn(new Bn(Buffer.from(privhex, 'hex')))
             const key = KeyPair.fromPrivKey(privKey)
             key.pubKey.toString().should.equal(pubhex)
         })
 
         it('should convert this known PrivKey to known PubKey and preserve compressed=false', function () {
             const privhex = '906977a061af29276e40bf377042ffbde414e496ae2260bbf1fa9d085637bfff'
-            const privKey = new PrivKey().fromBn(Bn(Buffer.from(privhex, 'hex')))
+            const privKey = new PrivKey().fromBn(new Bn(Buffer.from(privhex, 'hex')))
             privKey.compressed = false
             const key = KeyPair.fromPrivKey(privKey)
             key.pubKey.compressed.should.equal(false)
@@ -171,9 +171,9 @@ describe('KeyPair', function () {
             key.fromRandom()
             should.exist(key.privKey)
             should.exist(key.pubKey)
-            key.privKey.bn.gt(Bn(0)).should.equal(true)
-            key.pubKey.point.getX().gt(Bn(0)).should.equal(true)
-            key.pubKey.point.getY().gt(Bn(0)).should.equal(true)
+            key.privKey.bn.gt(new Bn(0)).should.equal(true)
+            key.pubKey.point.getX().gt(new Bn(0)).should.equal(true)
+            key.pubKey.point.getY().gt(new Bn(0)).should.equal(true)
             key.privKey.compressed.should.equal(true)
             key.pubKey.compressed.should.equal(true)
         })
@@ -184,9 +184,9 @@ describe('KeyPair', function () {
             const key = KeyPair.fromRandom()
             should.exist(key.privKey)
             should.exist(key.pubKey)
-            key.privKey.bn.gt(Bn(0)).should.equal(true)
-            key.pubKey.point.getX().gt(Bn(0)).should.equal(true)
-            key.pubKey.point.getY().gt(Bn(0)).should.equal(true)
+            key.privKey.bn.gt(new Bn(0)).should.equal(true)
+            key.pubKey.point.getX().gt(new Bn(0)).should.equal(true)
+            key.pubKey.point.getY().gt(new Bn(0)).should.equal(true)
             key.privKey.compressed.should.equal(true)
             key.pubKey.compressed.should.equal(true)
         })

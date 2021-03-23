@@ -7,7 +7,7 @@ import { PubKey } from '../src/pub-key'
 import { Sig } from '../src/sig'
 import { Point } from '../src/point'
 import should = require('should')
-import vectors from './vectors/ecdsa.json'
+import * as vectors from './vectors/ecdsa.json'
 
 describe('Ecdsa', function () {
     it('should create a blank ecdsa', function () {
@@ -384,7 +384,7 @@ describe('Ecdsa', function () {
         it('should return an error if the pubKey is invalid', function () {
             const ecdsa = new Ecdsa()
             ecdsa.hashBuf = Hash.sha256(Buffer.from('test'))
-            ecdsa.verifyStr().indexOf('Invalid pubKey').should.equal(0)
+            ;(ecdsa.verifyStr() as string).indexOf('Invalid pubKey').should.equal(0)
         })
 
         it('should return an error if r, s are invalid', function () {

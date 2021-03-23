@@ -1,7 +1,7 @@
 import { Bn } from '../src/bn'
 import should = require('should')
 import { Sig } from '../src/sig'
-import vectors from './vectors/sig.json'
+import * as vectors from './vectors/sig.json'
 
 describe('Sig', function () {
     it('should make a blank signature', function () {
@@ -345,29 +345,21 @@ describe('Sig', function () {
             const r = new Bn('63173831029936981022572627018246571655303050627048489594159321588908385378810')
             const s = new Bn('4331694221846364448463828256391194279133231453999942381442030409253074198130')
             let sig = Sig.fromObject({ r: r, s: s, recovery: 0 })
-            sig.toHex()
-                .toString('hex')
-                .should.equal(
-                    '1f8bab1f0a2ff2f9cb8992173d8ad73c229d31ea8e10b0f4d4ae1a0d8ed76021fa0993a6ec81755b9111762fc2cf8e3ede73047515622792110867d12654275e72'
-                )
+            sig.toHex().should.equal(
+                '1f8bab1f0a2ff2f9cb8992173d8ad73c229d31ea8e10b0f4d4ae1a0d8ed76021fa0993a6ec81755b9111762fc2cf8e3ede73047515622792110867d12654275e72'
+            )
             sig = Sig.fromObject({ r: r, s: s, recovery: 1 })
-            sig.toHex()
-                .toString('hex')
-                .should.equal(
-                    '208bab1f0a2ff2f9cb8992173d8ad73c229d31ea8e10b0f4d4ae1a0d8ed76021fa0993a6ec81755b9111762fc2cf8e3ede73047515622792110867d12654275e72'
-                )
+            sig.toHex().should.equal(
+                '208bab1f0a2ff2f9cb8992173d8ad73c229d31ea8e10b0f4d4ae1a0d8ed76021fa0993a6ec81755b9111762fc2cf8e3ede73047515622792110867d12654275e72'
+            )
             sig = Sig.fromObject({ r: r, s: s, recovery: 2 })
-            sig.toHex()
-                .toString('hex')
-                .should.equal(
-                    '218bab1f0a2ff2f9cb8992173d8ad73c229d31ea8e10b0f4d4ae1a0d8ed76021fa0993a6ec81755b9111762fc2cf8e3ede73047515622792110867d12654275e72'
-                )
+            sig.toHex().should.equal(
+                '218bab1f0a2ff2f9cb8992173d8ad73c229d31ea8e10b0f4d4ae1a0d8ed76021fa0993a6ec81755b9111762fc2cf8e3ede73047515622792110867d12654275e72'
+            )
             sig = Sig.fromObject({ r: r, s: s, recovery: 3 })
-            sig.toHex()
-                .toString('hex')
-                .should.equal(
-                    '228bab1f0a2ff2f9cb8992173d8ad73c229d31ea8e10b0f4d4ae1a0d8ed76021fa0993a6ec81755b9111762fc2cf8e3ede73047515622792110867d12654275e72'
-                )
+            sig.toHex().should.equal(
+                '228bab1f0a2ff2f9cb8992173d8ad73c229d31ea8e10b0f4d4ae1a0d8ed76021fa0993a6ec81755b9111762fc2cf8e3ede73047515622792110867d12654275e72'
+            )
         })
     })
 

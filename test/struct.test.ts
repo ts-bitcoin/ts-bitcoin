@@ -1,6 +1,6 @@
 import should = require('should')
 import { Struct } from '../src/struct'
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 import { Br } from '../src/br'
 
 describe('Struct', function () {
@@ -13,14 +13,14 @@ describe('Struct', function () {
 
     describe('#fromObject', function () {
         it('should set from an object', function () {
-            new Struct().fromObject({ test: 'test' }).test.should.equal('test')
+            ;(new Struct().fromObject({ test: 'test' }) as any).test.should.equal('test')
             Object.keys(new Struct().fromObject({})).length.should.equal(0)
         })
     })
 
     describe('@fromObject', function () {
         it('should set from an object', function () {
-            Struct.fromObject({ test: 'test' }).test.should.equal('test')
+            ;(Struct.fromObject({ test: 'test' }) as any).test.should.equal('test')
             Object.keys(Struct.fromObject({})).length.should.equal(0)
         })
     })
@@ -28,7 +28,7 @@ describe('Struct', function () {
     describe('#fromBr', function () {
         it('should throw an error if arg is not a Br', function () {
             ;(function () {
-                new Struct().fromBr({})
+                new Struct().fromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
@@ -43,7 +43,7 @@ describe('Struct', function () {
     describe('@fromBr', function () {
         it('should throw an error if arg is not a Br', function () {
             ;(function () {
-                Struct.fromBr({})
+                Struct.fromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
@@ -58,7 +58,7 @@ describe('Struct', function () {
     describe('#asyncFromBr', function () {
         it('should throw an error if arg is not a Br', function () {
             ;(function () {
-                new Struct().asyncFromBr({})
+                new Struct().asyncFromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
@@ -73,7 +73,7 @@ describe('Struct', function () {
     describe('@asyncFromBr', function () {
         it('should throw an error if arg is not a Br', function () {
             ;(function () {
-                Struct.asyncFromBr({})
+                Struct.asyncFromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
@@ -112,7 +112,7 @@ describe('Struct', function () {
     describe('#fromBuffer', function () {
         it('should throw an error if arg is not a buffer', function () {
             ;(function () {
-                new Struct().fromBuffer({})
+                new Struct().fromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
@@ -127,7 +127,7 @@ describe('Struct', function () {
     describe('@fromBuffer', function () {
         it('should throw an error if arg is not a buffer', function () {
             ;(function () {
-                Struct.fromBuffer({})
+                Struct.fromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
@@ -142,7 +142,7 @@ describe('Struct', function () {
     describe('#asyncFromBuffer', function () {
         it('should throw an error if arg is not a buffer', function () {
             ;(function () {
-                new Struct().asyncFromBuffer({})
+                new Struct().asyncFromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
@@ -157,7 +157,7 @@ describe('Struct', function () {
     describe('@asyncFromBuffer', function () {
         it('should throw an error if arg is not a buffer', function () {
             ;(function () {
-                Struct.asyncFromBuffer({})
+                Struct.asyncFromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
@@ -176,7 +176,7 @@ describe('Struct', function () {
             struct = Object.create(struct)
             const buf = Buffer.from('00', 'hex')
             struct.fromFastBuffer(buf)
-            struct.fromBuffer.calledOnce.should.equal(true)
+            ;(struct.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
         })
 
         it('should not call fromBuffer if buf length is zero', function () {
@@ -185,7 +185,7 @@ describe('Struct', function () {
             struct = Object.create(struct)
             const buf = Buffer.from('', 'hex')
             struct.fromFastBuffer(buf)
-            struct.fromBuffer.calledOnce.should.equal(false)
+            ;(struct.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(false)
         })
     })
 
@@ -195,7 +195,7 @@ describe('Struct', function () {
             StructMock.prototype.fromBuffer = sinon.spy()
             const buf = Buffer.from('00', 'hex')
             StructMock.fromFastBuffer(buf)
-            StructMock.prototype.fromBuffer.calledOnce.should.equal(true)
+            ;(StructMock.prototype.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
         })
 
         it('should not call fromBuffer if buf length is zero', function () {
@@ -203,7 +203,7 @@ describe('Struct', function () {
             StructMock.prototype.fromBuffer = sinon.spy()
             const buf = Buffer.from('', 'hex')
             StructMock.fromFastBuffer(buf)
-            StructMock.prototype.fromBuffer.calledOnce.should.equal(false)
+            ;(StructMock.prototype.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(false)
         })
     })
 
@@ -228,10 +228,10 @@ describe('Struct', function () {
             let struct = new Struct()
             struct.toBuffer = sinon.spy()
             struct = Object.create(struct)
-            struct.property = 'test'
+            ;(struct as any).property = 'test'
             Object.keys(struct).length.should.equal(1)
             struct.toFastBuffer()
-            struct.toBuffer.calledOnce.should.equal(true)
+            ;(struct.toBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
         })
 
         it('should return zero-length buffer if object has no keys', function () {
@@ -240,7 +240,7 @@ describe('Struct', function () {
             struct = Object.create(struct)
             Object.keys(struct).length.should.equal(0)
             struct.toFastBuffer().length.should.equal(0)
-            struct.toBuffer.calledOnce.should.equal(false)
+            ;(struct.toBuffer as sinon.SinonSpy).calledOnce.should.equal(false)
         })
     })
 
@@ -327,7 +327,7 @@ describe('Struct', function () {
     describe('#fromString', function () {
         it('should throw an error for invalid string', function () {
             ;(function () {
-                new Struct().fromString({})
+                new Struct().fromString({} as any)
             }.should.throw('str must be a string'))
         })
 
@@ -341,7 +341,7 @@ describe('Struct', function () {
     describe('@fromString', function () {
         it('should throw an error for invalid string', function () {
             ;(function () {
-                Struct.fromString({})
+                Struct.fromString({} as any)
             }.should.throw('str must be a string'))
         })
 
@@ -355,7 +355,7 @@ describe('Struct', function () {
     describe('#asyncFromString', function () {
         it('should throw an error for invalid string', function () {
             ;(function () {
-                new Struct().asyncFromString({})
+                new Struct().asyncFromString({} as any)
             }.should.throw('str must be a string'))
         })
 
@@ -369,7 +369,7 @@ describe('Struct', function () {
     describe('@asyncFromString', function () {
         it('should throw an error for invalid string', function () {
             ;(function () {
-                Struct.asyncFromString({})
+                Struct.asyncFromString({} as any)
             }.should.throw('str must be a string'))
         })
 
@@ -399,7 +399,7 @@ describe('Struct', function () {
     describe('#fromJSON', function () {
         it('should throw a not implemented error', function () {
             ;(function () {
-                new Struct().fromJSON()
+                new Struct().fromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
@@ -407,7 +407,7 @@ describe('Struct', function () {
     describe('@fromJSON', function () {
         it('should throw a not implemented error', function () {
             ;(function () {
-                Struct.fromJSON()
+                Struct.fromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
@@ -415,7 +415,7 @@ describe('Struct', function () {
     describe('#asyncFromJSON', function () {
         it('should throw a not implemented error', function () {
             ;(function () {
-                new Struct().asyncFromJSON()
+                new Struct().asyncFromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
@@ -423,7 +423,7 @@ describe('Struct', function () {
     describe('@asyncFromJSON', function () {
         it('should throw a not implemented error', function () {
             ;(function () {
-                Struct.asyncFromJSON()
+                Struct.asyncFromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
@@ -431,8 +431,8 @@ describe('Struct', function () {
     describe('#toJSON', function () {
         it('should convert an object into a json string', function () {
             const obj = new Struct()
-            obj.arr = [1, 2, 3, 4]
-            obj.anotherObj = new Struct()
+            ;(obj as any).arr = [1, 2, 3, 4]
+            ;(obj as any).anotherObj = new Struct()
 
             const json = obj.toJSON()
 
@@ -454,7 +454,7 @@ describe('Struct', function () {
             const struct = new Struct()
             struct.cloneByJSON = sinon.spy()
             struct.clone()
-            struct.cloneByJSON.calledOnce.should.equal(true)
+            ;(struct.cloneByJSON as sinon.SinonSpy).calledOnce.should.equal(true)
         })
     })
 
@@ -462,7 +462,7 @@ describe('Struct', function () {
         it('should call toBuffer', function () {
             class Struct2 extends Struct {
                 toBuffer() {
-                    return {}
+                    return {} as any
                 }
 
                 fromBuffer(obj) {
@@ -472,7 +472,7 @@ describe('Struct', function () {
             const struct = new Struct2()
             struct.toBuffer = sinon.spy()
             struct.cloneByBuffer()
-            struct.toBuffer.calledOnce.should.equal(true)
+            ;(struct.toBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
         })
     })
 
@@ -480,7 +480,7 @@ describe('Struct', function () {
         it('should call toFastBuffer', function () {
             class Struct2 extends Struct {
                 toFastBuffer() {
-                    return {}
+                    return {} as any
                 }
 
                 fromFastBuffer(obj) {
@@ -490,7 +490,7 @@ describe('Struct', function () {
             const struct = new Struct2()
             struct.toFastBuffer = sinon.spy()
             struct.cloneByFastBuffer()
-            struct.toFastBuffer.calledOnce.should.equal(true)
+            ;(struct.toFastBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
         })
     })
 
@@ -498,7 +498,7 @@ describe('Struct', function () {
         it('should call toHex', function () {
             class Struct2 extends Struct {
                 toHex() {
-                    return {}
+                    return {} as any
                 }
 
                 fromHex(obj) {
@@ -508,7 +508,7 @@ describe('Struct', function () {
             const struct = new Struct2()
             struct.toHex = sinon.spy()
             struct.cloneByHex()
-            struct.toHex.calledOnce.should.equal(true)
+            ;(struct.toHex as sinon.SinonSpy).calledOnce.should.equal(true)
         })
     })
 
@@ -516,7 +516,7 @@ describe('Struct', function () {
         it('should call toString', function () {
             class Struct2 extends Struct {
                 toString() {
-                    return {}
+                    return {} as any
                 }
 
                 fromString(obj) {
@@ -526,7 +526,7 @@ describe('Struct', function () {
             const struct = new Struct2()
             struct.toString = sinon.spy()
             struct.cloneByString()
-            struct.toString.calledOnce.should.equal(true)
+            ;(struct.toString as sinon.SinonSpy).calledOnce.should.equal(true)
         })
     })
 
@@ -544,7 +544,7 @@ describe('Struct', function () {
             const struct = new Struct2()
             struct.toJSON = sinon.spy()
             struct.cloneByJSON()
-            struct.toJSON.calledOnce.should.equal(true)
+            ;(struct.toJSON as sinon.SinonSpy).calledOnce.should.equal(true)
         })
     })
 })

@@ -1,6 +1,6 @@
 import 'should'
 import { Hash } from '../src/hash'
-import vectors from './vectors/hash'
+import * as vectors from './vectors/hash.json'
 
 describe('Hash', function () {
     const buf = Buffer.from([0, 1, 2, 3, 253, 254, 255])
@@ -15,13 +15,13 @@ describe('Hash', function () {
     describe('@hmac', function () {
         it('should throw errors in these cases', function () {
             ;(function () {
-                Hash.hmac('non-supported-hash-function', Buffer.from([]), Buffer.from([]))
+                Hash.hmac('non-supported-hash-function' as any, Buffer.from([]), Buffer.from([]))
             }.should.throw('invalid choice of hash function'))
             ;(function () {
-                Hash.hmac('sha512', Buffer.from([]), '')
+                Hash.hmac('sha512', Buffer.from([]), '' as any)
             }.should.throw('data and key must be buffers'))
             ;(function () {
-                Hash.hmac('sha512', '', Buffer.from([]))
+                Hash.hmac('sha512', '' as any, Buffer.from([]))
             }.should.throw('data and key must be buffers'))
         })
     })
@@ -36,7 +36,7 @@ describe('Hash', function () {
 
         it('should throw an error when the input is not a buffer', function () {
             ;(function () {
-                Hash.sha1(str)
+                Hash.sha1(str as any)
             }.should.throw('sha1 hash must be of a buffer'))
         })
     })
@@ -87,7 +87,7 @@ describe('Hash', function () {
 
         it('should throw an error when the input is not a buffer', function () {
             ;(function () {
-                Hash.sha256(str)
+                Hash.sha256(str as any)
             }.should.throw('sha256 hash must be of a buffer'))
         })
     })
@@ -145,7 +145,7 @@ describe('Hash', function () {
 
         it('should throw an error when the input is not a buffer', function () {
             ;(function () {
-                Hash.sha256Sha256(str)
+                Hash.sha256Sha256(str as any)
             }.should.throw('sha256Sha256 hash must be of a buffer: Error: sha256 hash must be of a buffer'))
         })
     })
@@ -166,7 +166,7 @@ describe('Hash', function () {
 
         it('should throw an error when the input is not a buffer', function () {
             ;(function () {
-                Hash.sha256Ripemd160(str)
+                Hash.sha256Ripemd160(str as any)
             }.should.throw('sha256Ripemd160 hash must be of a buffer: Error: sha256 hash must be of a buffer'))
         })
     })
@@ -187,7 +187,7 @@ describe('Hash', function () {
 
         it('should throw an error when the input is not a buffer', function () {
             ;(function () {
-                Hash.ripemd160(str)
+                Hash.ripemd160(str as any)
             }.should.throw('ripemd160 hash must be of a buffer'))
         })
     })
@@ -210,7 +210,7 @@ describe('Hash', function () {
 
         it('should throw an error when the input is not a buffer', function () {
             ;(function () {
-                Hash.sha512(str)
+                Hash.sha512(str as any)
             }.should.throw('sha512 hash must be of a buffer'))
         })
     })

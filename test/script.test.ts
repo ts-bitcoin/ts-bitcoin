@@ -5,8 +5,8 @@ import { PubKey } from '../src/pub-key'
 import { Script } from '../src/script'
 import should = require('should')
 
-import scriptInvalid from './vectors/bitcoind/script_invalid.json'
-import scriptValid from './vectors/bitcoind/script_valid.json'
+import * as scriptInvalid from './vectors/bitcoind/script_invalid.json'
+import * as scriptValid from './vectors/bitcoind/script_valid.json'
 
 describe('Script', function () {
     it('should make a new script', function () {
@@ -230,7 +230,7 @@ describe('Script', function () {
                 .should.equal('OP_0 OP_PUSHDATA1 3 0x010203 OP_0')
             new Script().fromString('OP_0 3 0x010203 OP_0').toString().should.equal('OP_0 3 0x010203 OP_0')
             new Script().fromString('').toString().should.equal('')
-            new Script().fromString().toString().should.equal('')
+            new Script().fromString(undefined).toString().should.equal('')
         })
     })
 
@@ -246,7 +246,7 @@ describe('Script', function () {
             script.chunks[0].opCodeNum.should.equal(buf[0])
             script.chunks[1].buf.toString('hex').should.equal('010203')
             script.chunks[2].opCodeNum.should.equal(buf[buf.length - 1])
-            script.toString().toString('hex').should.equal('OP_0 OP_PUSHDATA4 3 0x010203 OP_0')
+            script.toString().should.equal('OP_0 OP_PUSHDATA4 3 0x010203 OP_0')
         })
     })
 
@@ -467,11 +467,11 @@ describe('Script', function () {
             ]
             const pubKeys = testPubKeysHex.map((hex) => new PubKey().fromHex(hex))
             const pubKeysSorted = Script.sortPubKeys(pubKeys)
-            pubKeysSorted[0].toString('hex').should.equal(testPubKeysHex[2])
-            pubKeysSorted[1].toString('hex').should.equal(testPubKeysHex[1])
-            pubKeysSorted[2].toString('hex').should.equal(testPubKeysHex[0])
-            pubKeysSorted[3].toString('hex').should.equal(testPubKeysHex[4])
-            pubKeysSorted[4].toString('hex').should.equal(testPubKeysHex[3])
+            pubKeysSorted[0].toString().should.equal(testPubKeysHex[2])
+            pubKeysSorted[1].toString().should.equal(testPubKeysHex[1])
+            pubKeysSorted[2].toString().should.equal(testPubKeysHex[0])
+            pubKeysSorted[3].toString().should.equal(testPubKeysHex[4])
+            pubKeysSorted[4].toString().should.equal(testPubKeysHex[3])
         })
     })
 

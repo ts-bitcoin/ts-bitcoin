@@ -1617,7 +1617,14 @@ export class Interp extends Struct {
      * transaction is valid or not. It simply iterates over the results generated
      * by the results method.
      */
-    public verify(scriptSig: Script, scriptPubKey: Script, tx: Tx, nIn: number, flags: number, valueBn: Bn): boolean {
+    public verify(
+        scriptSig?: Script,
+        scriptPubKey?: Script,
+        tx?: Tx,
+        nIn?: number,
+        flags?: number,
+        valueBn?: Bn
+    ): boolean {
         let results = this.results(scriptSig, scriptPubKey, tx, nIn, flags, valueBn)
         for (let success of results) {
             if (!success) {
@@ -1641,12 +1648,12 @@ export class Interp extends Struct {
      * automatically return true or false, use the verify method.
      */
     public *results(
-        scriptSig: Script,
-        scriptPubKey: Script,
-        tx: Tx,
-        nIn: number,
-        flags: number,
-        valueBn: Bn
+        scriptSig?: Script,
+        scriptPubKey?: Script,
+        tx?: Tx,
+        nIn?: number,
+        flags?: number,
+        valueBn?: Bn
     ): Generator<boolean, void, unknown> {
         let stackCopy
 

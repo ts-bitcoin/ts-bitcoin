@@ -9,7 +9,7 @@ import { TxOut } from '../src/tx-out'
 import { VarInt } from '../src/var-int'
 import { Interp } from '../src/interp'
 import should = require('should')
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 
 import vectorsBitcoindSighash from './vectors/bitcoind/sighash.json'
 import vectorsBitcoinABCSighash from './vectors/bitcoin-abc/sighash.json'

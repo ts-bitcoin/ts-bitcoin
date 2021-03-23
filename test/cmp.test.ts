@@ -43,12 +43,12 @@ describe('cmp', function () {
         ;(function () {
             const buf1 = ''
             const buf2 = Buffer.from([0])
-            cmp(buf1, buf2)
+            cmp(buf1 as any, buf2)
         }.should.throw('buf1 and buf2 must be buffers'))
         ;(function () {
             const buf1 = Buffer.from([0])
             const buf2 = ''
-            cmp(buf1, buf2)
+            cmp(buf1, buf2 as any)
         }.should.throw('buf1 and buf2 must be buffers'))
     })
 })

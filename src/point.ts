@@ -22,11 +22,14 @@ const _point = ec.curve.point()
 const _Point: new (...rest: any[]) => _Point = _point.constructor
 
 export class Point extends _Point {
+    public x: Bn
+    public y: Bn
+
     constructor(x?: Bn, y?: Bn, isRed?: boolean) {
         super(ec.curve, x, y, isRed)
     }
 
-    public static fromX(isOdd: boolean, x: Bn): Point {
+    public static fromX(isOdd: boolean, x: Bn | number): Point {
         const _point = ec.curve.pointFromX(x, isOdd)
         const point = Object.create(Point.prototype)
         return point.copyFrom(_point)

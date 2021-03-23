@@ -12,7 +12,7 @@ import { TxOut } from '../src/tx-out'
 import { TxOutMap } from '../src/tx-out-map'
 import { TxVerifier } from '../src/tx-verifier'
 import should = require('should')
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 
 describe('TxBuilder', function () {
     it('should make a new txbuilder', function () {
@@ -22,9 +22,7 @@ describe('TxBuilder', function () {
         txb = new TxBuilder()
         ;(txb instanceof TxBuilder).should.equal(true)
         should.exist(txb.tx)
-        txb = new TxBuilder({
-            tx: new Tx(),
-        })
+        txb = new TxBuilder(new Tx())
         should.exist(txb.tx)
     })
 
@@ -333,7 +331,7 @@ describe('TxBuilder', function () {
         it('it should call tx sort', function () {
             const txBuilder = new TxBuilder()
             let called = 0
-            txBuilder.tx.sort = () => {
+            ;(txBuilder.tx as any).sort = () => {
                 called++
             }
             txBuilder.sort()
@@ -513,12 +511,12 @@ describe('TxBuilder', function () {
             const keyPair1 = obj.keyPair1
             const txOut1 = obj.txOut1
 
-            txb.txOutMap = sinon.spy()
-            txb.uTxOutMap = {
+            ;(txb as any).txOutMap = sinon.spy()
+            ;(txb as any).uTxOutMap = {
                 get: sinon.spy(),
             }
             txb.signTxIn(0, keyPair1, txOut1, undefined, Sig.SIGHASH_ALL, 0)
-            txb.uTxOutMap.get.calledOnce.should.equal(false)
+            ;(txb.uTxOutMap.get as sinon.SinonSpy).calledOnce.should.equal(false)
         })
     })
 
@@ -604,12 +602,12 @@ describe('TxBuilder', function () {
             const txb = obj.txb
             const keyPair1 = obj.keyPair1
             const txOut1 = obj.txOut1
-            txb.txOutMap = sinon.spy()
-            txb.uTxOutMap = {
+            ;(txb as any).txOutMap = sinon.spy()
+            ;(txb as any).uTxOutMap = {
                 get: sinon.spy(),
             }
             await txb.asyncSignTxIn(0, keyPair1, txOut1, undefined, Sig.SIGHASH_ALL, 0)
-            txb.uTxOutMap.get.calledOnce.should.equal(false)
+            ;(txb.uTxOutMap.get as sinon.SinonSpy).calledOnce.should.equal(false)
         })
     })
 

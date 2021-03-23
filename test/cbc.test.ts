@@ -51,7 +51,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -73,7 +73,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -95,7 +95,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -135,7 +135,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -157,7 +157,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -178,7 +178,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -193,7 +193,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -210,7 +210,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -233,7 +233,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -253,7 +253,7 @@ describe('Cbc', function () {
             ivBuf.fill(0x10)
             const cipherKeyBuf = Buffer.alloc(128 / 8)
             cipherKeyBuf.fill(0)
-            const blockCipher = {}
+            const blockCipher = {} as any
             blockCipher.encrypt = function (messageBuf, cipherKeyBuf) {
                 return messageBuf
             }
@@ -285,7 +285,7 @@ describe('Cbc', function () {
             const buf = Buffer.alloc(32 / 8)
             buf.fill(0)
             const paddedbuf = Cbc.pkcs7Pad(buf, 128)
-            const unpaddedbuf = Cbc.pkcs7Unpad(paddedbuf, 128)
+            const unpaddedbuf = Cbc.pkcs7Unpad(paddedbuf)
             unpaddedbuf.toString('hex').should.equal(buf.toString('hex'))
         })
     })

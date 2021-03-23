@@ -58,7 +58,7 @@ describe('SigOperations', function () {
     describe('#setMany', function () {
         it('should set this vector', function () {
             const sigOperations = new SigOperations()
-            let arr = [{ nScriptChunk, addressStr }]
+            let arr: any[] = [{ nScriptChunk, addressStr }]
             sigOperations.setMany(txHashBuf, txOutNum, arr)
             arr = sigOperations.get(txHashBuf, txOutNum)
             const obj = arr[0]
@@ -128,8 +128,8 @@ describe('SigOperations', function () {
             const txOutNum2 = 9
             const nScriptChunk2 = 2
             const addressStr2 = Address.fromPubKey(KeyPair.fromRandom().pubKey).toString()
-            sigOperations.setOne(txHashBuf2, txOutNum2, nScriptChunk2, type, addressStr2)
-            arr = sigOperations.get(txHashBuf2, txOutNum2)
+            sigOperations.setOne(txHashBuf2 as any, txOutNum2, nScriptChunk2, type, addressStr2)
+            arr = sigOperations.get(txHashBuf2 as any, txOutNum2)
             obj = arr[0]
             obj.nScriptChunk.should.equal(nScriptChunk2)
             obj.addressStr.should.equal(addressStr2.toString())

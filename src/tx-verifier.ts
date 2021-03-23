@@ -48,7 +48,7 @@ export class TxVerifier extends Struct {
     /**
      * Convenience method to verify a transaction.
      */
-    public static verify(tx: Tx, txOutMap: TxOutMap, flags: number): boolean {
+    public static verify(tx: Tx, txOutMap: TxOutMap, flags?: number): boolean {
         return new TxVerifier(tx, txOutMap).verify(flags)
     }
 

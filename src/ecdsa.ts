@@ -165,7 +165,7 @@ export class Ecdsa extends Struct {
      *
      * https://tools.ietf.org/html/rfc6979#section-3.2
      */
-    public deterministicK(badrs: number): this {
+    public deterministicK(badrs?: number): this {
         let v = Buffer.alloc(32)
         v.fill(0x01)
         let k = Buffer.alloc(32)
@@ -415,7 +415,7 @@ export class Ecdsa extends Struct {
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    public static sign(hashBuf: Buffer, keyPair: KeyPair, endian: 'big' | 'little'): Sig {
+    public static sign(hashBuf: Buffer, keyPair: KeyPair, endian?: 'big' | 'little'): Sig {
         return new Ecdsa()
             .fromObject({
                 hashBuf: hashBuf,
@@ -425,7 +425,7 @@ export class Ecdsa extends Struct {
             .sign().sig
     }
 
-    public static async asyncSign(hashBuf: Buffer, keyPair: KeyPair, endian: 'big' | 'little'): Promise<Sig> {
+    public static async asyncSign(hashBuf: Buffer, keyPair: KeyPair, endian?: 'big' | 'little'): Promise<Sig> {
         const ecdsa = new Ecdsa().fromObject({
             hashBuf: hashBuf,
             endian: endian,
@@ -439,7 +439,7 @@ export class Ecdsa extends Struct {
         hashBuf: Buffer,
         sig: Sig,
         pubKey: PubKey,
-        endian: 'big' | 'little',
+        endian?: 'big' | 'little',
         enforceLowS = true
     ): boolean {
         return new Ecdsa()
@@ -456,7 +456,7 @@ export class Ecdsa extends Struct {
         hashBuf: Buffer,
         sig: Sig,
         pubKey: PubKey,
-        endian: 'big' | 'little',
+        endian?: 'big' | 'little',
         enforceLowS = true
     ): Promise<boolean> {
         const ecdsa = new Ecdsa().fromObject({

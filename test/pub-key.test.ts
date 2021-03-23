@@ -12,7 +12,7 @@ describe('PubKey', function () {
 
     it('should create a public key with a point', function () {
         const p = new Point()
-        const pk = new PubKey({ point: p })
+        const pk = new PubKey(p)
         should.exist(pk.point)
     })
 
