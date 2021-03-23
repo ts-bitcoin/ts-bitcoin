@@ -15,9 +15,8 @@
  * that is deliberately so to make it similar to bitcoin core, and thus easier
  * to audit.
  */
-'use strict'
-
 import { Bn } from './bn'
+import { Br } from './br'
 import { Bw } from './bw'
 import { cmp } from './cmp'
 import { Hash } from './hash'
@@ -26,20 +25,123 @@ import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Sig } from './sig'
 import { Struct } from './struct'
-import { Tx } from './tx'
+import { Tx, TxLike } from './tx'
 import { TxIn } from './tx-in'
 
-class Interp extends Struct {
+interface InterpLike {
+    script: string
+    tx?: TxLike
+    nIn: number
+    stack: string[]
+    altStack: string[]
+    pc: number
+    pBeginCodeHash: number
+    nOpCount: number
+    ifStack: boolean[]
+    errStr: string
+    flags: number
+}
+
+export class Interp extends Struct {
+    public static readonly true = Buffer.from([1])
+    public static readonly false = Buffer.from([])
+
+    public static readonly MAX_SCRIPT_ELEMENT_SIZE = 520
+    public static readonly LOCKTIME_THRESHOLD = 500000000 // Tue Nov  5 00:53:20 1985 UTC
+
+    // flags taken from bitcoin core
+    // bitcoin core commit: b5d1b1092998bc95313856d535c632ea5a8f9104
+    public static readonly SCRIPT_VERIFY_NONE = 0
+
+    // Evaluate P2SH subScripts (softfork safe, Bip16).
+    public static readonly SCRIPT_VERIFY_P2SH = 1 << 0
+
+    // Passing a non-strict-DER signature or one with undefined hashtype to a checksig operation causes script failure.
+    // Passing a pubKey that is not (0x04 + 64 bytes) or (0x02 or 0x03 + 32 bytes) to checksig causes that pubKey to be
+    // skipped (not softfork safe: this flag can widen the validity of OP_CHECKSIG OP_NOT).
+    public static readonly SCRIPT_VERIFY_STRICTENC = 1 << 1
+
+    // Passing a non-strict-DER signature to a checksig operation causes script failure (softfork safe, Bip62 rule 1)
+    public static readonly SCRIPT_VERIFY_DERSIG = 1 << 2
+
+    // Passing a non-strict-DER signature or one with S > order/2 to a checksig operation causes script failure
+    // (softfork safe, Bip62 rule 5).
+    public static readonly SCRIPT_VERIFY_LOW_S = 1 << 3
+
+    // verify dummy stack item consumed by CHECKMULTISIG is of zero-length (softfork safe, Bip62 rule 7).
+    public static readonly SCRIPT_VERIFY_NULLDUMMY = 1 << 4
+
+    // Using a non-push operator in the scriptSig causes script failure (softfork safe, Bip62 rule 2).
+    public static readonly SCRIPT_VERIFY_SIGPUSHONLY = 1 << 5
+
+    // Require minimal encodings for all push operations (OP_0... OP_16, OP_1NEGATE where possible, direct
+    // pushes up to 75 bytes, OP_PUSHDATA up to 255 bytes, OP_PUSHDATA2 for anything larger). Evaluating
+    // any other push causes the script to fail (Bip62 rule 3).
+    // In addition, whenever a stack element is interpreted as a number, it must be of minimal length (Bip62 rule 4).
+    // (softfork safe)
+    public static readonly SCRIPT_VERIFY_MINIMALDATA = 1 << 6
+
+    // Discourage use of NOPs reserved for upgrades (NOP1-10)
+    //
+    // Provided so that nodes can avoid accepting or mining transactions
+    // containing executed NOP's whose meaning may change after a soft-fork,
+    // thus rendering the script invalid; with this flag set executing
+    // discouraged NOPs fails the script. This verification flag will never be
+    // a mandatory flag applied to scripts in a block. NOPs that are not
+    // executed, e.g.  within an unexecuted IF ENDIF block, are *not* rejected.
+    public static readonly SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS = 1 << 7
+
+    // Require that only a single stack element remains after evaluation. This
+    // changes the success criterion from "At least one stack element must
+    // remain, and when interpreted as a boolean, it must be true" to "Exactly
+    // one stack element must remain, and when interpreted as a boolean, it must
+    // be true".  (softfork safe, Bip62 rule 6)
+    // Note: CLEANSTACK should never be used without P2SH.
+    public static readonly SCRIPT_VERIFY_CLEANSTACK = 1 << 8
+
+    // Verify CHECKLOCKTIMEVERIFY
+    //
+    // See Bip65 for details.
+    public static readonly SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY = 1 << 9
+
+    // support CHECKSEQUENCEVERIFY opCode
+    //
+    // See Bip112 for details
+    public static readonly SCRIPT_VERIFY_CHECKSEQUENCEVERIFY = 1 << 10
+
+    // used for UAHF
+    // https://github.com/Bitcoin-UAHF/spec/blob/master/replay-protected-sighash.md
+    public static readonly SCRIPT_ENABLE_SIGHASH_FORKID = 1 << 16
+
+    // These are the things we wish to verify by default. At the time of writing,
+    // P2SH and CHECKLOCKTIMEVERIFY are both active, but CHECKSEQUENCEVERIFY is
+    // not.
+    public static readonly defaultFlags = Interp.SCRIPT_VERIFY_P2SH | Interp.SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY
+    // Interp.defaultFlags = Interp.SCRIPT_VERIFY_P2SH | Interp.SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY | Interp.SCRIPT_VERIFY_CHECKSEQUENCEVERIFY
+
+    public script: Script
+    public tx: Tx
+    public nIn: number
+    public stack: Buffer[]
+    public altStack: Buffer[]
+    public pc: number
+    public pBeginCodeHash: number
+    public nOpCount: number
+    public ifStack: boolean[]
+    public errStr: string
+    public flags: number
+    public valueBn: Bn
+
     constructor(
-        script,
-        tx,
-        nIn,
-        stack = [],
-        altStack = [],
+        script: Script,
+        tx: Tx,
+        nIn: number,
+        stack: Buffer[] = [],
+        altStack: Buffer[] = [],
         pc = 0,
         pBeginCodeHash = 0,
         nOpCount = 0,
-        ifStack = [],
+        ifStack: boolean[] = [],
         errStr = '',
         flags = Interp.defaultFlags,
         valueBn = new Bn(0)
@@ -60,7 +162,7 @@ class Interp extends Struct {
         })
     }
 
-    initialize() {
+    public initialize(): this {
         this.script = new Script()
         this.stack = []
         this.altStack = []
@@ -73,7 +175,7 @@ class Interp extends Struct {
         return this
     }
 
-    fromJSON(json) {
+    public fromJSON(json: InterpLike): this {
         this.fromJSONNoTx(json)
         this.tx = json.tx ? new Tx().fromJSON(json.tx) : undefined
         return this
@@ -81,7 +183,7 @@ class Interp extends Struct {
     /**
      * Convert JSON containing everything but the tx to an interp object.
      */
-    fromJSONNoTx(json) {
+    public fromJSONNoTx(json: InterpLike): this {
         this.fromObject({
             script: json.script !== undefined ? new Script().fromJSON(json.script) : undefined,
             nIn: json.nIn,
@@ -109,7 +211,7 @@ class Interp extends Struct {
         return this
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         let jsonNoTxBufLEn = br.readVarIntNum()
         let jsonNoTxBuf = br.read(jsonNoTxBufLEn)
         this.fromJSONNoTx(JSON.parse(jsonNoTxBuf.toString()))
@@ -121,7 +223,7 @@ class Interp extends Struct {
         return this
     }
 
-    toJSON() {
+    public toJSON(): InterpLike {
         let json = this.toJSONNoTx()
         json.tx = this.tx ? this.tx.toJSON() : undefined
         return json
@@ -130,12 +232,12 @@ class Interp extends Struct {
     /**
      * Convert everything but the tx to JSON.
      */
-    toJSONNoTx() {
-        let stack = []
+    public toJSONNoTx(): InterpLike {
+        let stack: string[] = []
         this.stack.forEach(function (buf) {
             stack.push(buf.toString('hex'))
         })
-        let altStack = []
+        let altStack: string[] = []
         this.altStack.forEach(function (buf) {
             altStack.push(buf.toString('hex'))
         })
@@ -153,7 +255,7 @@ class Interp extends Struct {
         }
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -175,7 +277,7 @@ class Interp extends Struct {
      * constants as bitcoin core, including the flags, which customize the
      * operation of the interpreter.
      */
-    static getFlags(flagstr) {
+    public static getFlags(flagstr: string): number {
         let flags = 0
         if (flagstr.indexOf('NONE') !== -1) {
             flags = flags | Interp.SCRIPT_VERIFY_NONE
@@ -219,7 +321,7 @@ class Interp extends Struct {
         return flags
     }
 
-    static castToBool(buf) {
+    public static castToBool(buf: Buffer): boolean {
         for (let i = 0; i < buf.length; i++) {
             if (buf[i] !== 0) {
                 // can be negative zero
@@ -235,7 +337,7 @@ class Interp extends Struct {
     /**
      * Translated from bitcoin core's CheckSigEncoding
      */
-    checkSigEncoding(buf) {
+    public checkSigEncoding(buf: Buffer): boolean {
         // Empty signature. Not strictly DER encoded, but allowed to provide a
         // compact way to provide an invalid signature for use with CHECK(MULTI)SIG
         if (buf.length === 0) {
@@ -268,7 +370,7 @@ class Interp extends Struct {
     /**
      * Translated from bitcoin core's CheckPubKeyEncoding
      */
-    checkPubKeyEncoding(buf) {
+    public checkPubKeyEncoding(buf: Buffer): boolean {
         if ((this.flags & Interp.SCRIPT_VERIFY_STRICTENC) !== 0 && !PubKey.isCompressedOrUncompressed(buf)) {
             this.errStr = 'SCRIPT_ERR_PUBKEYTYPE'
             return false
@@ -279,7 +381,7 @@ class Interp extends Struct {
     /**
      * Translated from bitcoin core's CheckLockTime
      */
-    checkLockTime(nLockTime) {
+    public checkLockTime(nLockTime: number): boolean {
         // There are two kinds of nLockTime: lock-by-blockheight
         // and lock-by-blocktime, distinguished by whether
         // nLockTime < LOCKTIME_THRESHOLD.
@@ -322,7 +424,7 @@ class Interp extends Struct {
     /**
      * Translated from bitcoin core's CheckSequence.
      */
-    checkSequence(nSequence) {
+    public checkSequence(nSequence: number): boolean {
         // Relative lock times are supported by comparing the passed
         // in operand to the sequence number of the input.
         let txToSequence = this.tx.txIns[this.nIn].nSequence
@@ -379,7 +481,7 @@ class Interp extends Struct {
      * Interp.prototype.step()
      * bitcoin core commit: b5d1b1092998bc95313856d535c632ea5a8f9104
      */
-    *eval() {
+    public *eval(): Generator<boolean, void, unknown> {
         if (this.script.toBuffer().length > 10000) {
             this.errStr = 'SCRIPT_ERR_SCRIPT_SIZE'
             yield false
@@ -416,7 +518,7 @@ class Interp extends Struct {
     /**
      * Based on the inner loop of bitcoin core's EvalScript function
      */
-    step() {
+    public step(): boolean {
         let fRequireMinimal = (this.flags & Interp.SCRIPT_VERIFY_MINIMALDATA) !== 0
 
         // bool fExec = !count(ifStack.begin(), ifStack.end(), false)
@@ -1062,10 +1164,10 @@ class Interp extends Struct {
                                 if (bn.lt(0)) bn = bn.neg()
                                 break
                             case OpCode.OP_NOT:
-                                bn = new Bn(bn.eq(0) + 0)
+                                bn = new Bn(~~bn.eq(0))
                                 break
                             case OpCode.OP_0NOTEQUAL:
-                                bn = new Bn(bn.neq(0) + 0)
+                                bn = new Bn(~~bn.neq(0))
                                 break
                             // default:      assert(!"invalid opCode"); break; // TODO: does this ever occur?
                         }
@@ -1114,7 +1216,7 @@ class Interp extends Struct {
                                 break
 
                             case OpCode.OP_DIV:
-                                if (bn2 == 0) {
+                                if (bn2.eq(0)) {
                                     this.errStr = 'SCRIPT_ERR_DIV_BY_ZERO'
                                     return false
                                 }
@@ -1122,7 +1224,7 @@ class Interp extends Struct {
                                 break
 
                             case OpCode.OP_MOD:
-                                if (bn2 == 0) {
+                                if (bn2.eq(0)) {
                                     this.errStr = 'SCRIPT_ERR_DIV_BY_ZERO'
                                     return false
                                 }
@@ -1131,39 +1233,39 @@ class Interp extends Struct {
 
                             // case OpCode.OP_BOOLAND:       bn = (bn1 != bnZero && bn2 != bnZero); break
                             case OpCode.OP_BOOLAND:
-                                bn = new Bn((bn1.neq(0) && bn2.neq(0)) + 0)
+                                bn = new Bn(~~(bn1.neq(0) && bn2.neq(0)))
                                 break
                             // case OpCode.OP_BOOLOR:        bn = (bn1 != bnZero || bn2 != bnZero); break
                             case OpCode.OP_BOOLOR:
-                                bn = new Bn((bn1.neq(0) || bn2.neq(0)) + 0)
+                                bn = new Bn(~~(bn1.neq(0) || bn2.neq(0)))
                                 break
                             // case OpCode.OP_NUMEQUAL:      bn = (bn1 == bn2); break
                             case OpCode.OP_NUMEQUAL:
-                                bn = new Bn(bn1.eq(bn2) + 0)
+                                bn = new Bn(~~bn1.eq(bn2))
                                 break
                             // case OpCode.OP_NUMEQUALVERIFY:    bn = (bn1 == bn2); break
                             case OpCode.OP_NUMEQUALVERIFY:
-                                bn = new Bn(bn1.eq(bn2) + 0)
+                                bn = new Bn(~~bn1.eq(bn2))
                                 break
                             // case OpCode.OP_NUMNOTEQUAL:     bn = (bn1 != bn2); break
                             case OpCode.OP_NUMNOTEQUAL:
-                                bn = new Bn(bn1.neq(bn2) + 0)
+                                bn = new Bn(~~bn1.neq(bn2))
                                 break
                             // case OpCode.OP_LESSTHAN:      bn = (bn1 < bn2); break
                             case OpCode.OP_LESSTHAN:
-                                bn = new Bn(bn1.lt(bn2) + 0)
+                                bn = new Bn(~~bn1.lt(bn2))
                                 break
                             // case OpCode.OP_GREATERTHAN:     bn = (bn1 > bn2); break
                             case OpCode.OP_GREATERTHAN:
-                                bn = new Bn(bn1.gt(bn2) + 0)
+                                bn = new Bn(~~bn1.gt(bn2))
                                 break
                             // case OpCode.OP_LESSTHANOREQUAL:   bn = (bn1 <= bn2); break
                             case OpCode.OP_LESSTHANOREQUAL:
-                                bn = new Bn(bn1.leq(bn2) + 0)
+                                bn = new Bn(~~bn1.leq(bn2))
                                 break
                             // case OpCode.OP_GREATERTHANOREQUAL:  bn = (bn1 >= bn2); break
                             case OpCode.OP_GREATERTHANOREQUAL:
-                                bn = new Bn(bn1.geq(bn2) + 0)
+                                bn = new Bn(~~bn1.geq(bn2))
                                 break
                             case OpCode.OP_MIN:
                                 bn = bn1.lt(bn2) ? bn1 : bn2
@@ -1489,8 +1591,8 @@ class Interp extends Struct {
                         return false
                     }
 
-                    let n1 = data.slice(0, position)
-                    let n2 = data.slice(position)
+                    let n1 = data.slice(0, position.toNumber())
+                    let n2 = data.slice(position.toNumber())
 
                     this.stack.pop()
                     this.stack.pop()
@@ -1515,7 +1617,7 @@ class Interp extends Struct {
      * transaction is valid or not. It simply iterates over the results generated
      * by the results method.
      */
-    verify(scriptSig, scriptPubKey, tx, nIn, flags, valueBn) {
+    public verify(scriptSig: Script, scriptPubKey: Script, tx: Tx, nIn: number, flags: number, valueBn: Bn): boolean {
         let results = this.results(scriptSig, scriptPubKey, tx, nIn, flags, valueBn)
         for (let success of results) {
             if (!success) {
@@ -1538,7 +1640,14 @@ class Interp extends Struct {
      * is a generator, thus you can and need to iterate through it.  To
      * automatically return true or false, use the verify method.
      */
-    *results(scriptSig, scriptPubKey, tx, nIn, flags, valueBn) {
+    public *results(
+        scriptSig: Script,
+        scriptPubKey: Script,
+        tx: Tx,
+        nIn: number,
+        flags: number,
+        valueBn: Bn
+    ): Generator<boolean, void, unknown> {
         let stackCopy
 
         this.fromObject({
@@ -1658,7 +1767,7 @@ class Interp extends Struct {
      * JSON-compatible object so it can be easily stringified. pc refers to the
      * currently executing opcode.
      */
-    getDebugObject() {
+    public getDebugObject() {
         let pc = this.pc - 1 // pc is incremented immediately after getting
         return {
             errStr: this.errStr,
@@ -1670,85 +1779,7 @@ class Interp extends Struct {
         }
     }
 
-    getDebugString() {
+    public getDebugString(): string {
         return JSON.stringify(this.getDebugObject(), null, 2)
     }
 }
-
-Interp.true = Buffer.from([1])
-Interp.false = Buffer.from([])
-
-Interp.MAX_SCRIPT_ELEMENT_SIZE = 520
-Interp.LOCKTIME_THRESHOLD = 500000000 // Tue Nov  5 00:53:20 1985 UTC
-
-// flags taken from bitcoin core
-// bitcoin core commit: b5d1b1092998bc95313856d535c632ea5a8f9104
-Interp.SCRIPT_VERIFY_NONE = 0
-
-// Evaluate P2SH subScripts (softfork safe, Bip16).
-Interp.SCRIPT_VERIFY_P2SH = 1 << 0
-
-// Passing a non-strict-DER signature or one with undefined hashtype to a checksig operation causes script failure.
-// Passing a pubKey that is not (0x04 + 64 bytes) or (0x02 or 0x03 + 32 bytes) to checksig causes that pubKey to be
-// skipped (not softfork safe: this flag can widen the validity of OP_CHECKSIG OP_NOT).
-Interp.SCRIPT_VERIFY_STRICTENC = 1 << 1
-
-// Passing a non-strict-DER signature to a checksig operation causes script failure (softfork safe, Bip62 rule 1)
-Interp.SCRIPT_VERIFY_DERSIG = 1 << 2
-
-// Passing a non-strict-DER signature or one with S > order/2 to a checksig operation causes script failure
-// (softfork safe, Bip62 rule 5).
-Interp.SCRIPT_VERIFY_LOW_S = 1 << 3
-
-// verify dummy stack item consumed by CHECKMULTISIG is of zero-length (softfork safe, Bip62 rule 7).
-Interp.SCRIPT_VERIFY_NULLDUMMY = 1 << 4
-
-// Using a non-push operator in the scriptSig causes script failure (softfork safe, Bip62 rule 2).
-Interp.SCRIPT_VERIFY_SIGPUSHONLY = 1 << 5
-
-// Require minimal encodings for all push operations (OP_0... OP_16, OP_1NEGATE where possible, direct
-// pushes up to 75 bytes, OP_PUSHDATA up to 255 bytes, OP_PUSHDATA2 for anything larger). Evaluating
-// any other push causes the script to fail (Bip62 rule 3).
-// In addition, whenever a stack element is interpreted as a number, it must be of minimal length (Bip62 rule 4).
-// (softfork safe)
-Interp.SCRIPT_VERIFY_MINIMALDATA = 1 << 6
-
-// Discourage use of NOPs reserved for upgrades (NOP1-10)
-//
-// Provided so that nodes can avoid accepting or mining transactions
-// containing executed NOP's whose meaning may change after a soft-fork,
-// thus rendering the script invalid; with this flag set executing
-// discouraged NOPs fails the script. This verification flag will never be
-// a mandatory flag applied to scripts in a block. NOPs that are not
-// executed, e.g.  within an unexecuted IF ENDIF block, are *not* rejected.
-Interp.SCRIPT_VERIFY_DISCOURAGE_UPGRADABLE_NOPS = 1 << 7
-
-// Require that only a single stack element remains after evaluation. This
-// changes the success criterion from "At least one stack element must
-// remain, and when interpreted as a boolean, it must be true" to "Exactly
-// one stack element must remain, and when interpreted as a boolean, it must
-// be true".  (softfork safe, Bip62 rule 6)
-// Note: CLEANSTACK should never be used without P2SH.
-Interp.SCRIPT_VERIFY_CLEANSTACK = 1 << 8
-
-// Verify CHECKLOCKTIMEVERIFY
-//
-// See Bip65 for details.
-Interp.SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY = 1 << 9
-
-// support CHECKSEQUENCEVERIFY opCode
-//
-// See Bip112 for details
-Interp.SCRIPT_VERIFY_CHECKSEQUENCEVERIFY = 1 << 10
-
-// used for UAHF
-// https://github.com/Bitcoin-UAHF/spec/blob/master/replay-protected-sighash.md
-Interp.SCRIPT_ENABLE_SIGHASH_FORKID = 1 << 16
-
-// These are the things we wish to verify by default. At the time of writing,
-// P2SH and CHECKLOCKTIMEVERIFY are both active, but CHECKSEQUENCEVERIFY is
-// not.
-Interp.defaultFlags = Interp.SCRIPT_VERIFY_P2SH | Interp.SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY
-// Interp.defaultFlags = Interp.SCRIPT_VERIFY_P2SH | Interp.SCRIPT_VERIFY_CHECKLOCKTIMEVERIFY | Interp.SCRIPT_VERIFY_CHECKSEQUENCEVERIFY
-
-export { Interp }

@@ -20,7 +20,7 @@ import { TxOut, TxOutLike } from './tx-out'
 import { VarInt } from './var-int'
 import { Workers } from './workers'
 
-interface TxLike {
+export interface TxLike {
     versionBytesNum: number
     txInsVi: string
     txIns: TxInLike[]

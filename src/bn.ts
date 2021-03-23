@@ -295,7 +295,7 @@ BnLegacy.prototype.fromScriptNumBuffer = function (buf, fRequireMinimal, nMaxNum
 // an error if the output is larger than four bytes. (Which can happen if
 // performing a numerical operation that results in an overflow to more than 4
 // bytes).
-BnLegacy.prototype.toScriptNumBuffer = function (buf) {
+BnLegacy.prototype.toScriptNumBuffer = function () {
     return this.toSm({ endian: 'little' })
 }
 
@@ -575,7 +575,7 @@ class BnDefinition {
     // an error if the output is larger than four bytes. (Which can happen if
     // performing a numerical operation that results in an overflow to more than 4
     // bytes).
-    toScriptNumBuffer(buf: Buffer): Buffer {
+    toScriptNumBuffer(): Buffer {
         return 0 as any
     }
 
@@ -762,7 +762,7 @@ class BnDefinition {
     /**
      * @description a equals b
      */
-    eq(b: BnDefinition): boolean {
+    eq(b: BnDefinition | number): boolean {
         return 0 as any
     }
 
@@ -818,7 +818,7 @@ class BnDefinition {
     /**
      * @description addition
      */
-    add(b: BnDefinition): BnDefinition {
+    add(b: BnDefinition | number): BnDefinition {
         return 0 as any
     }
 
@@ -846,7 +846,7 @@ class BnDefinition {
     /**
      * @description subtraction
      */
-    sub(b: BnDefinition): BnDefinition {
+    sub(b: BnDefinition | number): BnDefinition {
         return 0 as any
     }
 
@@ -1193,7 +1193,7 @@ class BnDefinition {
         return 0 as any
     }
 
-    neq(b: BnDefinition): boolean {
+    neq(b: BnDefinition | number): boolean {
         return 0 as any
     }
     geq(b: BnDefinition): boolean {
