@@ -388,7 +388,9 @@ export class Tx extends Struct {
         return JSON.parse(workersResult.resbuf.toString())
     }
 
-    public addTxIn(txHashBuf: Buffer, txOutNum: number, script: Script, nSequence: number): this {
+    public addTxIn(txHashBuf: TxIn): this
+    public addTxIn(txHashBuf: Buffer, txOutNum: number, script: Script, nSequence: number): this
+    public addTxIn(txHashBuf: Buffer | TxIn, txOutNum?: number, script?: Script, nSequence?: number): this {
         let txIn: TxIn
         if (txHashBuf instanceof TxIn) {
             txIn = txHashBuf
@@ -400,7 +402,9 @@ export class Tx extends Struct {
         return this
     }
 
-    public addTxOut(valueBn: Bn, script: Script): this {
+    public addTxOut(valueBn: TxOut): this
+    public addTxOut(valueBn: Bn, script: Script): this
+    public addTxOut(valueBn: Bn | TxOut, script?: Script): this {
         let txOut: TxOut
         if (valueBn instanceof TxOut) {
             txOut = valueBn

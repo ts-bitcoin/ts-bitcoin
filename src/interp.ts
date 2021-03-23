@@ -133,9 +133,9 @@ export class Interp extends Struct {
     public valueBn: Bn
 
     constructor(
-        script: Script,
-        tx: Tx,
-        nIn: number,
+        script?: Script,
+        tx?: Tx,
+        nIn?: number,
         stack: Buffer[] = [],
         altStack: Buffer[] = [],
         pc = 0,

@@ -12,7 +12,7 @@ import { Struct } from './struct'
 import { Tx } from './tx'
 import { TxOut } from './tx-out'
 
-type TxOutMapLike = { [label: string]: string }
+export type TxOutMapLike = { [label: string]: string }
 
 export class TxOutMap extends Struct {
     public map: Map<string, TxOut>

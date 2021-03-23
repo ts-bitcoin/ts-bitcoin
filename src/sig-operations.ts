@@ -24,6 +24,8 @@ interface SigOperationsMapItem {
     log?: any
 }
 
+export type SigOperationsLike = { [label: string]: SigOperationsMapItem[] }
+
 export class SigOperations extends Struct {
     public map: Map<string, SigOperationsMapItem[]>
 

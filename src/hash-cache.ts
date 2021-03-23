@@ -6,6 +6,12 @@
  */
 import { Struct } from './struct'
 
+export interface HashCacheLike {
+    prevoutsHashBuf: string
+    sequenceHashBuf: string
+    outputsHashBuf: string
+}
+
 export class HashCache extends Struct {
     public prevoutsHashBuf: Buffer
     public sequenceHashBuf: Buffer
@@ -24,14 +30,14 @@ export class HashCache extends Struct {
         return Buffer.from(JSON.stringify(this.toJSON()))
     }
 
-    public fromJSON(json: { prevoutsHashBuf?: string; sequenceHashBuf?: string; outputsHashBuf?: string }): this {
+    public fromJSON(json: HashCacheLike): this {
         this.prevoutsHashBuf = json.prevoutsHashBuf ? Buffer.from(json.prevoutsHashBuf, 'hex') : undefined
         this.sequenceHashBuf = json.sequenceHashBuf ? Buffer.from(json.sequenceHashBuf, 'hex') : undefined
         this.outputsHashBuf = json.outputsHashBuf ? Buffer.from(json.outputsHashBuf, 'hex') : undefined
         return this
     }
 
-    public toJSON() {
+    public toJSON(): HashCacheLike {
         return {
             prevoutsHashBuf: this.prevoutsHashBuf ? this.prevoutsHashBuf.toString('hex') : undefined,
             sequenceHashBuf: this.sequenceHashBuf ? this.sequenceHashBuf.toString('hex') : undefined,

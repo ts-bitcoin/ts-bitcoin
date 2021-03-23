@@ -2,34 +2,67 @@
  * Transaction Builder
  * ===================
  */
-'use strict'
-
 import { Address } from './address'
 import { Constants as Cst } from './constants'
 import { Bn } from './bn'
-import { HashCache } from './hash-cache'
+import { HashCache, HashCacheLike } from './hash-cache'
 import { Script } from './script'
-import { SigOperations } from './sig-operations'
+import { SigOperations, SigOperationsLike } from './sig-operations'
 import { Sig } from './sig'
 import { Struct } from './struct'
 import { Tx } from './tx'
 import { TxIn } from './tx-in'
 import { TxOut } from './tx-out'
-import { TxOutMap } from './tx-out-map'
+import { TxOutMap, TxOutMapLike } from './tx-out-map'
 import { VarInt } from './var-int'
+import { PubKey } from './pub-key'
+import { KeyPair } from './key-pair'
 
 const Constants = Cst.Default.TxBuilder
 
-class TxBuilder extends Struct {
+interface TxBuilderLike {
+    tx: string
+    txIns: string[]
+    txOuts: string[]
+    uTxOutMap: TxOutMapLike
+    sigOperations: SigOperationsLike
+    changeScript: string
+    changeAmountBn: number
+    feeAmountBn: number
+    feePerKbNum: number
+    sigsPerInput: number
+    dust: number
+    dustChangeToFees: boolean
+    hashCache: HashCacheLike
+}
+
+export class TxBuilder extends Struct {
+    public tx: Tx
+    public txIns: TxIn[]
+    public txOuts: TxOut[]
+    public uTxOutMap: TxOutMap
+    public sigOperations: SigOperations
+    public changeScript: Script
+    public changeAmountBn: Bn
+    public feeAmountBn: Bn
+    public feePerKbNum: number
+    public sigsPerInput: number
+    public dust: number
+    public dustChangeToFees: boolean
+    public hashCache: HashCache
+
+    public nLockTime: number
+    public versionBytesNum: number
+
     constructor(
         tx = new Tx(),
-        txIns = [],
-        txOuts = [],
+        txIns: TxIn[] = [],
+        txOuts: TxOut[] = [],
         uTxOutMap = new TxOutMap(),
         sigOperations = new SigOperations(),
-        changeScript,
-        changeAmountBn,
-        feeAmountBn,
+        changeScript?: Script,
+        changeAmountBn?: Bn,
+        feeAmountBn?: Bn,
         feePerKbNum = Constants.feePerKbNum,
         nLockTime = 0,
         versionBytesNum = 1,
@@ -57,8 +90,8 @@ class TxBuilder extends Struct {
         })
     }
 
-    toJSON() {
-        const json = {}
+    public toJSON(): TxBuilderLike {
+        const json: TxBuilderLike = {} as any
         json.tx = this.tx.toHex()
         json.txIns = this.txIns.map((txIn) => txIn.toHex())
         json.txOuts = this.txOuts.map((txOut) => txOut.toHex())
@@ -75,7 +108,7 @@ class TxBuilder extends Struct {
         return json
     }
 
-    fromJSON(json) {
+    public fromJSON(json: TxBuilderLike): this {
         this.tx = new Tx().fromHex(json.tx)
         this.txIns = json.txIns.map((txIn) => TxIn.fromHex(txIn))
         this.txOuts = json.txOuts.map((txOut) => TxOut.fromHex(txOut))
@@ -92,7 +125,7 @@ class TxBuilder extends Struct {
         return this
     }
 
-    setFeePerKbNum(feePerKbNum) {
+    public setFeePerKbNum(feePerKbNum: number): this {
         if (typeof feePerKbNum !== 'number' || feePerKbNum <= 0) {
             throw new Error('cannot set a fee of zero or less')
         }
@@ -100,12 +133,12 @@ class TxBuilder extends Struct {
         return this
     }
 
-    setChangeAddress(changeAddress) {
+    public setChangeAddress(changeAddress: Address): this {
         this.changeScript = changeAddress.toTxOutScript()
         return this
     }
 
-    setChangeScript(changeScript) {
+    public setChangeScript(changeScript: Script): this {
         this.changeScript = changeScript
         return this
     }
@@ -113,12 +146,12 @@ class TxBuilder extends Struct {
     /**
      * nLockTime is an unsigned integer.
      */
-    setNLocktime(nLockTime) {
+    public setNLocktime(nLockTime: number): this {
         this.nLockTime = nLockTime
         return this
     }
 
-    setVersion(versionBytesNum) {
+    public setVersion(versionBytesNum: number): this {
         this.versionBytesNum = versionBytesNum
         return this
     }
@@ -128,7 +161,7 @@ class TxBuilder extends Struct {
      * dust. Values less than dust cannot be broadcast. If you are OK with
      * sending dust amounts to fees, then set this value to true.
      */
-    setDust(dust = Constants.dust) {
+    public setDust(dust = Constants.dust): this {
         this.dust = dust
         return this
     }
@@ -141,7 +174,7 @@ class TxBuilder extends Struct {
      * might not be possible if the change itself is less than dust, in which
      * case all dust goes to fees.
      */
-    sendDustChangeToFees(dustChangeToFees = false) {
+    public sendDustChangeToFees(dustChangeToFees = false): this {
         this.dustChangeToFees = dustChangeToFees
         return this
     }
@@ -154,7 +187,7 @@ class TxBuilder extends Struct {
      * an input, including the script in the output, which is why this is
      * necessary when signing an input.
      */
-    importPartiallySignedTx(tx, uTxOutMap = this.uTxOutMap, sigOperations = this.sigOperations) {
+    public importPartiallySignedTx(tx: Tx, uTxOutMap = this.uTxOutMap, sigOperations = this.sigOperations): this {
         this.tx = tx
         this.uTxOutMap = uTxOutMap
         this.sigOperations = sigOperations
@@ -164,7 +197,7 @@ class TxBuilder extends Struct {
     /**
      * Pay "from" a script - in other words, add an input to the transaction.
      */
-    inputFromScript(txHashBuf, txOutNum, txOut, script, nSequence) {
+    public inputFromScript(txHashBuf: Buffer, txOutNum: number, txOut: TxOut, script: Script, nSequence: number): this {
         if (
             !Buffer.isBuffer(txHashBuf) ||
             !(typeof txOutNum === 'number') ||
@@ -178,7 +211,14 @@ class TxBuilder extends Struct {
         return this
     }
 
-    addSigOperation(txHashBuf, txOutNum, nScriptChunk, type, addressStr, nHashType) {
+    public addSigOperation(
+        txHashBuf: Buffer,
+        txOutNum: number,
+        nScriptChunk: number,
+        type: 'sig' | 'pubKey',
+        addressStr: string,
+        nHashType?: number
+    ): this {
         this.sigOperations.addOne(txHashBuf, txOutNum, nScriptChunk, type, addressStr, nHashType)
         return this
     }
@@ -187,7 +227,14 @@ class TxBuilder extends Struct {
      * Pay "from" a pubKeyHash output - in other words, add an input to the
      * transaction.
      */
-    inputFromPubKeyHash(txHashBuf, txOutNum, txOut, pubKey, nSequence, nHashType) {
+    public inputFromPubKeyHash(
+        txHashBuf: Buffer,
+        txOutNum: number,
+        txOut: TxOut,
+        pubKey: PubKey,
+        nSequence: number,
+        nHashType: number
+    ): this {
         if (!Buffer.isBuffer(txHashBuf) || typeof txOutNum !== 'number' || !(txOut instanceof TxOut)) {
             throw new Error('invalid one of: txHashBuf, txOutNum, txOut')
         }
@@ -203,7 +250,7 @@ class TxBuilder extends Struct {
      * An address to send funds to, along with the amount. The amount should be
      * denominated in satoshis, not bitcoins.
      */
-    outputToAddress(valueBn, addr) {
+    public outputToAddress(valueBn: Bn, addr: Address): this {
         if (!(addr instanceof Address) || !(valueBn instanceof Bn)) {
             throw new Error('addr must be an Address, and valueBn must be a Bn')
         }
@@ -216,7 +263,7 @@ class TxBuilder extends Struct {
      * A script to send funds to, along with the amount. The amount should be
      * denominated in satoshis, not bitcoins.
      */
-    outputToScript(valueBn, script) {
+    public outputToScript(valueBn: Bn, script: Script): this {
         if (!(script instanceof Script) || !(valueBn instanceof Bn)) {
             throw new Error('script must be a Script, and valueBn must be a Bn')
         }
@@ -225,7 +272,7 @@ class TxBuilder extends Struct {
         return this
     }
 
-    buildOutputs() {
+    public buildOutputs(): Bn {
         let outAmountBn = new Bn(0)
         this.txOuts.forEach((txOut) => {
             if (txOut.valueBn.lt(this.dust) && !txOut.script.isOpReturn() && !txOut.script.isSafeDataOut()) {
@@ -237,7 +284,7 @@ class TxBuilder extends Struct {
         return outAmountBn
     }
 
-    buildInputs(outAmountBn, extraInputsNum = 0) {
+    public buildInputs(outAmountBn: Bn, extraInputsNum = 0): Bn {
         let inAmountBn = new Bn(0)
         for (const txIn of this.txIns) {
             const txOut = this.uTxOutMap.get(txIn.txHashBuf, txIn.txOutNum)
@@ -264,7 +311,7 @@ class TxBuilder extends Struct {
     // Thanks to SigOperations, if those are accurately used, then we can
     // accurately estimate what the size of the transaction is going to be once
     // all the signatures and public keys are inserted.
-    estimateSize() {
+    public estimateSize(): number {
         // largest possible sig size. final 1 is for pushdata at start. second to
         // final is sighash byte. the rest are DER encoding.
         const sigSize = 1 + 1 + 1 + 1 + 32 + 1 + 1 + 32 + 1 + 1
@@ -296,7 +343,7 @@ class TxBuilder extends Struct {
         return Math.round(size)
     }
 
-    estimateFee(extraFeeAmount = new Bn(0)) {
+    public estimateFee(extraFeeAmount = new Bn(0)): Bn {
         // old style rounding up per kb - pays too high fees:
         // const fee = Math.ceil(this.estimateSize() / 1000) * this.feePerKbNum
 
@@ -314,7 +361,7 @@ class TxBuilder extends Struct {
      * to use all the inputs (such as if you wish to spend the entire balance
      * of a wallet), set the argument useAllInputs = true.
      */
-    build(opts = { useAllInputs: false }) {
+    public build(opts = { useAllInputs: false }): this {
         let minFeeAmountBn
         if (this.txIns.length <= 0) {
             throw Error('tx-builder number of inputs must be greater than 0')
@@ -383,7 +430,7 @@ class TxBuilder extends Struct {
     }
 
     // BIP 69 sorting. call after build() but before sign()
-    sort() {
+    public sort(): this {
         this.tx.sort()
         return this
     }
@@ -391,7 +438,7 @@ class TxBuilder extends Struct {
     /**
      * Check if all signatures are present in a multisig input script.
      */
-    static allSigsPresent(m, script) {
+    public static allSigsPresent(m: number, script: Script): boolean {
         // The first element is a Famous MultiSig Bug OP_0, and last element is the
         // redeemScript. The rest are signatures.
         let present = 0
@@ -406,7 +453,7 @@ class TxBuilder extends Struct {
     /**
      * Remove blank signatures in a multisig input script.
      */
-    static removeBlankSigs(script) {
+    public static removeBlankSigs(script: Script): Script {
         // The first element is a Famous MultiSig Bug OP_0, and last element is the
         // redeemScript. The rest are signatures.
         script = new Script(script.chunks.slice()) // copy the script
@@ -418,7 +465,7 @@ class TxBuilder extends Struct {
         return script
     }
 
-    fillSig(nIn, nScriptChunk, sig) {
+    public fillSig(nIn: number, nScriptChunk: number, sig: Sig): this {
         const txIn = this.tx.txIns[nIn]
         txIn.script.chunks[nScriptChunk] = new Script().writeBuffer(sig.toTxFormat()).chunks[0]
         txIn.scriptVi = VarInt.fromNumber(txIn.script.toBuffer().length)
@@ -433,13 +480,13 @@ class TxBuilder extends Struct {
      * you're not normal because you're using OP_CODESEPARATORs, you know what
      * to do.
      */
-    getSig(
-        keyPair,
+    public getSig(
+        keyPair: KeyPair,
         nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID,
-        nIn,
-        subScript,
+        nIn: number,
+        subScript: Script,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID
-    ) {
+    ): Sig {
         let valueBn
         if (nHashType & Sig.SIGHASH_FORKID && flags & Tx.SCRIPT_ENABLE_SIGHASH_FORKID) {
             const txHashBuf = this.tx.txIns[nIn].txHashBuf
@@ -457,13 +504,13 @@ class TxBuilder extends Struct {
      * Asynchronously sign an input in a worker, but do not fill the signature
      * into the transaction. Return the signature.
      */
-    asyncGetSig(
-        keyPair,
+    public asyncGetSig(
+        keyPair: KeyPair,
         nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID,
-        nIn,
-        subScript,
+        nIn: number,
+        subScript: Script,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID
-    ) {
+    ): Promise<Sig> {
         let valueBn
         if (nHashType & Sig.SIGHASH_FORKID && flags & Tx.SCRIPT_ENABLE_SIGHASH_FORKID) {
             const txHashBuf = this.tx.txIns[nIn].txHashBuf
@@ -482,14 +529,14 @@ class TxBuilder extends Struct {
      * This method only works for some standard transaction types. For
      * non-standard transaction types, use getSig.
      */
-    signTxIn(
-        nIn,
-        keyPair,
-        txOut,
-        nScriptChunk,
+    public signTxIn(
+        nIn: number,
+        keyPair: KeyPair,
+        txOut: TxOut,
+        nScriptChunk: number,
         nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID
-    ) {
+    ): this {
         const txIn = this.tx.txIns[nIn]
         const script = txIn.script
         if (nScriptChunk === undefined && script.isPubKeyHashIn()) {
@@ -505,7 +552,7 @@ class TxBuilder extends Struct {
         }
         const outScript = txOut.script
         const subScript = outScript // true for standard script types
-        const sig = this.getSig(keyPair, nHashType, nIn, subScript, flags, this.hashCache)
+        const sig = this.getSig(keyPair, nHashType, nIn, subScript, flags)
         this.fillSig(nIn, nScriptChunk, sig)
         return this
     }
@@ -515,14 +562,14 @@ class TxBuilder extends Struct {
      * signature into the transaction.  This method only works for some standard
      * transaction types. For non-standard transaction types, use asyncGetSig.
      */
-    async asyncSignTxIn(
-        nIn,
-        keyPair,
-        txOut,
-        nScriptChunk,
+    public async asyncSignTxIn(
+        nIn: number,
+        keyPair: KeyPair,
+        txOut: TxOut,
+        nScriptChunk: number,
         nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID
-    ) {
+    ): Promise<this> {
         const txIn = this.tx.txIns[nIn]
         const script = txIn.script
         if (nScriptChunk === undefined && script.isPubKeyHashIn()) {
@@ -538,12 +585,12 @@ class TxBuilder extends Struct {
         }
         const outScript = txOut.script
         const subScript = outScript // true for standard script types
-        const sig = await this.asyncGetSig(keyPair, nHashType, nIn, subScript, flags, this.hashCache)
+        const sig = await this.asyncGetSig(keyPair, nHashType, nIn, subScript, flags)
         this.fillSig(nIn, nScriptChunk, sig)
         return this
     }
 
-    signWithKeyPairs(keyPairs) {
+    public signWithKeyPairs(keyPairs: KeyPair[]): this {
         // produce map of addresses to private keys
         const addressStrMap = {}
         for (const keyPair of keyPairs) {
@@ -566,7 +613,7 @@ class TxBuilder extends Struct {
                 }
                 const txOut = this.uTxOutMap.get(txIn.txHashBuf, txIn.txOutNum)
                 if (type === 'sig') {
-                    this.signTxIn(nIn, keyPair, txOut, nScriptChunk, nHashType)
+                    this.signTxIn(~~nIn, keyPair, txOut, nScriptChunk, nHashType)
                     obj.log = 'successfully inserted signature'
                 } else if (type === 'pubKey') {
                     txIn.script.chunks[nScriptChunk] = new Script().writeBuffer(keyPair.pubKey.toBuffer()).chunks[0]
@@ -581,5 +628,3 @@ class TxBuilder extends Struct {
         return this
     }
 }
-
-export { TxBuilder }
