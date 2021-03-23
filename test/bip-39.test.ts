@@ -5,7 +5,7 @@ import { Bip39Jp } from '../src/bip-39-jp'
 import { Bip39En } from '../src/bip-39-en'
 import { Random } from '../src/random'
 import should = require('should')
-import vectors from './vectors/bip39.json'
+import * as vectors from './vectors/bip39.json'
 import { wordList as enWordList } from '../src/bip-39-en-wordlist'
 import { wordList as jpWordList } from '../src/bip-39-jp-wordlist'
 

@@ -119,7 +119,7 @@
   },
   "license": "MIT",
   "mocha": {
-    "spec": "test/tx-builder.test.ts",
+    "spec": "test/**/*.test.ts",
     "require": "ts-node/register",
     "reporter": "progress",
     "recursive": true

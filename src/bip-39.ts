@@ -135,7 +135,7 @@ export class Bip39 extends Struct {
         return this.seed
     }
 
-    public async asyncToSeed(passphrase: string): Promise<Buffer> {
+    public async asyncToSeed(passphrase?: string): Promise<Buffer> {
         if (passphrase === undefined) {
             passphrase = ''
         }

@@ -1,19 +1,16 @@
-import { Address } from '../src/address'
 import { Bn } from '../src/bn'
 import { Br } from '../src/br'
 import { Interp } from '../src/interp'
-import { KeyPair } from '../src/key-pair'
 import { Script } from '../src/script'
 import { Tx } from '../src/tx'
 import { TxOut } from '../src/tx-out'
 import { TxOutMap } from '../src/tx-out-map'
-import { TxBuilder } from '../src/tx-builder'
 import { TxVerifier } from '../src/tx-verifier'
 import should = require('should')
-import coolestTxVector from './vectors/coolest-tx-ever-sent.json'
-import sighashSingleVector from './vectors/sighash-single-bug.json'
-import txInvalid from './vectors/bitcoind/tx_invalid.json'
-import txValid from './vectors/bitcoind/tx_valid.json'
+import * as coolestTxVector from './vectors/coolest-tx-ever-sent.json'
+import * as sighashSingleVector from './vectors/sighash-single-bug.json'
+import * as txInvalid from './vectors/bitcoind/tx_invalid.json'
+import * as txValid from './vectors/bitcoind/tx_valid.json'
 
 describe('TxVerifier', function () {
     it('should make a new txVerifier', function () {
@@ -21,18 +18,16 @@ describe('TxVerifier', function () {
         ;(txVerifier instanceof TxVerifier).should.equal(true)
         txVerifier = new TxVerifier()
         ;(txVerifier instanceof TxVerifier).should.equal(true)
-        txVerifier = new TxVerifier({
-            tx: new Tx(),
-        })
+        txVerifier = new TxVerifier(new Tx())
         should.exist(txVerifier.tx)
     })
 
     describe('#getDebugObject', function () {
         it('should get an object with these properties', function () {
             const vector = txInvalid[10]
-            const inputs = vector[0]
-            const txhex = vector[1]
-            const flags = Interp.getFlags(vector[2])
+            const inputs = (vector[0] as any) as number[]
+            const txhex = (vector[1] as any) as string
+            const flags = Interp.getFlags(vector[2] as any)
 
             const txOutMap = new TxOutMap()
             inputs.forEach(function (input) {
@@ -58,9 +53,9 @@ describe('TxVerifier', function () {
     describe('#getDebugString', function () {
         it('should get an object with these properties', function () {
             const vector = txInvalid[10]
-            const inputs = vector[0]
-            const txhex = vector[1]
-            const flags = Interp.getFlags(vector[2])
+            const inputs = (vector[0] as any) as number[]
+            const txhex = (vector[1] as any) as string
+            const flags = Interp.getFlags(vector[2] as any)
 
             const txOutMap = new TxOutMap()
             inputs.forEach(function (input) {
@@ -130,9 +125,9 @@ describe('TxVerifier', function () {
             }
             c++
             it('should verify txValid vector ' + c, function () {
-                const inputs = vector[0]
-                const txhex = vector[1]
-                const flags = Interp.getFlags(vector[2])
+                const inputs = (vector[0] as any) as number[]
+                const txhex = (vector[1] as any) as string
+                const flags = Interp.getFlags(vector[2] as any)
 
                 const txOutMap = new TxOutMap()
                 inputs.forEach(function (input) {
@@ -151,9 +146,9 @@ describe('TxVerifier', function () {
             })
 
             it('should async verify txValid vector ' + c, async function () {
-                const inputs = vector[0]
-                const txhex = vector[1]
-                const flags = Interp.getFlags(vector[2])
+                const inputs = (vector[0] as any) as number[]
+                const txhex = (vector[1] as any) as string
+                const flags = Interp.getFlags(vector[2] as any)
 
                 const txOutMap = new TxOutMap()
                 inputs.forEach(function (input) {
@@ -179,9 +174,9 @@ describe('TxVerifier', function () {
             }
             c++
             it('should unverify txInvalid vector ' + c, function () {
-                const inputs = vector[0]
-                const txhex = vector[1]
-                const flags = Interp.getFlags(vector[2])
+                const inputs = (vector[0] as any) as number[]
+                const txhex = (vector[1] as any) as string
+                const flags = Interp.getFlags(vector[2] as any)
 
                 const txOutMap = new TxOutMap()
                 inputs.forEach(function (input) {
@@ -201,9 +196,9 @@ describe('TxVerifier', function () {
             })
 
             it('should async unverify txInvalid vector ' + c, async function () {
-                const inputs = vector[0]
-                const txhex = vector[1]
-                const flags = Interp.getFlags(vector[2])
+                const inputs = (vector[0] as any) as number[]
+                const txhex = (vector[1] as any) as string
+                const flags = Interp.getFlags(vector[2] as any)
 
                 const txOutMap = new TxOutMap()
                 inputs.forEach(function (input) {

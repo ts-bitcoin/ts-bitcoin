@@ -21,11 +21,11 @@ export class WorkersResult extends Struct {
         super({ resbuf, isError, id })
     }
 
-    public fromResult(result: Buffer | Struct, id: number): this {
+    public fromResult(result: Buffer | Struct | string, id: number): this {
         if (Buffer.isBuffer(result)) {
             this.resbuf = result
-        } else if (result.toFastBuffer) {
-            this.resbuf = result.toFastBuffer()
+        } else if ((result as any).toFastBuffer) {
+            this.resbuf = (result as any).toFastBuffer()
         } else {
             this.resbuf = Buffer.from(JSON.stringify(result))
         }
@@ -34,7 +34,7 @@ export class WorkersResult extends Struct {
         return this
     }
 
-    public static fromResult(result: Buffer | Struct, id: number): WorkersResult {
+    public static fromResult(result: Buffer | Struct | string, id: number): WorkersResult {
         return new this().fromResult(result, id)
     }
 

@@ -36,7 +36,7 @@ describe('TxOut', function () {
 
     describe('#setScript', function () {
         it('should set the script size correctly', function () {
-            const txOut2 = new TxOut(txOut)
+            const txOut2 = new TxOut().fromJSON(txOut.toJSON())
             txOut2
                 .setScript(new Script().fromString('OP_RETURN OP_RETURN OP_RETURN'))
                 .scriptVi.toNumber()
@@ -46,7 +46,7 @@ describe('TxOut', function () {
 
     describe('#fromProperties', function () {
         it('should make a new txOut', function () {
-            const valueBn = Bn(0)
+            const valueBn = new Bn(0)
             const script = Script.fromString('OP_RETURN')
             const txOut = new TxOut().fromProperties(valueBn, script)
             txOut.scriptVi.toNumber().should.equal(1)
@@ -55,7 +55,7 @@ describe('TxOut', function () {
 
     describe('@fromProperties', function () {
         it('should make a new txOut', function () {
-            const valueBn = Bn(0)
+            const valueBn = new Bn(0)
             const script = Script.fromString('OP_RETURN')
             const txOut = TxOut.fromProperties(valueBn, script)
             txOut.scriptVi.toNumber().should.equal(1)

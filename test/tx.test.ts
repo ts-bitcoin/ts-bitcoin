@@ -11,12 +11,12 @@ import { Interp } from '../src/interp'
 import should = require('should')
 import * as sinon from 'sinon'
 
-import vectorsBitcoindSighash from './vectors/bitcoind/sighash.json'
-import vectorsBitcoinABCSighash from './vectors/bitcoin-abc/sighash.json'
-import vectorsBitcoindTxValid from './vectors/bitcoind/tx_valid.json'
-import vectorsBitcoindTxInvalid from './vectors/bitcoind/tx_invalid.json'
-import largesttxvector from './vectors/largesttx.json'
-import fixture from './vectors/bip69.json'
+import * as vectorsBitcoindSighash from './vectors/bitcoind/sighash.json'
+import * as vectorsBitcoinABCSighash from './vectors/bitcoin-abc/sighash.json'
+import * as vectorsBitcoindTxValid from './vectors/bitcoind/tx_valid.json'
+import * as vectorsBitcoindTxInvalid from './vectors/bitcoind/tx_invalid.json'
+import * as largesttxvector from './vectors/largesttx.json'
+import * as fixture from './vectors/bip69.json'
 
 describe('Tx', function () {
     const txIn = new TxIn().fromBuffer(
@@ -83,7 +83,7 @@ describe('Tx', function () {
             const tx1 = Tx.fromHex(tx2hex)
             tx1.toJSON = sinon.spy()
             const tx2 = tx1.cloneByBuffer()
-            tx1.toJSON.calledOnce.should.equal(false)
+            ;(tx1.toJSON as sinon.SinonSpy).calledOnce.should.equal(false)
             tx2.should.not.equal(tx1)
             tx2.toHex().should.equal(tx1.toHex())
         })
@@ -365,19 +365,21 @@ describe('Tx', function () {
                 return
             }
             it('should pass bitcoind sighash test vector ' + i, function () {
-                const txbuf = Buffer.from(vector[0], 'hex')
-                const scriptbuf = Buffer.from(vector[1], 'hex')
+                const txbuf = Buffer.from(vector[0] as any, 'hex')
+                const scriptbuf = Buffer.from(vector[1] as any, 'hex')
                 const subScript = new Script().fromBuffer(scriptbuf)
                 const nIn = vector[2]
                 const nHashType = vector[3]
-                const sighashBuf = Buffer.from(vector[4], 'hex')
+                const sighashBuf = Buffer.from(vector[4] as any, 'hex')
                 const tx = Tx.fromBuffer(txbuf)
 
                 // make sure transacion to/from buffer is isomorphic
                 tx.toHex().should.equal(txbuf.toString('hex'))
 
                 // sighash ought to be correct
-                tx.sighash(nHashType, nIn, subScript).toString('hex').should.equal(sighashBuf.toString('hex'))
+                tx.sighash(nHashType as any, nIn as any, subScript)
+                    .toString('hex')
+                    .should.equal(sighashBuf.toString('hex'))
             })
         })
 
@@ -389,12 +391,12 @@ describe('Tx', function () {
                 if (vector[0] === 'Test vectors for SIGHASH_FORKID') {
                     return
                 }
-                const txbuf = Buffer.from(vector[0], 'hex')
-                const scriptbuf = Buffer.from(vector[1], 'hex')
+                const txbuf = Buffer.from(vector[0] as any, 'hex')
+                const scriptbuf = Buffer.from(vector[1] as any, 'hex')
                 const subScript = new Script().fromBuffer(scriptbuf)
-                const nIn = vector[2]
-                const nHashType = vector[3]
-                const sighashBuf = Buffer.from(vector[4], 'hex')
+                const nIn = (vector[2] as any) as number
+                const nHashType = (vector[3] as any) as number
+                const sighashBuf = Buffer.from(vector[4] as any, 'hex')
                 const tx = Tx.fromBuffer(txbuf)
 
                 // make sure transacion to/from buffer is isomorphic
@@ -419,7 +421,7 @@ describe('Tx', function () {
             }
             it('should correctly serialized/deserialize tx_valid test vector ' + j, function () {
                 const txhex = vector[1]
-                const txbuf = Buffer.from(vector[1], 'hex')
+                const txbuf = Buffer.from(vector[1] as any, 'hex')
                 const tx = Tx.fromBuffer(txbuf)
                 tx.toBuffer().toString('hex').should.equal(txhex)
             })
@@ -433,7 +435,7 @@ describe('Tx', function () {
             }
             it('should correctly serialized/deserialize tx_invalid test vector ' + j, function () {
                 const txhex = vector[1]
-                const txbuf = Buffer.from(vector[1], 'hex')
+                const txbuf = Buffer.from(vector[1] as any, 'hex')
                 const tx = Tx.fromBuffer(txbuf)
                 tx.toBuffer().toString('hex').should.equal(txhex)
             })

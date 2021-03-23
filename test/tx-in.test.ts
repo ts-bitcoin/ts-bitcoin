@@ -72,7 +72,7 @@ describe('TxIn', function () {
 
     describe('#setScript', function () {
         it('should calculate the varInt size correctly', function () {
-            const txIn2 = new TxIn(txIn)
+            const txIn2 = new TxIn().fromJSON(txIn.toJSON())
             txIn2
                 .setScript(new Script().fromString('OP_RETURN OP_RETURN OP_RETURN'))
                 .scriptVi.toNumber()

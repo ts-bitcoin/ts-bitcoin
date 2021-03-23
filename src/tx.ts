@@ -165,7 +165,7 @@ export class Tx extends Struct {
         nHashType: number,
         nIn: number,
         subScript: Script,
-        valueBn: Bn,
+        valueBn?: Bn,
         flags = 0,
         hashCache = new HashCache()
     ): Buffer {
@@ -279,7 +279,7 @@ export class Tx extends Struct {
         nHashType: number,
         nIn: number,
         subScript: Script,
-        valueBn: Bn,
+        valueBn?: Bn,
         flags = 0,
         hashCache?: HashCache
     ): Promise<Buffer> {
@@ -300,7 +300,7 @@ export class Tx extends Struct {
         nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID,
         nIn: number,
         subScript: Script,
-        valueBn: Bn,
+        valueBn?: Bn,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID,
         hashCache?: HashCache
     ): Sig {
@@ -316,7 +316,7 @@ export class Tx extends Struct {
         nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID,
         nIn: number,
         subScript: Script,
-        valueBn: Bn,
+        valueBn?: Bn,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID,
         hashCache?: HashCache
     ): Promise<Sig> {
@@ -339,7 +339,7 @@ export class Tx extends Struct {
         nIn: number,
         subScript: Script,
         enforceLowS = false,
-        valueBn: Bn,
+        valueBn?: Bn,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID,
         hashCache?: HashCache
     ): boolean {
@@ -353,7 +353,7 @@ export class Tx extends Struct {
         nIn: number,
         subScript: Script,
         enforceLowS = false,
-        valueBn: Bn,
+        valueBn?: Bn,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID,
         hashCache?: HashCache
     ): Promise<boolean> {
