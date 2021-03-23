@@ -218,7 +218,7 @@ export class Tx extends Struct {
         }
 
         // original bitcoin code follows - not related to UAHF (Bitcoin SV)
-        const txcopy = this.cloneByBuffer()
+        const txcopy: Tx = this.cloneByBuffer()
 
         subScript = new Script().fromBuffer(subScript.toBuffer())
         subScript.removeCodeseparators()

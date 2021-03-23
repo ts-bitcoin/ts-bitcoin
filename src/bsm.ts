@@ -9,8 +9,6 @@
  * which deal with a base64 string representing the compressed format of a
  * signature.
  */
-'use strict'
-
 import { Address } from './address'
 import { Bw } from './bw'
 import { cmp } from './cmp'
@@ -21,12 +19,20 @@ import { Sig } from './sig'
 import { Struct } from './struct'
 import { Workers } from './workers'
 
-class Bsm extends Struct {
-    constructor(messageBuf, keyPair, sig, address, verified) {
+export class Bsm extends Struct {
+    public static readonly magicBytes = Buffer.from('Bitcoin Signed Message:\n')
+
+    public messageBuf: Buffer
+    public keyPair: KeyPair
+    public sig: Sig
+    public address: Address
+    public verified: boolean
+
+    constructor(messageBuf?: Buffer, keyPair?: KeyPair, sig?: Sig, address?: Address, verified?: boolean) {
         super({ messageBuf, keyPair, sig, address, verified })
     }
 
-    static magicHash(messageBuf) {
+    public static magicHash(messageBuf: Buffer): Buffer {
         if (!Buffer.isBuffer(messageBuf)) {
             throw new Error('messageBuf must be a buffer')
         }
@@ -42,13 +48,13 @@ class Bsm extends Struct {
         return hashBuf
     }
 
-    static async asyncMagicHash(messageBuf) {
+    public static async asyncMagicHash(messageBuf: Buffer): Promise<Buffer> {
         const args = [messageBuf]
         const workersResult = await Workers.asyncClassMethod(Bsm, 'magicHash', args)
         return workersResult.resbuf
     }
 
-    static sign(messageBuf, keyPair) {
+    public static sign(messageBuf: Buffer, keyPair: KeyPair): string {
         const m = new Bsm(messageBuf, keyPair)
         m.sign()
         const sigbuf = m.sig.toCompact()
@@ -56,14 +62,14 @@ class Bsm extends Struct {
         return sigstr
     }
 
-    static async asyncSign(messageBuf, keyPair) {
+    public static async asyncSign(messageBuf: Buffer, keyPair: KeyPair): Promise<string> {
         const args = [messageBuf, keyPair]
         const workersResult = await Workers.asyncClassMethod(Bsm, 'sign', args)
         const sigstr = JSON.parse(workersResult.resbuf.toString())
         return sigstr
     }
 
-    static verify(messageBuf, sigstr, address) {
+    public static verify(messageBuf: Buffer, sigstr: string, address: Address): boolean {
         const sigbuf = Buffer.from(sigstr, 'base64')
         const message = new Bsm()
         message.messageBuf = messageBuf
@@ -73,14 +79,14 @@ class Bsm extends Struct {
         return message.verify().verified
     }
 
-    static async asyncVerify(messageBuf, sigstr, address) {
+    public static async asyncVerify(messageBuf: Buffer, sigstr: string, address: Address): Promise<boolean> {
         const args = [messageBuf, sigstr, address]
         const workersResult = await Workers.asyncClassMethod(Bsm, 'verify', args)
         const res = JSON.parse(workersResult.resbuf.toString())
         return res
     }
 
-    sign() {
+    public sign(): this {
         const hashBuf = Bsm.magicHash(this.messageBuf)
         const ecdsa = new Ecdsa().fromObject({
             hashBuf: hashBuf,
@@ -92,7 +98,7 @@ class Bsm extends Struct {
         return this
     }
 
-    verify() {
+    public verify(): this {
         const hashBuf = Bsm.magicHash(this.messageBuf)
 
         const ecdsa = new Ecdsa()
@@ -106,7 +112,7 @@ class Bsm extends Struct {
             return this
         }
 
-        const address = new Address().fromPubKey(ecdsa.keyPair.pubKey, undefined, this.sig.compressed)
+        const address = new Address().fromPubKey(ecdsa.keyPair.pubKey)
         // TODO: what if livenet/testnet mismatch?
         if (cmp(address.hashBuf, this.address.hashBuf)) {
             this.verified = true
@@ -117,7 +123,3 @@ class Bsm extends Struct {
         return this
     }
 }
-
-Bsm.magicBytes = Buffer.from('Bitcoin Signed Message:\n')
-
-export { Bsm }

@@ -2,17 +2,21 @@
  * Transaction Verifier
  * ====================
  */
-'use strict'
-
 import { Bn } from './bn'
 import { Block } from './block'
 import { Interp } from './interp'
 import { Struct } from './struct'
 import { Tx } from './tx'
 import { Workers } from './workers'
+import { TxOutMap } from './tx-out-map'
 
-class TxVerifier extends Struct {
-    constructor(tx, txOutMap, errStr, interp) {
+export class TxVerifier extends Struct {
+    public tx: Tx
+    public txOutMap: TxOutMap
+    public errStr: string
+    public interp: Interp
+
+    constructor(tx?: Tx, txOutMap?: TxOutMap, errStr?: string, interp?: Interp) {
         super({ tx, txOutMap, errStr, interp })
     }
 
@@ -27,7 +31,7 @@ class TxVerifier extends Struct {
      * valid, which is not performed by this test. That check is done with the
      * normal verify function.
      */
-    verify(flags = Interp.SCRIPT_ENABLE_SIGHASH_FORKID) {
+    public verify(flags = Interp.SCRIPT_ENABLE_SIGHASH_FORKID): boolean {
         return !this.checkStr() && !this.verifyStr(flags)
     }
 
@@ -36,7 +40,7 @@ class TxVerifier extends Struct {
      * error was found), and false otherwise. In case an error was found the
      * error message can be accessed by calling this.getDebugString().
      */
-    async asyncVerify(flags) {
+    public async asyncVerify(flags: number): Promise<boolean> {
         const verifyStr = await this.asyncVerifyStr(flags)
         return !this.checkStr() && !verifyStr
     }
@@ -44,11 +48,11 @@ class TxVerifier extends Struct {
     /**
      * Convenience method to verify a transaction.
      */
-    static verify(tx, txOutMap, flags) {
+    public static verify(tx: Tx, txOutMap: TxOutMap, flags: number): boolean {
         return new TxVerifier(tx, txOutMap).verify(flags)
     }
 
-    static asyncVerify(tx, txOutMap, flags) {
+    public static asyncVerify(tx: Tx, txOutMap: TxOutMap, flags: number): Promise<boolean> {
         return new TxVerifier(tx, txOutMap).asyncVerify(flags)
     }
 
@@ -57,7 +61,7 @@ class TxVerifier extends Struct {
      * describing the error. This function contains the same logic as
      * CheckTransaction in bitcoin core.
      */
-    checkStr() {
+    public checkStr(): boolean | string {
         // Basic checks that don't depend on any context
         if (this.tx.txIns.length === 0 || this.tx.txInsVi.toNumber() === 0) {
             this.errStr = 'transaction txIns empty'
@@ -126,7 +130,7 @@ class TxVerifier extends Struct {
      * verify the transaction inputs by running the script interpreter. Returns a
      * string of the script interpreter is invalid, otherwise returns false.
      */
-    verifyStr(flags) {
+    public verifyStr(flags: number): boolean | string {
         for (let i = 0; i < this.tx.txIns.length; i++) {
             if (!this.verifyNIn(i, flags)) {
                 this.errStr = 'input ' + i + ' failed script verify'
@@ -136,7 +140,7 @@ class TxVerifier extends Struct {
         return false
     }
 
-    async asyncVerifyStr(flags) {
+    public async asyncVerifyStr(flags: number): Promise<boolean | string> {
         for (let i = 0; i < this.tx.txIns.length; i++) {
             const verifyNIn = await this.asyncVerifyNIn(i, flags)
             if (!verifyNIn) {
@@ -151,7 +155,7 @@ class TxVerifier extends Struct {
      * Verify a particular input by running the script interpreter. Returns true if
      * the input is valid, false otherwise.
      */
-    verifyNIn(nIn, flags) {
+    public verifyNIn(nIn: number, flags: number): boolean {
         const txIn = this.tx.txIns[nIn]
         const scriptSig = txIn.script
         const txOut = this.txOutMap.get(txIn.txHashBuf, txIn.txOutNum)
@@ -166,7 +170,7 @@ class TxVerifier extends Struct {
         return verified
     }
 
-    async asyncVerifyNIn(nIn, flags) {
+    public async asyncVerifyNIn(nIn: number, flags: number): Promise<boolean> {
         const txIn = this.tx.txIns[nIn]
         const scriptSig = txIn.script
         const txOut = this.txOutMap.get(txIn.txHashBuf, txIn.txOutNum)
@@ -189,16 +193,14 @@ class TxVerifier extends Struct {
         return verified
     }
 
-    getDebugObject() {
+    public getDebugObject() {
         return {
             errStr: this.errStr,
             interpFailure: this.interp ? this.interp.getDebugObject() : undefined,
         }
     }
 
-    getDebugString() {
+    public getDebugString(): string {
         return JSON.stringify(this.getDebugObject(), null, 2)
     }
 }
-
-export { TxVerifier }
