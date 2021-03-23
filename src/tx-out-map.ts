@@ -8,17 +8,20 @@
  * TxOutMap is necessary when signing a transction to get the script and value
  * of that output which is plugged into the sighash algorithm.
  */
-'use strict'
-
 import { Struct } from './struct'
+import { Tx } from './tx'
 import { TxOut } from './tx-out'
 
-class TxOutMap extends Struct {
-    constructor(map = new Map()) {
+type TxOutMapLike = { [label: string]: string }
+
+export class TxOutMap extends Struct {
+    public map: Map<string, TxOut>
+
+    constructor(map: Map<string, TxOut> = new Map()) {
         super({ map })
     }
 
-    toJSON() {
+    public toJSON(): TxOutMapLike {
         const json = {}
         this.map.forEach((txOut, label) => {
             json[label] = txOut.toHex()
@@ -26,25 +29,25 @@ class TxOutMap extends Struct {
         return json
     }
 
-    fromJSON(json) {
+    public fromJSON(json: TxOutMapLike): this {
         Object.keys(json).forEach((label) => {
             this.map.set(label, TxOut.fromHex(json[label]))
         })
         return this
     }
 
-    set(txHashBuf, txOutNum, txOut) {
+    public set(txHashBuf: Buffer, txOutNum: number, txOut: TxOut): this {
         const label = txHashBuf.toString('hex') + ':' + txOutNum
         this.map.set(label, txOut)
         return this
     }
 
-    get(txHashBuf, txOutNum) {
+    public get(txHashBuf: Buffer, txOutNum: number): TxOut {
         const label = txHashBuf.toString('hex') + ':' + txOutNum
         return this.map.get(label)
     }
 
-    setTx(tx) {
+    public setTx(tx: Tx): this {
         const txhashhex = tx.hash().toString('hex')
         tx.txOuts.forEach((txOut, index) => {
             const label = txhashhex + ':' + index
@@ -53,5 +56,3 @@ class TxOutMap extends Struct {
         return this
     }
 }
-
-export { TxOutMap }

@@ -6,36 +6,45 @@
  * new TxOut(valueBn, script) (i.e., just as with TxIn, you can leave out the
  * scriptVi, since it can be computed automatically.
  */
-'use strict'
-
 import { Bn } from './bn'
+import { Br } from './br'
 import { Bw } from './bw'
 import { Script } from './script'
 import { Struct } from './struct'
 import { VarInt } from './var-int'
 
-class TxOut extends Struct {
-    constructor(valueBn, scriptVi, script) {
+export interface TxOutLike {
+    valueBn: string
+    scriptVi: string
+    script: string
+}
+
+export class TxOut extends Struct {
+    public valueBn: Bn
+    public scriptVi: VarInt
+    public script: Script
+
+    constructor(valueBn?: Bn, scriptVi?: VarInt, script?: Script) {
         super({ valueBn, scriptVi, script })
     }
 
-    setScript(script) {
+    public setScript(script: Script): this {
         this.scriptVi = VarInt.fromNumber(script.toBuffer().length)
         this.script = script
         return this
     }
 
-    fromProperties(valueBn, script) {
+    public fromProperties(valueBn: Bn, script: Script): this {
         this.fromObject({ valueBn })
         this.setScript(script)
         return this
     }
 
-    static fromProperties(valueBn, script) {
+    public static fromProperties(valueBn: Bn, script: Script): TxOut {
         return new this().fromProperties(valueBn, script)
     }
 
-    fromJSON(json) {
+    public fromJSON(json: TxOutLike): this {
         this.fromObject({
             valueBn: new Bn().fromJSON(json.valueBn),
             scriptVi: new VarInt().fromJSON(json.scriptVi),
@@ -44,7 +53,7 @@ class TxOut extends Struct {
         return this
     }
 
-    toJSON() {
+    public toJSON(): TxOutLike {
         return {
             valueBn: this.valueBn.toJSON(),
             scriptVi: this.scriptVi.toJSON(),
@@ -52,14 +61,14 @@ class TxOut extends Struct {
         }
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         this.valueBn = br.readUInt64LEBn()
         this.scriptVi = VarInt.fromNumber(br.readVarIntNum())
         this.script = new Script().fromBuffer(br.read(this.scriptVi.toNumber()))
         return this
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -69,5 +78,3 @@ class TxOut extends Struct {
         return bw
     }
 }
-
-export { TxOut }

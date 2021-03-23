@@ -368,29 +368,29 @@ export class Struct {
         throw new Error('not implemented')
     }
 
-    public clone<T extends Struct>(): T {
+    public clone(): this {
         // TODO: Should this be more intelligent about picking which clone method
         // to default to?
-        return this.cloneByJSON()
+        return this.cloneByJSON() as any
     }
 
-    public cloneByBuffer<T extends Struct>(): T {
+    public cloneByBuffer(): this {
         return new (this.constructor as typeof Struct)().fromBuffer(this.toBuffer()) as any
     }
 
-    public cloneByFastBuffer<T extends Struct>(): T {
+    public cloneByFastBuffer(): this {
         return new (this.constructor as typeof Struct)().fromFastBuffer(this.toFastBuffer()) as any
     }
 
-    public cloneByHex<T extends Struct>(): T {
+    public cloneByHex(): this {
         return new (this.constructor as typeof Struct)().fromHex(this.toHex()) as any
     }
 
-    public cloneByString<T extends Struct>(): T {
+    public cloneByString(): this {
         return new (this.constructor as typeof Struct)().fromString(this.toString()) as any
     }
 
-    public cloneByJSON<T extends Struct>(): T {
+    public cloneByJSON(): this {
         return new (this.constructor as typeof Struct)().fromJSON(this.toJSON()) as any
     }
 }

@@ -7,36 +7,80 @@
  * can leave out the scriptVi, which is computed automatically if you leave it
  * out.)
  */
-'use strict'
-
 import { Bw } from './bw'
 import { VarInt } from './var-int'
 import { OpCode } from './op-code'
 import { Script } from './script'
 import { Struct } from './struct'
+import { Br } from './br'
+import { TxOut } from './tx-out'
+import { PubKey } from './pub-key'
 
-class TxIn extends Struct {
-    constructor(txHashBuf, txOutNum, scriptVi, script, nSequence = 0xffffffff) {
+export interface TxInLike {
+    txHashBuf: string
+    txOutNum: number
+    scriptVi: string
+    script: string
+    nSequence: number
+}
+
+export class TxIn extends Struct {
+    /* Interpret sequence numbers as relative lock-time constraints. */
+    public static readonly LOCKTIME_VERIFY_SEQUENCE = 1 << 0
+
+    /* Setting nSequence to this value for every input in a transaction disables
+     * nLockTime. */
+    public static readonly SEQUENCE_FINAL = 0xffffffff
+
+    /* Below flags apply in the context of Bip 68 */
+    /* If this flag set, txIn.nSequence is NOT interpreted as a relative lock-time.
+     * */
+    public static readonly SEQUENCE_LOCKTIME_DISABLE_FLAG = 1 << 31
+
+    /* If txIn.nSequence encodes a relative lock-time and this flag is set, the
+     * relative lock-time has units of 512 seconds, otherwise it specifies blocks
+     * with a granularity of 1. */
+    public static readonly SEQUENCE_LOCKTIME_TYPE_FLAG = 1 << 22
+
+    /* If txIn.nSequence encodes a relative lock-time, this mask is applied to
+     * extract that lock-time from the sequence field. */
+    public static readonly SEQUENCE_LOCKTIME_MASK = 0x0000ffff
+
+    /* In order to use the same number of bits to encode roughly the same
+     * wall-clock duration, and because blocks are naturally limited to occur
+     * every 600s on average, the minimum granularity for time-based relative
+     * lock-time is fixed at 512 seconds.  Converting from CTxIn::nSequence to
+     * seconds is performed by multiplying by 512 = 2^9, or equivalently
+     * shifting up by 9 bits. */
+    public static readonly SEQUENCE_LOCKTIME_GRANULARITY = 9
+
+    public txHashBuf: Buffer
+    public txOutNum: number
+    public scriptVi: VarInt
+    public script: Script
+    public nSequence: number
+
+    constructor(txHashBuf?: Buffer, txOutNum?: number, scriptVi?: VarInt, script?: Script, nSequence = 0xffffffff) {
         super({ txHashBuf, txOutNum, scriptVi, script, nSequence })
     }
 
-    setScript(script) {
+    public setScript(script: Script): this {
         this.scriptVi = VarInt.fromNumber(script.toBuffer().length)
         this.script = script
         return this
     }
 
-    fromProperties(txHashBuf, txOutNum, script, nSequence) {
+    public fromProperties(txHashBuf: Buffer, txOutNum: number, script: Script, nSequence: number) {
         this.fromObject({ txHashBuf, txOutNum, nSequence })
         this.setScript(script)
         return this
     }
 
-    static fromProperties(txHashBuf, txOutNum, script, nSequence) {
+    public static fromProperties(txHashBuf: Buffer, txOutNum: number, script: Script, nSequence: number): TxIn {
         return new this().fromProperties(txHashBuf, txOutNum, script, nSequence)
     }
 
-    fromJSON(json) {
+    public fromJSON(json: TxInLike): this {
         this.fromObject({
             txHashBuf: typeof json.txHashBuf !== 'undefined' ? Buffer.from(json.txHashBuf, 'hex') : undefined,
             txOutNum: json.txOutNum,
@@ -47,7 +91,7 @@ class TxIn extends Struct {
         return this
     }
 
-    toJSON() {
+    public toJSON(): TxInLike {
         return {
             txHashBuf: typeof this.txHashBuf !== 'undefined' ? this.txHashBuf.toString('hex') : undefined,
             txOutNum: this.txOutNum,
@@ -57,7 +101,7 @@ class TxIn extends Struct {
         }
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         this.txHashBuf = br.read(32)
         this.txOutNum = br.readUInt32LE()
         this.scriptVi = VarInt.fromBuffer(br.readVarIntBuf())
@@ -66,7 +110,7 @@ class TxIn extends Struct {
         return this
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -84,7 +128,7 @@ class TxIn extends Struct {
      * defaults to blank but can be substituted with the real public key if you
      * know what it is.
      */
-    fromPubKeyHashTxOut(txHashBuf, txOutNum, txOut, pubKey) {
+    public fromPubKeyHashTxOut(txHashBuf: Buffer, txOutNum: number, txOut: TxOut, pubKey: PubKey): this {
         const script = new Script()
         if (txOut.script.isPubKeyHashOut()) {
             script.writeOpCode(OpCode.OP_0) // blank signature
@@ -102,7 +146,7 @@ class TxIn extends Struct {
         return this
     }
 
-    hasNullInput() {
+    public hasNullInput(): boolean {
         const hex = this.txHashBuf.toString('hex')
         if (
             hex === '0000000000000000000000000000000000000000000000000000000000000000' &&
@@ -116,40 +160,9 @@ class TxIn extends Struct {
     /**
      * Analagous to bitcoind's SetNull in COutPoint
      */
-    setNullInput() {
+    public setNullInput(): void {
         this.txHashBuf = Buffer.alloc(32)
         this.txHashBuf.fill(0)
         this.txOutNum = 0xffffffff // -1 cast to unsigned int
     }
 }
-
-/* Interpret sequence numbers as relative lock-time constraints. */
-TxIn.LOCKTIME_VERIFY_SEQUENCE = 1 << 0
-
-/* Setting nSequence to this value for every input in a transaction disables
- * nLockTime. */
-TxIn.SEQUENCE_FINAL = 0xffffffff
-
-/* Below flags apply in the context of Bip 68 */
-/* If this flag set, txIn.nSequence is NOT interpreted as a relative lock-time.
- * */
-TxIn.SEQUENCE_LOCKTIME_DISABLE_FLAG = 1 << 31
-
-/* If txIn.nSequence encodes a relative lock-time and this flag is set, the
- * relative lock-time has units of 512 seconds, otherwise it specifies blocks
- * with a granularity of 1. */
-TxIn.SEQUENCE_LOCKTIME_TYPE_FLAG = 1 << 22
-
-/* If txIn.nSequence encodes a relative lock-time, this mask is applied to
- * extract that lock-time from the sequence field. */
-TxIn.SEQUENCE_LOCKTIME_MASK = 0x0000ffff
-
-/* In order to use the same number of bits to encode roughly the same
- * wall-clock duration, and because blocks are naturally limited to occur
- * every 600s on average, the minimum granularity for time-based relative
- * lock-time is fixed at 512 seconds.  Converting from CTxIn::nSequence to
- * seconds is performed by multiplying by 512 = 2^9, or equivalently
- * shifting up by 9 bits. */
-TxIn.SEQUENCE_LOCKTIME_GRANULARITY = 9
-
-export { TxIn }

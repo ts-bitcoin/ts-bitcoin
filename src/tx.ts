@@ -4,40 +4,61 @@
  *
  * A bitcoin transaction.
  */
-'use strict'
-
 import { Bn } from './bn'
 import { Br } from './br'
 import { Bw } from './bw'
 import { Ecdsa } from './ecdsa'
 import { Hash } from './hash'
 import { HashCache } from './hash-cache'
+import { KeyPair } from './key-pair'
+import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Sig } from './sig'
 import { Struct } from './struct'
-import { TxIn } from './tx-in'
-import { TxOut } from './tx-out'
+import { TxIn, TxInLike } from './tx-in'
+import { TxOut, TxOutLike } from './tx-out'
 import { VarInt } from './var-int'
 import { Workers } from './workers'
 
-class Tx extends Struct {
+interface TxLike {
+    versionBytesNum: number
+    txInsVi: string
+    txIns: TxInLike[]
+    txOutsVi: string
+    txOuts: TxOutLike[]
+    nLockTime: number
+}
+
+export class Tx extends Struct {
+    public static readonly MAX_MONEY = 21000000 * 1e8
+
+    // This is defined on Interp, but Tx cannot depend on Interp - must redefine here
+    public static readonly SCRIPT_ENABLE_SIGHASH_FORKID = 1 << 16
+
+    public versionBytesNum: number
+    public txInsVi: VarInt
+    public txIns: TxIn[]
+    public txOutsVi: VarInt
+    public txOuts: TxOut[]
+    public nLockTime: number
+
     constructor(
         versionBytesNum = 1,
         txInsVi = VarInt.fromNumber(0),
-        txIns = [],
+        txIns: TxIn[] = [],
         txOutsVi = VarInt.fromNumber(0),
-        txOuts = [],
+        txOuts: TxOut[] = [],
         nLockTime = 0
     ) {
         super({ versionBytesNum, txInsVi, txIns, txOutsVi, txOuts, nLockTime })
     }
 
-    fromJSON(json) {
-        const txIns = []
+    public fromJSON(json: TxLike): this {
+        const txIns: TxIn[] = []
         json.txIns.forEach(function (txIn) {
             txIns.push(new TxIn().fromJSON(txIn))
         })
-        const txOuts = []
+        const txOuts: TxOut[] = []
         json.txOuts.forEach(function (txOut) {
             txOuts.push(new TxOut().fromJSON(txOut))
         })
@@ -52,12 +73,12 @@ class Tx extends Struct {
         return this
     }
 
-    toJSON() {
-        const txIns = []
+    public toJSON(): TxLike {
+        const txIns: TxInLike[] = []
         this.txIns.forEach(function (txIn) {
             txIns.push(txIn.toJSON())
         })
-        const txOuts = []
+        const txOuts: TxOutLike[] = []
         this.txOuts.forEach(function (txOut) {
             txOuts.push(txOut.toJSON())
         })
@@ -71,7 +92,7 @@ class Tx extends Struct {
         }
     }
 
-    fromBr(br) {
+    public fromBr(br: Br): this {
         this.versionBytesNum = br.readUInt32LE()
         this.txInsVi = new VarInt(br.readVarIntBuf())
         const txInsNum = this.txInsVi.toNumber()
@@ -89,7 +110,7 @@ class Tx extends Struct {
         return this
     }
 
-    toBw(bw) {
+    public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
         }
@@ -107,7 +128,7 @@ class Tx extends Struct {
     }
 
     // https://github.com/Bitcoin-UAHF/spec/blob/master/replay-protected-sighash.md
-    hashPrevouts() {
+    public hashPrevouts(): Buffer {
         const bw = new Bw()
         for (const i in this.txIns) {
             const txIn = this.txIns[i]
@@ -117,7 +138,7 @@ class Tx extends Struct {
         return Hash.sha256Sha256(bw.toBuffer())
     }
 
-    hashSequence() {
+    public hashSequence(): Buffer {
         const bw = new Bw()
         for (const i in this.txIns) {
             const txIn = this.txIns[i]
@@ -126,7 +147,7 @@ class Tx extends Struct {
         return Hash.sha256Sha256(bw.toBuffer())
     }
 
-    hashOutputs() {
+    public hashOutputs(): Buffer {
         const bw = new Bw()
         for (const i in this.txOuts) {
             const txOut = this.txOuts[i]
@@ -140,7 +161,14 @@ class Tx extends Struct {
      * p2sh transaction, subScript is usually the redeemScript. If you're not
      * normal because you're using OP_CODESEPARATORs, you know what to do.
      */
-    sighash(nHashType, nIn, subScript, valueBn, flags = 0, hashCache = new HashCache()) {
+    public sighash(
+        nHashType: number,
+        nIn: number,
+        subScript: Script,
+        valueBn: Bn,
+        flags = 0,
+        hashCache = new HashCache()
+    ): Buffer {
         // start with UAHF part (Bitcoin SV)
         // https://github.com/Bitcoin-UAHF/spec/blob/master/replay-protected-sighash.md
         if (nHashType & Sig.SIGHASH_FORKID && flags & Tx.SCRIPT_ENABLE_SIGHASH_FORKID) {
@@ -247,7 +275,14 @@ class Tx extends Struct {
         return new Br(Hash.sha256Sha256(buf)).readReverse()
     }
 
-    async asyncSighash(nHashType, nIn, subScript, valueBn, flags = 0, hashCache = {}) {
+    public async asyncSighash(
+        nHashType: number,
+        nIn: number,
+        subScript: Script,
+        valueBn: Bn,
+        flags = 0,
+        hashCache?: HashCache
+    ): Promise<Buffer> {
         const workersResult = await Workers.asyncObjectMethod(this, 'sighash', [
             nHashType,
             nIn,
@@ -260,15 +295,15 @@ class Tx extends Struct {
     }
 
     // This function returns a signature but does not update any inputs
-    sign(
-        keyPair,
+    public sign(
+        keyPair: KeyPair,
         nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID,
-        nIn,
-        subScript,
-        valueBn,
+        nIn: number,
+        subScript: Script,
+        valueBn: Bn,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID,
-        hashCache = {}
-    ) {
+        hashCache?: HashCache
+    ): Sig {
         const hashBuf = this.sighash(nHashType, nIn, subScript, valueBn, flags, hashCache)
         const sig = Ecdsa.sign(hashBuf, keyPair, 'little').fromObject({
             nHashType: nHashType,
@@ -276,15 +311,15 @@ class Tx extends Struct {
         return sig
     }
 
-    async asyncSign(
-        keyPair,
+    public async asyncSign(
+        keyPair: KeyPair,
         nHashType = Sig.SIGHASH_ALL | Sig.SIGHASH_FORKID,
-        nIn,
-        subScript,
-        valueBn,
+        nIn: number,
+        subScript: Script,
+        valueBn: Bn,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID,
-        hashCache = {}
-    ) {
+        hashCache?: HashCache
+    ): Promise<Sig> {
         const workersResult = await Workers.asyncObjectMethod(this, 'sign', [
             keyPair,
             nHashType,
@@ -298,30 +333,30 @@ class Tx extends Struct {
     }
 
     // This function takes a signature as input and does not parse any inputs
-    verify(
-        sig,
-        pubKey,
-        nIn,
-        subScript,
+    public verify(
+        sig: Sig,
+        pubKey: PubKey,
+        nIn: number,
+        subScript: Script,
         enforceLowS = false,
-        valueBn,
+        valueBn: Bn,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID,
-        hashCache = {}
-    ) {
+        hashCache?: HashCache
+    ): boolean {
         const hashBuf = this.sighash(sig.nHashType, nIn, subScript, valueBn, flags, hashCache)
         return Ecdsa.verify(hashBuf, sig, pubKey, 'little', enforceLowS)
     }
 
-    async asyncVerify(
-        sig,
-        pubKey,
-        nIn,
-        subScript,
+    public async asyncVerify(
+        sig: Sig,
+        pubKey: PubKey,
+        nIn: number,
+        subScript: Script,
         enforceLowS = false,
-        valueBn,
+        valueBn: Bn,
         flags = Tx.SCRIPT_ENABLE_SIGHASH_FORKID,
-        hashCache = {}
-    ) {
+        hashCache?: HashCache
+    ): Promise<boolean> {
         const workersResult = await Workers.asyncObjectMethod(this, 'verify', [
             sig,
             pubKey,
@@ -335,26 +370,26 @@ class Tx extends Struct {
         return JSON.parse(workersResult.resbuf.toString())
     }
 
-    hash() {
+    public hash(): Buffer {
         return Hash.sha256Sha256(this.toBuffer())
     }
 
-    async asyncHash() {
+    public async asyncHash(): Promise<Buffer> {
         const workersResult = await Workers.asyncObjectMethod(this, 'hash', [])
         return workersResult.resbuf
     }
 
-    id() {
+    public id(): string {
         return new Br(this.hash()).readReverse().toString('hex')
     }
 
-    async asyncId() {
+    public async asyncId(): Promise<string> {
         const workersResult = await Workers.asyncObjectMethod(this, 'id', [])
         return JSON.parse(workersResult.resbuf.toString())
     }
 
-    addTxIn(txHashBuf, txOutNum, script, nSequence) {
-        let txIn
+    public addTxIn(txHashBuf: Buffer, txOutNum: number, script: Script, nSequence: number): this {
+        let txIn: TxIn
         if (txHashBuf instanceof TxIn) {
             txIn = txHashBuf
         } else {
@@ -365,8 +400,8 @@ class Tx extends Struct {
         return this
     }
 
-    addTxOut(valueBn, script) {
-        let txOut
+    public addTxOut(valueBn: Bn, script: Script): this {
+        let txOut: TxOut
         if (valueBn instanceof TxOut) {
             txOut = valueBn
         } else {
@@ -380,14 +415,14 @@ class Tx extends Struct {
     /**
      * Analagous to bitcoind's IsCoinBase function in transaction.h
      */
-    isCoinbase() {
+    public isCoinbase(): boolean {
         return this.txIns.length === 1 && this.txIns[0].hasNullInput()
     }
 
     /**
      * BIP 69 sorting. Be sure to sign after sorting.
      */
-    sort() {
+    public sort(): this {
         this.txIns.sort((first, second) => {
             return (
                 new Br(first.txHashBuf).readReverse().compare(new Br(second.txHashBuf).readReverse()) ||
@@ -405,10 +440,3 @@ class Tx extends Struct {
         return this
     }
 }
-
-Tx.MAX_MONEY = 21000000 * 1e8
-
-// This is defined on Interp, but Tx cannot depend on Interp - must redefine here
-Tx.SCRIPT_ENABLE_SIGHASH_FORKID = 1 << 16
-
-export { Tx }
