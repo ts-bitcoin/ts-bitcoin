@@ -126,7 +126,7 @@ export class TxBuilder extends Struct {
     }
 
     public setFeePerKbNum(feePerKbNum: number): this {
-        if (typeof feePerKbNum !== 'number' || feePerKbNum <= 0) {
+        if (typeof feePerKbNum !== 'number' || feePerKbNum < 0) {
             throw new Error('cannot set a fee of zero or less')
         }
         this.feePerKbNum = feePerKbNum
