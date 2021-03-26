@@ -213,6 +213,7 @@ export class TxBuilder extends Struct {
             throw new Error('invalid one of: txHashBuf, txOutNum, txOut, script')
         }
         this.txIns.push(TxIn.fromProperties(txHashBuf, txOutNum, script, nSequence))
+        this.sigOperations.setMany(txHashBuf, txOutNum, [])
         this.uTxOutMap.set(txHashBuf, txOutNum, txOut)
         return this
     }

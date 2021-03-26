@@ -139,6 +139,6 @@ export class SigOperations extends Struct {
      */
     public get(txHashBuf: Buffer, txOutNum: number): SigOperationsMapItem[] {
         const label = txHashBuf.toString('hex') + ':' + txOutNum
-        return this.map.get(label)
+        return this.map.get(label) || []
     }
 }
