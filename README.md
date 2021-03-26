@@ -1,22 +1,22 @@
-# Bitcoin TS
+# TS-Bitcoin
 
-![Main CI](https://github.com/bitcoin-ts/bitcoin-ts/workflows/Main%20CI/badge.svg)
+![Main CI](https://github.com/ts-bitcoin/ts-bitcoin/workflows/Main%20CI/badge.svg)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-![GitHub](https://img.shields.io/github/license/bitcoin-ts/bitcoin-ts)
+![GitHub](https://img.shields.io/github/license/ts-bitcoin/ts-bitcoin)
 
 TypeScript library for Bitcoin SV (BSV).
 
 ## Installation
 
 ```
-npm install bitcoin-ts
+npm install @ts-bitcoin/core
 ```
 
 ## Example
 
 ```ts
-import { Address, Bn, KeyPair, PrivKey, TxBuilder, TxOut, deps } from 'bitcoin-ts'
+import { Address, Bn, KeyPair, PrivKey, TxBuilder, TxOut, deps } from 'ts-bitcoin'
 
 const txb = new TxBuilder()
 
@@ -50,7 +50,7 @@ const raw = txb.tx.toHex()
 
 ## About
 
-BitcoinTS is a TypeScript library for Bitcoin SV (BSV). It's a fork of bsv v2 which intended to satisfy certain
+TS-Bitcoin is a TypeScript library for Bitcoin SV (BSV). It's a fork of bsv v2 which intended to satisfy certain
 goals:
 
 1. Support ease-of-use by being internally consistent. It should not be

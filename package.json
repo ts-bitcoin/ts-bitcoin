@@ -1,8 +1,8 @@
 {
-  "name": "bitcoin-ts",
+  "name": "@ts-bitcoin/core",
   "description": "TypeScript library for Bitcoin SV (BSV).",
   "version": "1.0.0",
-  "author": "bitcoin-ts",
+  "author": "ts-bitcoin",
   "license": "MIT",
   "main": "lib/index.js",
   "module": "lib/bundle.esm.js",
@@ -12,11 +12,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bitcoin-ts/bitcoin-ts.git"
+    "url": "git+https://github.com/ts-bitcoin/ts-bitcoin.git"
   },
-  "homepage": "https://github.com/bitcoin-ts/bitcoin-ts#readme",
+  "homepage": "https://github.com/ts-bitcoin/ts-bitcoin#readme",
   "bugs": {
-    "url": "https://github.com/bitcoin-ts/bitcoin-ts/issues"
+    "url": "https://github.com/ts-bitcoin/ts-bitcoin/issues"
   },
   "publishConfig": {
     "access": "public"
