@@ -125,15 +125,19 @@ export class KeyPair extends Struct {
         return new this().asyncFromRandom()
     }
 
-    public static readonly Mainnet = class extends KeyPair {
-        constructor(privKey?: DefaultPrivKey, pubKey?: PubKey) {
-            super(privKey, pubKey, DefaultPrivKey.Mainnet)
-        }
-    }
+    public static Mainnet: typeof KeyPair
 
-    public static readonly Testnet = class extends KeyPair {
-        constructor(privKey?: DefaultPrivKey, pubKey?: PubKey) {
-            super(privKey, pubKey, DefaultPrivKey.Testnet)
-        }
+    public static Testnet: typeof KeyPair
+}
+
+KeyPair.Mainnet = class extends KeyPair {
+    constructor(privKey?: DefaultPrivKey, pubKey?: PubKey) {
+        super(privKey, pubKey, DefaultPrivKey.Mainnet)
+    }
+}
+
+KeyPair.Testnet = class extends KeyPair {
+    constructor(privKey?: DefaultPrivKey, pubKey?: PubKey) {
+        super(privKey, pubKey, DefaultPrivKey.Testnet)
     }
 }

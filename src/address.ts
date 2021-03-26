@@ -226,15 +226,19 @@ export class Address extends Struct {
         return this
     }
 
-    public static readonly Mainnet = class extends Address {
-        constructor(versionByteNum?: number, hashBuf?: Buffer) {
-            super(versionByteNum, hashBuf, Constants.Mainnet.Address)
-        }
-    }
+    public static Mainnet: typeof Address
 
-    public static readonly Testnet = class extends Address {
-        constructor(versionByteNum?: number, hashBuf?: Buffer) {
-            super(versionByteNum, hashBuf, Constants.Testnet.Address)
-        }
+    public static Testnet: typeof Address
+}
+
+Address.Mainnet = class extends Address {
+    constructor(versionByteNum?: number, hashBuf?: Buffer) {
+        super(versionByteNum, hashBuf, Constants.Mainnet.Address)
+    }
+}
+
+Address.Testnet = class extends Address {
+    constructor(versionByteNum?: number, hashBuf?: Buffer) {
+        super(versionByteNum, hashBuf, Constants.Testnet.Address)
     }
 }

@@ -173,27 +173,35 @@ export class Msg extends Struct {
         }
     }
 
-    public static readonly Mainnet = class extends Msg {
-        constructor(magicNum: number, cmdbuf: Buffer, datasize: number, checksumbuf: Buffer, dataBuf: Buffer) {
-            super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Mainnet)
-        }
-    }
+    public static Mainnet: typeof Msg
 
-    public static readonly Testnet = class extends Msg {
-        constructor(magicNum?: number, cmdbuf?: Buffer, datasize?: number, checksumbuf?: Buffer, dataBuf?: Buffer) {
-            super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Testnet)
-        }
-    }
+    public static Testnet: typeof Msg
 
-    public static readonly Regtest = class extends Msg {
-        constructor(magicNum?: number, cmdbuf?: Buffer, datasize?: number, checksumbuf?: Buffer, dataBuf?: Buffer) {
-            super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Regtest)
-        }
-    }
+    public static Regtest: typeof Msg
 
-    public static readonly STN = class extends Msg {
-        constructor(magicNum?: number, cmdbuf?: Buffer, datasize?: number, checksumbuf?: Buffer, dataBuf?: Buffer) {
-            super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.STN)
-        }
+    public static STN: typeof Msg
+}
+
+Msg.Mainnet = class extends Msg {
+    constructor(magicNum: number, cmdbuf: Buffer, datasize: number, checksumbuf: Buffer, dataBuf: Buffer) {
+        super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Mainnet)
+    }
+}
+
+Msg.Testnet = class extends Msg {
+    constructor(magicNum?: number, cmdbuf?: Buffer, datasize?: number, checksumbuf?: Buffer, dataBuf?: Buffer) {
+        super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Testnet)
+    }
+}
+
+Msg.Regtest = class extends Msg {
+    constructor(magicNum?: number, cmdbuf?: Buffer, datasize?: number, checksumbuf?: Buffer, dataBuf?: Buffer) {
+        super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.Regtest)
+    }
+}
+
+Msg.STN = class extends Msg {
+    constructor(magicNum?: number, cmdbuf?: Buffer, datasize?: number, checksumbuf?: Buffer, dataBuf?: Buffer) {
+        super(magicNum, cmdbuf, datasize, checksumbuf, dataBuf, Constants.STN)
     }
 }

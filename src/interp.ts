@@ -1647,14 +1647,7 @@ export class Interp extends Struct {
      * is a generator, thus you can and need to iterate through it.  To
      * automatically return true or false, use the verify method.
      */
-    public *results(
-        scriptSig?: Script,
-        scriptPubKey?: Script,
-        tx?: Tx,
-        nIn?: number,
-        flags?: number,
-        valueBn?: Bn
-    ): Generator<boolean, void, unknown> {
+    public *results(scriptSig?: Script, scriptPubKey?: Script, tx?: Tx, nIn?: number, flags?: number, valueBn?: Bn) {
         let stackCopy
 
         this.fromObject({

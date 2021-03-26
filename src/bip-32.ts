@@ -406,51 +406,55 @@ export class Bip32 extends Struct {
         return this.versionBytesNum === this.Constants.privKey
     }
 
-    public static readonly Mainnet = class extends Bip32 {
-        constructor(
-            versionBytesNum?: number,
-            depth?: number,
-            parentFingerPrint?: Buffer,
-            childIndex?: number,
-            chainCode?: Buffer,
-            privKey?: PrivKeyClass,
-            pubKey?: PubKey
-        ) {
-            super(
-                versionBytesNum,
-                depth,
-                parentFingerPrint,
-                childIndex,
-                chainCode,
-                privKey,
-                pubKey,
-                Constants.Mainnet.Bip32,
-                PrivKeyClass.Mainnet
-            )
-        }
-    }
+    public static Mainnet: typeof Bip32
 
-    public static readonly Testnet = class extends Bip32 {
-        constructor(
-            versionBytesNum?: number,
-            depth?: number,
-            parentFingerPrint?: Buffer,
-            childIndex?: number,
-            chainCode?: Buffer,
-            privKey?: PrivKeyClass,
-            pubKey?: PubKey
-        ) {
-            super(
-                versionBytesNum,
-                depth,
-                parentFingerPrint,
-                childIndex,
-                chainCode,
-                privKey,
-                pubKey,
-                Constants.Testnet.Bip32,
-                PrivKeyClass.Testnet
-            )
-        }
+    public static Testnet: typeof Bip32
+}
+
+Bip32.Mainnet = class extends Bip32 {
+    constructor(
+        versionBytesNum?: number,
+        depth?: number,
+        parentFingerPrint?: Buffer,
+        childIndex?: number,
+        chainCode?: Buffer,
+        privKey?: PrivKeyClass,
+        pubKey?: PubKey
+    ) {
+        super(
+            versionBytesNum,
+            depth,
+            parentFingerPrint,
+            childIndex,
+            chainCode,
+            privKey,
+            pubKey,
+            Constants.Mainnet.Bip32,
+            PrivKeyClass.Mainnet
+        )
+    }
+}
+
+Bip32.Testnet = class extends Bip32 {
+    constructor(
+        versionBytesNum?: number,
+        depth?: number,
+        parentFingerPrint?: Buffer,
+        childIndex?: number,
+        chainCode?: Buffer,
+        privKey?: PrivKeyClass,
+        pubKey?: PubKey
+    ) {
+        super(
+            versionBytesNum,
+            depth,
+            parentFingerPrint,
+            childIndex,
+            chainCode,
+            privKey,
+            pubKey,
+            Constants.Testnet.Bip32,
+            PrivKeyClass.Testnet
+        )
     }
 }

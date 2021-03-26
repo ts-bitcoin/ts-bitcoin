@@ -135,15 +135,19 @@ export class PrivKey extends Struct {
         return this.fromWif(str)
     }
 
-    public static readonly Mainnet = class extends PrivKey {
-        constructor(bn?: Bn, compressed?: boolean) {
-            super(bn, compressed, Constants.Mainnet.PrivKey)
-        }
-    }
+    public static Mainnet: typeof PrivKey
 
-    public static readonly Testnet = class extends PrivKey {
-        constructor(bn?: Bn, compressed?: boolean) {
-            super(bn, compressed, Constants.Testnet.PrivKey)
-        }
+    public static Testnet: typeof PrivKey
+}
+
+PrivKey.Mainnet = class extends PrivKey {
+    constructor(bn?: Bn, compressed?: boolean) {
+        super(bn, compressed, Constants.Mainnet.PrivKey)
+    }
+}
+
+PrivKey.Testnet = class extends PrivKey {
+    constructor(bn?: Bn, compressed?: boolean) {
+        super(bn, compressed, Constants.Testnet.PrivKey)
     }
 }
