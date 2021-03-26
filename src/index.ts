@@ -43,3 +43,6 @@ export * from './aes'
 export * from './aescbc'
 export * from './cbc'
 export * from './ecies'
+
+// Dependencies, subject to change.
+export const deps = { Buffer }
