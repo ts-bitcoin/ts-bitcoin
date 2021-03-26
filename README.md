@@ -93,12 +93,6 @@ goals:
 
 - `NETWORK` - Default "mainnet"
 
-You can change the network to run the CLI in testnet mode:
-
-```
-NETWORK=testnet ./bin/bsv.js
-```
-
 ## Contribution and License Agreement
 
 If you contribute code to this project, you are implicitly allowing your code
