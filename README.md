@@ -16,7 +16,7 @@ npm install @ts-bitcoin/core
 ## Example
 
 ```ts
-import { Address, Bn, KeyPair, PrivKey, TxBuilder, TxOut, deps } from 'ts-bitcoin'
+import { Address, Bn, KeyPair, PrivKey, TxBuilder, TxOut, deps } from '@ts-bitcoin/core'
 
 const txb = new TxBuilder()
 
@@ -67,11 +67,11 @@ goals:
    fromString, toJSON, fromJSON, toBuffer, fromBuffer, toHex, fromHex methods.
 
 4. All standard features of the blockchain are implemented (or will be) and
-   saved in lib/. All BIPs are correctly implemented and, where appropriate, saved
-   as bip-xx.js in lib/ (since that is their standard name). In order to allow
+   saved in src/. All BIPs are correctly implemented and, where appropriate, saved
+   as bip-xx.ts in src/ (since that is their standard name). In order to allow
    rapid development, Yours Bitcoin includes non-standard and experimental
    features. Any non-standard features (such as colored coins or stealth
-   addresses) are labeled as such in index.js as well as in comments.
+   addresses) are labeled as such in index.ts as well as in comments.
 
 5. Expose everything, including dependencies. This makes it possible to develop
    apps that require fine-grained control over the basics, such as big numbers and
