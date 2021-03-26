@@ -1,19 +1,56 @@
-# Typed Bitcoin
+# Bitcoin TS
 
 ![Main CI](https://github.com/bitcoin-ts/bitcoin-ts/workflows/Main%20CI/badge.svg)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 ![GitHub](https://img.shields.io/github/license/bitcoin-ts/bitcoin-ts)
 
-Bitcoin SV (BSV) library with typings.
+TypeScript library for Bitcoin SV (BSV).
 
 ## Installation
 
 ```
-npm install @bitcoin-ts/bitcoin-ts
+npm install bitcoin-ts
 ```
 
-bsv is a javascript library for Bitcoin SV (BSV) intended to satisfy certain
+## Example
+
+```ts
+import { Address, Bn, KeyPair, PrivKey, TxBuilder, TxOut, deps } from 'bitcoin-ts'
+
+const txb = new TxBuilder()
+
+// make change address
+const privKey1 = new PrivKey().fromRandom()
+const keyPair1 = new KeyPair().fromPrivKey(privKey1)
+const addr1 = new Address().fromPubKey(keyPair1.pubKey)
+
+// make address to send from
+const privKey2 = new PrivKey().fromBn(new Bn(1))
+const keyPair2 = new KeyPair().fromPrivKey(privKey2)
+const addr2 = new Address().fromPubKey(keyPair2.pubKey)
+
+const txOut = TxOut.fromProperties(new Bn(2e8), addr2.toTxOutScript())
+const txHashBuf = deps.Buffer.alloc(32).fill(0)
+
+// make address to send to
+const privKey3 = new PrivKey().fromBn(new Bn(2))
+const keyPair3 = new KeyPair().fromPrivKey(privKey3)
+const addr3 = new Address().fromPubKey(keyPair3.pubKey)
+
+txb.setFeePerKbNum(0.0001e8)
+txb.setChangeAddress(addr1)
+txb.inputFromPubKeyHash(txHashBuf, 0, txOut, keyPair2.pubKey)
+txb.outputToAddress(new Bn(1e8), addr3)
+
+txb.build()
+
+const raw = txb.tx.toHex()
+```
+
+## About
+
+BitcoinTS is a TypeScript library for Bitcoin SV (BSV). It's a fork of bsv v2 which intended to satisfy certain
 goals:
 
 1. Support ease-of-use by being internally consistent. It should not be
@@ -54,9 +91,6 @@ goals:
 
 ## Environment Variables
 
-- `BSV_JS_BASE_URL` - Default "/".
-- `BSV_JS_BUNDLE_FILE` - Default "bsv.js"
-- `BSV_JS_WORKER_FILE` - Default "bsv-worker.js"
 - `NETWORK` - Default "mainnet"
 
 You can change the network to run the CLI in testnet mode:
@@ -64,3 +98,9 @@ You can change the network to run the CLI in testnet mode:
 ```
 NETWORK=testnet ./bin/bsv.js
 ```
+
+## Contribution and License Agreement
+
+If you contribute code to this project, you are implicitly allowing your code
+to be distributed under the MIT license. You are also implicitly verifying that
+all code is your original work. `</legalese>`
