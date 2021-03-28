@@ -5,12 +5,12 @@
  * A public key corresponds to a private key. If you have a private key, you
  * can find the corresponding public key with new PubKey().fromPrivKey(privKey).
  */
-import { Point } from './point'
 import { Bn } from './bn'
 import { Bw } from './bw'
+import { Point } from './point'
+import { PrivKey } from './priv-key'
 import { Struct } from './struct'
 import { Workers } from './workers'
-import { PrivKey } from './priv-key'
 
 export class PubKey extends Struct {
     public point: Point

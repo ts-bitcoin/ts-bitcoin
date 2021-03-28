@@ -1,11 +1,11 @@
+import should = require('should')
+import { Bn } from '../src/bn'
 import { KeyPair } from '../src/key-pair'
 import { PrivKey } from '../src/priv-key'
 import { PubKey } from '../src/pub-key'
-import { Bn } from '../src/bn'
-import should = require('should')
 
-describe('KeyPair', function () {
-    it('should satisfy this basic API', function () {
+describe('KeyPair', () => {
+    it('should satisfy this basic API', () => {
         let key = new KeyPair()
         should.exist(key)
         key = new KeyPair()
@@ -17,7 +17,7 @@ describe('KeyPair', function () {
         new KeyPair.Testnet().fromRandom().privKey.constructor.should.equal(PrivKey.Testnet)
     })
 
-    it('should make a key with a priv and pub', function () {
+    it('should make a key with a priv and pub', () => {
         const priv = new PrivKey()
         const pub = new PubKey()
         const key = new KeyPair(priv, pub)
@@ -26,8 +26,8 @@ describe('KeyPair', function () {
         should.exist(key.pubKey)
     })
 
-    describe('#fromJSON', function () {
-        it('should make a keyPair from this json', function () {
+    describe('#fromJSON', () => {
+        it('should make a keyPair from this json', () => {
             const privKey = new PrivKey().fromRandom()
             const pubKey = new PubKey().fromPrivKey(privKey)
             const keyPair = new KeyPair().fromJSON({
@@ -39,8 +39,8 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('#toJSON', function () {
-        it('should make json from this keyPair', function () {
+    describe('#toJSON', () => {
+        it('should make json from this keyPair', () => {
             const json = new KeyPair().fromRandom().toJSON()
             should.exist(json.privKey)
             should.exist(json.pubKey)
@@ -50,8 +50,8 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('#fromFastBuffer', function () {
-        it('should convert from a fast buffer', function () {
+    describe('#fromFastBuffer', () => {
+        it('should convert from a fast buffer', () => {
             let keyPair = new KeyPair().fromRandom()
             const privKey1 = keyPair.privKey
             const pubKey1 = keyPair.pubKey
@@ -64,9 +64,10 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('#toFastBuffer', function () {
-        it('should convert to a fast buffer', function () {
-            let keyPair, buf
+    describe('#toFastBuffer', () => {
+        it('should convert to a fast buffer', () => {
+            let keyPair
+            let buf
 
             keyPair = new KeyPair().fromRandom()
             keyPair.pubKey = undefined
@@ -84,16 +85,16 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('#fromString', function () {
-        it('should convert to and from a string', function () {
+    describe('#fromString', () => {
+        it('should convert to and from a string', () => {
             const keyPair = new KeyPair().fromRandom()
             const str = keyPair.toString()
             new KeyPair().fromString(str).toString().should.equal(str)
         })
     })
 
-    describe('#toPublic', function () {
-        it('should set the private key to undefined', function () {
+    describe('#toPublic', () => {
+        it('should set the private key to undefined', () => {
             const keyPair = new KeyPair().fromRandom()
             const publicKeyPair = keyPair.toPublic()
 
@@ -103,12 +104,12 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('#fromPrivKey', function () {
-        it('should make a new key from a privKey', function () {
+    describe('#fromPrivKey', () => {
+        it('should make a new key from a privKey', () => {
             should.exist(new KeyPair().fromPrivKey(new PrivKey().fromRandom()).pubKey)
         })
 
-        it('should convert this known PrivKey to known PubKey', function () {
+        it('should convert this known PrivKey to known PubKey', () => {
             const privhex = '906977a061af29276e40bf377042ffbde414e496ae2260bbf1fa9d085637bfff'
             const pubhex = '02a1633cafcc01ebfb6d78e39f687a1f0995c62fc95f51ead10a02ee0be551b5dc'
             const privKey = new PrivKey().fromBn(new Bn(Buffer.from(privhex, 'hex')))
@@ -116,7 +117,7 @@ describe('KeyPair', function () {
             key.pubKey.toString().should.equal(pubhex)
         })
 
-        it('should convert this known PrivKey to known PubKey and preserve compressed=false', function () {
+        it('should convert this known PrivKey to known PubKey and preserve compressed=false', () => {
             const privhex = '906977a061af29276e40bf377042ffbde414e496ae2260bbf1fa9d085637bfff'
             const privKey = new PrivKey().fromBn(new Bn(Buffer.from(privhex, 'hex')))
             privKey.compressed = false
@@ -125,12 +126,12 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('@fromPrivKey', function () {
-        it('should make a new key from a privKey', function () {
+    describe('@fromPrivKey', () => {
+        it('should make a new key from a privKey', () => {
             should.exist(KeyPair.fromPrivKey(new PrivKey().fromRandom()).pubKey)
         })
 
-        it('should convert this known PrivKey to known PubKey', function () {
+        it('should convert this known PrivKey to known PubKey', () => {
             const privhex = '906977a061af29276e40bf377042ffbde414e496ae2260bbf1fa9d085637bfff'
             const pubhex = '02a1633cafcc01ebfb6d78e39f687a1f0995c62fc95f51ead10a02ee0be551b5dc'
             const privKey = new PrivKey().fromBn(new Bn(Buffer.from(privhex, 'hex')))
@@ -138,7 +139,7 @@ describe('KeyPair', function () {
             key.pubKey.toString().should.equal(pubhex)
         })
 
-        it('should convert this known PrivKey to known PubKey and preserve compressed=false', function () {
+        it('should convert this known PrivKey to known PubKey and preserve compressed=false', () => {
             const privhex = '906977a061af29276e40bf377042ffbde414e496ae2260bbf1fa9d085637bfff'
             const privKey = new PrivKey().fromBn(new Bn(Buffer.from(privhex, 'hex')))
             privKey.compressed = false
@@ -147,8 +148,8 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('#asyncFromPrivKey', function () {
-        it('should convert a privKey same as .fromPrivKey', async function () {
+    describe('#asyncFromPrivKey', () => {
+        it('should convert a privKey same as .fromPrivKey', async () => {
             const privKey = new PrivKey().fromRandom()
             const keyPair = new KeyPair().fromPrivKey(privKey)
             const keyPair2 = await new KeyPair().asyncFromPrivKey(privKey)
@@ -156,8 +157,8 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('@asyncFromPrivKey', function () {
-        it('should convert a privKey same as .fromPrivKey', async function () {
+    describe('@asyncFromPrivKey', () => {
+        it('should convert a privKey same as .fromPrivKey', async () => {
             const privKey = new PrivKey().fromRandom()
             const keyPair = KeyPair.fromPrivKey(privKey)
             const keyPair2 = await KeyPair.asyncFromPrivKey(privKey)
@@ -165,8 +166,8 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('#fromRandom', function () {
-        it('should make a new priv and pub, should be compressed, mainnet', function () {
+    describe('#fromRandom', () => {
+        it('should make a new priv and pub, should be compressed, mainnet', () => {
             const key = new KeyPair()
             key.fromRandom()
             should.exist(key.privKey)
@@ -179,8 +180,8 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('@fromRandom', function () {
-        it('should make a new priv and pub, should be compressed, mainnet', function () {
+    describe('@fromRandom', () => {
+        it('should make a new priv and pub, should be compressed, mainnet', () => {
             const key = KeyPair.fromRandom()
             should.exist(key.privKey)
             should.exist(key.pubKey)
@@ -192,16 +193,16 @@ describe('KeyPair', function () {
         })
     })
 
-    describe('#asyncFromRandom', function () {
-        it('should have a privKey and pubKey and compute same as pubKey methods', async function () {
+    describe('#asyncFromRandom', () => {
+        it('should have a privKey and pubKey and compute same as pubKey methods', async () => {
             const keyPair = await new KeyPair().asyncFromRandom()
             const pubKey = new PubKey().fromPrivKey(keyPair.privKey)
             pubKey.toString().should.equal(keyPair.pubKey.toString())
         })
     })
 
-    describe('@asyncFromRandom', function () {
-        it('should have a privKey and pubKey and compute same as pubKey methods', async function () {
+    describe('@asyncFromRandom', () => {
+        it('should have a privKey and pubKey and compute same as pubKey methods', async () => {
             const keyPair = await KeyPair.asyncFromRandom()
             const pubKey = new PubKey().fromPrivKey(keyPair.privKey)
             pubKey.toString().should.equal(keyPair.pubKey.toString())

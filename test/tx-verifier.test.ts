@@ -1,3 +1,4 @@
+import should = require('should')
 import { Bn } from '../src/bn'
 import { Br } from '../src/br'
 import { Interp } from '../src/interp'
@@ -6,14 +7,13 @@ import { Tx } from '../src/tx'
 import { TxOut } from '../src/tx-out'
 import { TxOutMap } from '../src/tx-out-map'
 import { TxVerifier } from '../src/tx-verifier'
-import should = require('should')
-import * as coolestTxVector from './vectors/coolest-tx-ever-sent.json'
-import * as sighashSingleVector from './vectors/sighash-single-bug.json'
 import * as txInvalid from './vectors/bitcoind/tx_invalid.json'
 import * as txValid from './vectors/bitcoind/tx_valid.json'
+import * as coolestTxVector from './vectors/coolest-tx-ever-sent.json'
+import * as sighashSingleVector from './vectors/sighash-single-bug.json'
 
-describe('TxVerifier', function () {
-    it('should make a new txVerifier', function () {
+describe('TxVerifier', () => {
+    it('should make a new txVerifier', () => {
         let txVerifier = new TxVerifier()
         ;(txVerifier instanceof TxVerifier).should.equal(true)
         txVerifier = new TxVerifier()
@@ -22,15 +22,15 @@ describe('TxVerifier', function () {
         should.exist(txVerifier.tx)
     })
 
-    describe('#getDebugObject', function () {
-        it('should get an object with these properties', function () {
+    describe('#getDebugObject', () => {
+        it('should get an object with these properties', () => {
             const vector = txInvalid[10]
             const inputs = (vector[0] as any) as number[]
             const txhex = (vector[1] as any) as string
             const flags = Interp.getFlags(vector[2] as any)
 
             const txOutMap = new TxOutMap()
-            inputs.forEach(function (input) {
+            for (const input of inputs) {
                 let txOutNum = input[1]
                 if (txOutNum === -1) {
                     txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
@@ -38,7 +38,7 @@ describe('TxVerifier', function () {
                 const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
                 const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                 txOutMap.set(txHashBuf, txOutNum, txOut)
-            })
+            }
 
             const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
             const txVerifier = new TxVerifier(tx, txOutMap)
@@ -50,15 +50,15 @@ describe('TxVerifier', function () {
         })
     })
 
-    describe('#getDebugString', function () {
-        it('should get an object with these properties', function () {
+    describe('#getDebugString', () => {
+        it('should get an object with these properties', () => {
             const vector = txInvalid[10]
             const inputs = (vector[0] as any) as number[]
             const txhex = (vector[1] as any) as string
             const flags = Interp.getFlags(vector[2] as any)
 
             const txOutMap = new TxOutMap()
-            inputs.forEach(function (input) {
+            for (const input of inputs) {
                 let txOutNum = input[1]
                 if (txOutNum === -1) {
                     txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
@@ -66,7 +66,7 @@ describe('TxVerifier', function () {
                 const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
                 const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                 txOutMap.set(txHashBuf, txOutNum, txOut)
-            })
+            }
 
             const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
             const txVerifier = new TxVerifier(tx, txOutMap)
@@ -79,8 +79,8 @@ describe('TxVerifier', function () {
         })
     })
 
-    describe('vectors', function () {
-        it('should validate the coolest transaction ever', function () {
+    describe('vectors', () => {
+        it('should validate the coolest transaction ever', () => {
             // This test vector was given to me by JJ of bcoin. It is a transaction
             // with code seperators in the input. It also uses what used to be
             // OP_NOP2 but is now OP_CHECKLOCKTIMEVERIFY, so the
@@ -97,7 +97,7 @@ describe('TxVerifier', function () {
             str.should.equal(false)
         })
 
-        it('should validate this sighash single test vector', function () {
+        it('should validate this sighash single test vector', () => {
             // This test vector was given to me by JJ of bcoin. It is a transaction
             // on testnet, not mainnet. It highlights the famous "sighash single bug"
             // which is where sighash single returns a transaction hash of all 00s in
@@ -117,20 +117,21 @@ describe('TxVerifier', function () {
         })
     })
 
-    describe('TxVerifier Vectors', function () {
+    describe('TxVerifier Vectors', () => {
         let c = 0
-        txValid.forEach(function (vector, i) {
+        // eslint-disable-next-line ban/ban
+        txValid.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }
             c++
-            it('should verify txValid vector ' + c, function () {
+            it('should verify txValid vector ' + c, () => {
                 const inputs = (vector[0] as any) as number[]
                 const txhex = (vector[1] as any) as string
                 const flags = Interp.getFlags(vector[2] as any)
 
                 const txOutMap = new TxOutMap()
-                inputs.forEach(function (input) {
+                for (const input of inputs) {
                     let txOutNum = input[1]
                     if (txOutNum === -1) {
                         txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
@@ -138,20 +139,20 @@ describe('TxVerifier', function () {
                     const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
                     const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                     txOutMap.set(txHashBuf, txOutNum, txOut)
-                })
+                }
 
                 const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
                 const verified = TxVerifier.verify(tx, txOutMap, flags)
                 verified.should.equal(true)
             })
 
-            it('should async verify txValid vector ' + c, async function () {
+            it('should async verify txValid vector ' + c, async () => {
                 const inputs = (vector[0] as any) as number[]
                 const txhex = (vector[1] as any) as string
                 const flags = Interp.getFlags(vector[2] as any)
 
                 const txOutMap = new TxOutMap()
-                inputs.forEach(function (input) {
+                for (const input of inputs) {
                     let txOutNum = input[1]
                     if (txOutNum === -1) {
                         txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
@@ -159,7 +160,7 @@ describe('TxVerifier', function () {
                     const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
                     const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                     txOutMap.set(txHashBuf, txOutNum, txOut)
-                })
+                }
 
                 const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
                 const verified = await TxVerifier.asyncVerify(tx, txOutMap, flags)
@@ -168,18 +169,19 @@ describe('TxVerifier', function () {
         })
 
         c = 0
-        txInvalid.forEach(function (vector, i) {
+        // eslint-disable-next-line ban/ban
+        txInvalid.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }
             c++
-            it('should unverify txInvalid vector ' + c, function () {
+            it('should unverify txInvalid vector ' + c, () => {
                 const inputs = (vector[0] as any) as number[]
                 const txhex = (vector[1] as any) as string
                 const flags = Interp.getFlags(vector[2] as any)
 
                 const txOutMap = new TxOutMap()
-                inputs.forEach(function (input) {
+                for (const input of inputs) {
                     let txOutNum = input[1]
                     if (txOutNum === -1) {
                         txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
@@ -187,7 +189,7 @@ describe('TxVerifier', function () {
                     const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
                     const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                     txOutMap.set(txHashBuf, txOutNum, txOut)
-                })
+                }
 
                 const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
 
@@ -195,13 +197,13 @@ describe('TxVerifier', function () {
                 verified.should.equal(false)
             })
 
-            it('should async unverify txInvalid vector ' + c, async function () {
+            it('should async unverify txInvalid vector ' + c, async () => {
                 const inputs = (vector[0] as any) as number[]
                 const txhex = (vector[1] as any) as string
                 const flags = Interp.getFlags(vector[2] as any)
 
                 const txOutMap = new TxOutMap()
-                inputs.forEach(function (input) {
+                for (const input of inputs) {
                     let txOutNum = input[1]
                     if (txOutNum === -1) {
                         txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
@@ -209,7 +211,7 @@ describe('TxVerifier', function () {
                     const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
                     const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                     txOutMap.set(txHashBuf, txOutNum, txOut)
-                })
+                }
 
                 const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
 

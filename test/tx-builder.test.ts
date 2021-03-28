@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+import should = require('should')
+import * as sinon from 'sinon'
 import { Address } from '../src/address'
 import { Bn } from '../src/bn'
 import { Interp } from '../src/interp'
@@ -11,11 +14,9 @@ import { TxBuilder } from '../src/tx-builder'
 import { TxOut } from '../src/tx-out'
 import { TxOutMap } from '../src/tx-out-map'
 import { TxVerifier } from '../src/tx-verifier'
-import should = require('should')
-import * as sinon from 'sinon'
 
-describe('TxBuilder', function () {
-    it('should make a new txbuilder', function () {
+describe('TxBuilder', () => {
+    it('should make a new txbuilder', () => {
         let txb = new TxBuilder()
         ;(txb instanceof TxBuilder).should.equal(true)
         should.exist(txb.tx)
@@ -95,8 +96,8 @@ describe('TxBuilder', function () {
         return obj
     }
 
-    describe('#toJSON', function () {
-        it('should convert this txb to JSON', function () {
+    describe('#toJSON', () => {
+        it('should convert this txb to JSON', () => {
             const obj = prepareAndBuildTxBuilder()
             const txb = obj.txb
             const json = txb.toJSON()
@@ -111,8 +112,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should convert to/from json isomorphically', function () {
+    describe('#fromJSON', () => {
+        it('should convert to/from json isomorphically', () => {
             const obj = prepareAndBuildTxBuilder()
             const txb = obj.txb
             const json = txb.toJSON()
@@ -127,8 +128,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#setDust', function () {
-        it('should set the dust', function () {
+    describe('#setDust', () => {
+        it('should set the dust', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             txb.setDust(200)
@@ -138,8 +139,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#dustChangeToFees', function () {
-        it('should set the dustChangeToFees', function () {
+    describe('#dustChangeToFees', () => {
+        it('should set the dustChangeToFees', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             txb.sendDustChangeToFees(true)
@@ -150,7 +151,7 @@ describe('TxBuilder', function () {
             txb.build()
         })
 
-        it('should not be able to build a tx if dust is greater than all outputs', function () {
+        it('should not be able to build a tx if dust is greater than all outputs', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             txb.sendDustChangeToFees(true)
@@ -160,7 +161,7 @@ describe('TxBuilder', function () {
             }.should.throw('cannot create output lesser than dust'))
         })
 
-        it('should not be able to build a tx if dust is greater than all outputs', function () {
+        it('should not be able to build a tx if dust is greater than all outputs', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             txb.sendDustChangeToFees(true)
@@ -171,7 +172,7 @@ describe('TxBuilder', function () {
             }.should.throw('cannot create output lesser than dust'))
         })
 
-        it('should have two outputs if dust is zero', function () {
+        it('should have two outputs if dust is zero', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             txb.sendDustChangeToFees(true)
@@ -181,8 +182,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#setFeePerKbNum', function () {
-        it('should set the feePerKbNum', function () {
+    describe('#setFeePerKbNum', () => {
+        it('should set the feePerKbNum', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             txb.setFeePerKbNum(1000)
@@ -190,15 +191,15 @@ describe('TxBuilder', function () {
         })
     })
 
-    it('allows zero', function () {
+    it('allows zero', () => {
         const obj = prepareTxBuilder()
         const txb = obj.txb
         txb.setFeePerKbNum(0)
         should(txb.feePerKbNum).be.eql(0)
     })
 
-    describe('#setChangeAddress', function () {
-        it('should set the change address', function () {
+    describe('#setChangeAddress', () => {
+        it('should set the change address', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             const privKey = new PrivKey().fromRandom()
@@ -208,8 +209,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#setChangeScript', function () {
-        it('should set the changeScript', function () {
+    describe('#setChangeScript', () => {
+        it('should set the changeScript', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             const privKey = new PrivKey().fromRandom()
@@ -219,8 +220,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#setNLocktime', function () {
-        it('should set the nLockTime', function () {
+    describe('#setNLocktime', () => {
+        it('should set the nLockTime', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             txb.setNLocktime(1)
@@ -229,8 +230,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#setVersion', function () {
-        it('should set the versionBytesNum', function () {
+    describe('#setVersion', () => {
+        it('should set the versionBytesNum', () => {
             const obj = prepareTxBuilder()
             const txb = obj.txb
             txb.setVersion(2)
@@ -239,14 +240,14 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#importPartiallySignedTx', function () {
-        it('should set tx', function () {
+    describe('#importPartiallySignedTx', () => {
+        it('should set tx', () => {
             const tx = new Tx()
             const txb = new TxBuilder().importPartiallySignedTx(tx)
             should.exist(txb.tx)
         })
 
-        it('should set tx and uTxOutMap', function () {
+        it('should set tx and uTxOutMap', () => {
             const tx = new Tx()
             const uTxOutMap = new TxOutMap()
             const txb = new TxBuilder().importPartiallySignedTx(tx, uTxOutMap)
@@ -255,8 +256,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#outputToAddress', function () {
-        it('should add a pubKeyHash address', function () {
+    describe('#outputToAddress', () => {
+        it('should add a pubKeyHash address', () => {
             const pubKey = new PubKey().fromPrivKey(new PrivKey().fromRandom())
             const address = new Address().fromPubKey(pubKey)
             const txb = new TxBuilder()
@@ -265,8 +266,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#outputToScript', function () {
-        it('should add an OP_RETURN output', function () {
+    describe('#outputToScript', () => {
+        it('should add an OP_RETURN output', () => {
             const script = new Script().fromString('OP_RETURN')
             const txb = new TxBuilder()
             txb.outputToScript(new Bn(0), script)
@@ -274,7 +275,7 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#build', function () {
+    describe('#build', () => {
         function prepareTxBuilder(outAmountBn = new Bn(1e8)) {
             const txb = new TxBuilder()
 
@@ -317,7 +318,7 @@ describe('TxBuilder', function () {
             return txb
         }
 
-        it('should build a tx where all inputs are NOT required', function () {
+        it('should build a tx where all inputs are NOT required', () => {
             const txb = prepareTxBuilder()
 
             txb.build()
@@ -325,7 +326,7 @@ describe('TxBuilder', function () {
             txb.tx.txIns.length.should.equal(2)
         })
 
-        it('should build a tx where all inputs are required', function () {
+        it('should build a tx where all inputs are required', () => {
             const txb = prepareTxBuilder()
 
             txb.build({ useAllInputs: true })
@@ -333,7 +334,7 @@ describe('TxBuilder', function () {
             txb.tx.txIns.length.should.equal(3)
         })
 
-        it('should buld a tx with zero fees', function () {
+        it('should buld a tx with zero fees', () => {
             const txb = new TxBuilder()
 
             const changePrivKey = new PrivKey().fromBn(new Bn(1))
@@ -361,8 +362,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#sort', function () {
-        it('it should call tx sort', function () {
+    describe('#sort', () => {
+        it('it should call tx sort', () => {
             const txBuilder = new TxBuilder()
             let called = 0
             ;(txBuilder.tx as any).sort = () => {
@@ -373,8 +374,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('@allSigsPresent', function () {
-        it('should know all sigs are or are not present these scripts', function () {
+    describe('@allSigsPresent', () => {
+        it('should know all sigs are or are not present these scripts', () => {
             let script
             script = new Script().fromString(
                 'OP_0 71 0x304402204c99f293ca4d84f01e8f319e93978866877c948628cb4d4ff5ccdf42ae8434cc02206516aa37dcd9f50ddb2f7484aeaef3c0fbab77db60eeafd5ad91b0ba54b715e901 72 0x3045022100ff53e3f8ee64eb0f816a85a244d5e3bc20e7ade814e4377be5279a12130c8414022068e00c79272539d03357d4d589bf4c0c7a517023aaa2abe3f341c26ca9077d0801 OP_PUSHDATA1 105 0x522102c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee52102f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f92102f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f953ae'
@@ -391,8 +392,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('@removeBlankSigs', function () {
-        it('should know all sigs are or are not present these scripts', function () {
+    describe('@removeBlankSigs', () => {
+        it('should know all sigs are or are not present these scripts', () => {
             let script
             script = new Script().fromString(
                 'OP_0 OP_0 71 0x304402204c99f293ca4d84f01e8f319e93978866877c948628cb4d4ff5ccdf42ae8434cc02206516aa37dcd9f50ddb2f7484aeaef3c0fbab77db60eeafd5ad91b0ba54b715e901 72 0x3045022100ff53e3f8ee64eb0f816a85a244d5e3bc20e7ade814e4377be5279a12130c8414022068e00c79272539d03357d4d589bf4c0c7a517023aaa2abe3f341c26ca9077d0801 OP_PUSHDATA1 105 0x522102c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee52102f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f92102f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f953ae'
@@ -403,8 +404,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#inputFromScript', function () {
-        it('should add an input from a script', function () {
+    describe('#inputFromScript', () => {
+        it('should add an input from a script', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
             const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))
@@ -416,7 +417,7 @@ describe('TxBuilder', function () {
             txbuilder.txIns.length.should.equal(1)
         })
 
-        it('should add an input from a script and set nSequence', function () {
+        it('should add an input from a script and set nSequence', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
             const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))
@@ -430,8 +431,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#inputFromPubKeyHash', function () {
-        it('should add an input from a pubKeyHash output', function () {
+    describe('#inputFromPubKeyHash', () => {
+        it('should add an input from a pubKeyHash output', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
             const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))
@@ -442,7 +443,7 @@ describe('TxBuilder', function () {
             Buffer.compare(txbuilder.txIns[0].script.chunks[1].buf, keyPair.pubKey.toBuffer()).should.equal(0)
         })
 
-        it('should add an input from a pubKeyHash output and set nSequence', function () {
+        it('should add an input from a pubKeyHash output and set nSequence', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
             const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))
@@ -461,24 +462,26 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#getSig', function () {
-        let txb, keyPair1, txOut1
+    describe('#getSig', () => {
+        let txb
+        let keyPair1
+        let txOut1
 
-        before(function () {
+        before(() => {
             const obj = prepareAndBuildTxBuilder()
             txb = obj.txb
             keyPair1 = obj.keyPair1
             txOut1 = obj.txOut1
         })
 
-        it('should sign and verify synchronously', function () {
+        it('should sign and verify synchronously', () => {
             const sig = txb.getSig(keyPair1, Sig.SIGHASH_ALL, 0, keyPair1, txOut1)
             ;(sig instanceof Sig).should.equal(true)
         })
     })
 
-    describe('#signTxIn', function () {
-        it('should sign and verify no SIGHASH_FORKID synchronously', function () {
+    describe('#signTxIn', () => {
+        it('should sign and verify no SIGHASH_FORKID synchronously', () => {
             // prepare
             const obj = prepareAndBuildTxBuilder()
             const txb = obj.txb
@@ -508,7 +511,7 @@ describe('TxBuilder', function () {
             TxVerifier.verify(txb.tx, txb.uTxOutMap, flags).should.equal(true)
         })
 
-        it('should sign and verify SIGHASH_FORKID synchronously', function () {
+        it('should sign and verify SIGHASH_FORKID synchronously', () => {
             // prepare
             const obj = prepareAndBuildTxBuilder()
             const txb = obj.txb
@@ -538,7 +541,7 @@ describe('TxBuilder', function () {
             TxVerifier.verify(txb.tx, txb.uTxOutMap, flags).should.equal(true)
         })
 
-        it('should pass in txOut', function () {
+        it('should pass in txOut', () => {
             // prepare
             const obj = prepareAndBuildTxBuilder()
             const txb = obj.txb
@@ -554,24 +557,26 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#asyncGetSig', function () {
-        let txb, keyPair1, txOut1
+    describe('#asyncGetSig', () => {
+        let txb
+        let keyPair1
+        let txOut1
 
-        before(function () {
+        before(() => {
             const obj = prepareAndBuildTxBuilder()
             txb = obj.txb
             keyPair1 = obj.keyPair1
             txOut1 = obj.txOut1
         })
 
-        it('should sign and verify synchronously', async function () {
+        it('should sign and verify synchronously', async () => {
             const sig = await txb.asyncGetSig(keyPair1, Sig.SIGHASH_ALL, 0, keyPair1, txOut1)
             ;(sig instanceof Sig).should.equal(true)
         })
     })
 
-    describe('#asyncSignTxIn', function () {
-        it('should sign and verify no SIGHASH_FORKID asynchronously', async function () {
+    describe('#asyncSignTxIn', () => {
+        it('should sign and verify no SIGHASH_FORKID asynchronously', async () => {
             // prepare
             const obj = prepareAndBuildTxBuilder()
             const txb = obj.txb
@@ -601,7 +606,7 @@ describe('TxBuilder', function () {
             TxVerifier.verify(txb.tx, txb.uTxOutMap, flags).should.equal(true)
         })
 
-        it('should sign and verify SIGHASH_FORKID asynchronously', async function () {
+        it('should sign and verify SIGHASH_FORKID asynchronously', async () => {
             // prepare
             const obj = prepareAndBuildTxBuilder()
             const txb = obj.txb
@@ -631,7 +636,7 @@ describe('TxBuilder', function () {
             TxVerifier.verify(txb.tx, txb.uTxOutMap, flags).should.equal(true)
         })
 
-        it('should pass in txOut', async function () {
+        it('should pass in txOut', async () => {
             const obj = prepareAndBuildTxBuilder()
             const txb = obj.txb
             const keyPair1 = obj.keyPair1
@@ -645,8 +650,8 @@ describe('TxBuilder', function () {
         })
     })
 
-    describe('#signWithKeyPairs', function () {
-        it('should sign and verify synchronously', function () {
+    describe('#signWithKeyPairs', () => {
+        it('should sign and verify synchronously', () => {
             // prepare
             const obj = prepareAndBuildTxBuilder()
             const txb = obj.txb
@@ -693,7 +698,7 @@ describe('TxBuilder', function () {
             TxVerifier.verify(txb.tx, txb.uTxOutMap).should.equal(true)
         })
 
-        it('should sign and verify synchronously with no public key inserted at input', function () {
+        it('should sign and verify synchronously with no public key inserted at input', () => {
             function prepareTxBuilder() {
                 const txb = new TxBuilder()
 
@@ -837,7 +842,7 @@ describe('TxBuilder', function () {
             should(() => txb.signWithKeyPairs([keyPair1])).not.throw()
         })
 
-        it('should sign and verify a lot of inputs and outputs', function () {
+        it('should sign and verify a lot of inputs and outputs', () => {
             // make change address
             const privKey = new PrivKey().fromBn(new Bn(100))
             const keyPair = new KeyPair().fromPrivKey(privKey)
@@ -1023,7 +1028,7 @@ describe('TxBuilder', function () {
             TxVerifier.verify(txb.tx, txb.uTxOutMap).should.equal(true)
         })
 
-        it('should be able to add more inputs to pay the fee', function () {
+        it('should be able to add more inputs to pay the fee', () => {
             // make change address
             const privKey = new PrivKey().fromBn(new Bn(100))
             const keyPair = new KeyPair().fromPrivKey(privKey)
@@ -1103,7 +1108,7 @@ describe('TxBuilder', function () {
             TxVerifier.verify(txb.tx, txb.uTxOutMap).should.equal(true)
         })
 
-        it('should sign and verify synchronously with no public key inserted at input', function () {
+        it('should sign and verify synchronously with no public key inserted at input', () => {
             function prepareTxBuilder() {
                 const txb = new TxBuilder()
 
@@ -2049,7 +2054,7 @@ describe('TxBuilder', function () {
                 )
             )
 
-            let txVerifier = new TxVerifier(txb.tx, txb.uTxOutMap)
+            const txVerifier = new TxVerifier(txb.tx, txb.uTxOutMap)
 
             // txb.uTxOutMap.map.forEach((txOut, label) => {
             //   console.log(label, Address.fromTxOutScript(txOut.script).toString(), txOut.valueBn.toNumber())
@@ -2095,7 +2100,7 @@ describe('TxBuilder', function () {
             txb2.sort() // NOT sorting should lead to valid tx
             txb2.signWithKeyPairs(keyPairs)
 
-            let txVerifier2 = new TxVerifier(txb2.tx, txb2.uTxOutMap)
+            const txVerifier2 = new TxVerifier(txb2.tx, txb2.uTxOutMap)
 
             // txb2.uTxOutMap.map.forEach((txOut, label) => {
             //   console.log(label, Address.fromTxOutScript(txOut.script).toString(), txOut.valueBn.toNumber())

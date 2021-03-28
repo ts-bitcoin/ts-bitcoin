@@ -5,8 +5,8 @@
  * Some hash functions are used through out bitcoin. We expose them here as a
  * convenience.
  */
-import { Workers } from './workers'
 import { sha1, sha256, sha512, ripemd160 } from 'hash.js'
+import { Workers } from './workers'
 
 export class Hash {
     public static readonly blockSize = {

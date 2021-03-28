@@ -1,11 +1,11 @@
-import { Ecies } from '../src/ecies'
 import should = require('should')
+import { Ecies } from '../src/ecies'
+import { Hash } from '../src/hash'
 import { KeyPair } from '../src/key-pair'
 import { PrivKey } from '../src/priv-key'
-import { Hash } from '../src/hash'
 
-describe('#Ecies', function () {
-    it('should make a new Ecies object', function () {
+describe('#Ecies', () => {
+    it('should make a new Ecies object', () => {
         should.exist(Ecies)
     })
 
@@ -13,65 +13,65 @@ describe('#Ecies', function () {
     const tokey = new KeyPair().fromRandom()
     const messageBuf = Hash.sha256(Buffer.from('my message is the hash of this string'))
 
-    describe('@bitcoreEncrypt', function () {
-        it('should return a buffer', function () {
+    describe('@bitcoreEncrypt', () => {
+        it('should return a buffer', () => {
             const encBuf = Ecies.bitcoreEncrypt(messageBuf, tokey.pubKey, fromkey)
             Buffer.isBuffer(encBuf).should.equal(true)
         })
 
-        it('should return a buffer if fromkey is not present', function () {
+        it('should return a buffer if fromkey is not present', () => {
             const encBuf = Ecies.bitcoreEncrypt(messageBuf, tokey.pubKey)
             Buffer.isBuffer(encBuf).should.equal(true)
         })
     })
 
-    describe('@asyncBitcoreEncrypt', function () {
-        it('should return a buffer', async function () {
+    describe('@asyncBitcoreEncrypt', () => {
+        it('should return a buffer', async () => {
             const encBuf = await Ecies.asyncBitcoreEncrypt(messageBuf, tokey.pubKey, fromkey)
             Buffer.isBuffer(encBuf).should.equal(true)
         })
 
-        it('should return a buffer if fromkey is not present', async function () {
+        it('should return a buffer if fromkey is not present', async () => {
             const encBuf = await Ecies.asyncBitcoreEncrypt(messageBuf, tokey.pubKey)
             Buffer.isBuffer(encBuf).should.equal(true)
         })
     })
 
-    describe('@bitcoreDecrypt', function () {
-        it('should decrypt that which was encrypted', function () {
+    describe('@bitcoreDecrypt', () => {
+        it('should decrypt that which was encrypted', () => {
             const encBuf = Ecies.bitcoreEncrypt(messageBuf, tokey.pubKey, fromkey)
             const messageBuf2 = Ecies.bitcoreDecrypt(encBuf, tokey.privKey)
             messageBuf2.toString('hex').should.equal(messageBuf.toString('hex'))
         })
 
-        it('should decrypt that which was encrypted if fromKeyPair was randomly generated', function () {
+        it('should decrypt that which was encrypted if fromKeyPair was randomly generated', () => {
             const encBuf = Ecies.bitcoreEncrypt(messageBuf, tokey.pubKey)
             const messageBuf2 = Ecies.bitcoreDecrypt(encBuf, tokey.privKey)
             messageBuf2.toString('hex').should.equal(messageBuf.toString('hex'))
         })
     })
 
-    describe('@asyncDecrypt', function () {
-        it('should decrypt that which was encrypted', async function () {
+    describe('@asyncDecrypt', () => {
+        it('should decrypt that which was encrypted', async () => {
             const encBuf = await Ecies.asyncBitcoreEncrypt(messageBuf, tokey.pubKey, fromkey)
             const messageBuf2 = await Ecies.asyncBitcoreDecrypt(encBuf, tokey.privKey)
             messageBuf2.toString('hex').should.equal(messageBuf.toString('hex'))
         })
 
-        it('should decrypt that which was encrypted if fromKeyPair was randomly generated', async function () {
+        it('should decrypt that which was encrypted if fromKeyPair was randomly generated', async () => {
             const encBuf = await Ecies.asyncBitcoreEncrypt(messageBuf, tokey.pubKey)
             const messageBuf2 = await Ecies.asyncBitcoreDecrypt(encBuf, tokey.privKey)
             messageBuf2.toString('hex').should.equal(messageBuf.toString('hex'))
         })
     })
 
-    describe('Electrum Ecies', function () {
+    describe('Electrum Ecies', () => {
         const alicePrivKey = PrivKey.fromString('L1Ejc5dAigm5XrM3mNptMEsNnHzS7s51YxU7J61ewGshZTKkbmzJ')
         const aliceKeyPair = KeyPair.fromPrivKey(alicePrivKey)
         const bobPrivKey = PrivKey.fromString('KxfxrUXSMjJQcb3JgnaaA6MqsrKQ1nBSxvhuigdKRyFiEm6BZDgG')
         const bobKeyPair = KeyPair.fromPrivKey(bobPrivKey)
 
-        it('should do these test vectors correctly', function () {
+        it('should do these test vectors correctly', () => {
             const message = Buffer.from('this is my test message')
 
             Ecies.electrumDecrypt(
@@ -105,7 +105,7 @@ describe('#Ecies', function () {
                 )
         })
 
-        it('should encrypt and decrypt symmetrically with matching strings in ECDH noKey mode', function () {
+        it('should encrypt and decrypt symmetrically with matching strings in ECDH noKey mode', () => {
             const message = Buffer.from('this is my ECDH test message')
             const ecdhMessageEncryptedBob = Ecies.electrumEncrypt(message, bobKeyPair.pubKey, aliceKeyPair, true)
             const ecdhMessageEncryptedAlice = Ecies.electrumEncrypt(message, aliceKeyPair.pubKey, bobKeyPair, true)

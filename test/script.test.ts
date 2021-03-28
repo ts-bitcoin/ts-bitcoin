@@ -1,23 +1,23 @@
+import should = require('should')
 import { Bn } from '../src/bn'
 import { OpCode } from '../src/op-code'
 import { PrivKey } from '../src/priv-key'
 import { PubKey } from '../src/pub-key'
 import { Script } from '../src/script'
-import should = require('should')
 
 import * as scriptInvalid from './vectors/bitcoind/script_invalid.json'
 import * as scriptValid from './vectors/bitcoind/script_valid.json'
 
-describe('Script', function () {
-    it('should make a new script', function () {
+describe('Script', () => {
+    it('should make a new script', () => {
         const script = new Script()
         should.exist(script)
         new Script().toString().should.equal('')
         new Script().writeString('').toString().should.equal('')
     })
 
-    describe('#fromHex', function () {
-        it('should parse this hex string containing an OP code', function () {
+    describe('#fromHex', () => {
+        it('should parse this hex string containing an OP code', () => {
             const buf = Buffer.alloc(1)
             buf[0] = new OpCode().fromString('OP_0').toNumber()
             const script = new Script().fromHex(buf.toString('hex'))
@@ -26,8 +26,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#fromBuffer', function () {
-        it('should parse this buffer containing an OP code', function () {
+    describe('#fromBuffer', () => {
+        it('should parse this buffer containing an OP code', () => {
             const buf = Buffer.alloc(1)
             buf[0] = new OpCode().fromString('OP_0').toNumber()
             const script = new Script().fromBuffer(buf)
@@ -35,7 +35,7 @@ describe('Script', function () {
             script.chunks[0].opCodeNum.should.equal(buf[0])
         })
 
-        it('should parse this buffer containing another OP code', function () {
+        it('should parse this buffer containing another OP code', () => {
             const buf = Buffer.alloc(1)
             buf[0] = new OpCode().fromString('OP_CHECKMULTISIG').toNumber()
             const script = new Script().fromBuffer(buf)
@@ -43,14 +43,14 @@ describe('Script', function () {
             script.chunks[0].opCodeNum.should.equal(buf[0])
         })
 
-        it('should parse this buffer containing three bytes of data', function () {
+        it('should parse this buffer containing three bytes of data', () => {
             const buf = Buffer.from([3, 1, 2, 3])
             const script = new Script().fromBuffer(buf)
             script.chunks.length.should.equal(1)
             script.chunks[0].buf.toString('hex').should.equal('010203')
         })
 
-        it('should parse this buffer containing OP_PUSHDATA1 and three bytes of data', function () {
+        it('should parse this buffer containing OP_PUSHDATA1 and three bytes of data', () => {
             const buf = Buffer.from([0, 0, 1, 2, 3])
             buf[0] = new OpCode().fromString('OP_PUSHDATA1').toNumber()
             buf.writeUInt8(3, 1)
@@ -59,7 +59,7 @@ describe('Script', function () {
             script.chunks[0].buf.toString('hex').should.equal('010203')
         })
 
-        it('should parse this buffer containing OP_PUSHDATA1 and zero bytes of data', function () {
+        it('should parse this buffer containing OP_PUSHDATA1 and zero bytes of data', () => {
             const buf = Buffer.from([0])
             buf[0] = new OpCode().fromString('OP_PUSHDATA1').toNumber()
             const script = new Script().fromBuffer(buf)
@@ -67,7 +67,7 @@ describe('Script', function () {
             script.chunks[0].buf.toString('hex').should.equal('')
         })
 
-        it('should parse this buffer containing OP_PUSHDATA2 and zero bytes of data', function () {
+        it('should parse this buffer containing OP_PUSHDATA2 and zero bytes of data', () => {
             const buf = Buffer.from([0])
             buf[0] = new OpCode().fromString('OP_PUSHDATA2').toNumber()
             const script = new Script().fromBuffer(buf)
@@ -75,7 +75,7 @@ describe('Script', function () {
             script.chunks[0].buf.toString('hex').should.equal('')
         })
 
-        it('should parse this buffer containing OP_PUSHDATA2 and three bytes of data', function () {
+        it('should parse this buffer containing OP_PUSHDATA2 and three bytes of data', () => {
             const buf = Buffer.from([0, 0, 0, 1, 2, 3])
             buf[0] = new OpCode().fromString('OP_PUSHDATA2').toNumber()
             buf.writeUInt16LE(3, 1)
@@ -84,7 +84,7 @@ describe('Script', function () {
             script.chunks[0].buf.toString('hex').should.equal('010203')
         })
 
-        it('should parse this buffer containing OP_PUSHDATA4 and zero bytes of data', function () {
+        it('should parse this buffer containing OP_PUSHDATA4 and zero bytes of data', () => {
             const buf = Buffer.from([0, 0])
             buf[0] = new OpCode().fromString('OP_PUSHDATA4').toNumber()
             const script = new Script().fromBuffer(buf)
@@ -92,7 +92,7 @@ describe('Script', function () {
             script.chunks[0].buf.toString('hex').should.equal('')
         })
 
-        it('should parse this buffer containing OP_PUSHDATA4 and three bytes of data', function () {
+        it('should parse this buffer containing OP_PUSHDATA4 and three bytes of data', () => {
             const buf = Buffer.from([0, 0, 0, 0, 0, 1, 2, 3])
             buf[0] = new OpCode().fromString('OP_PUSHDATA4').toNumber()
             buf.writeUInt16LE(3, 1)
@@ -101,7 +101,7 @@ describe('Script', function () {
             script.chunks[0].buf.toString('hex').should.equal('010203')
         })
 
-        it('should parse this buffer an OP code, data, and another OP code', function () {
+        it('should parse this buffer an OP code, data, and another OP code', () => {
             const buf = Buffer.from([0, 0, 0, 0, 0, 0, 1, 2, 3, 0])
             buf[0] = new OpCode().fromString('OP_0').toNumber()
             buf[1] = new OpCode().fromString('OP_PUSHDATA4').toNumber()
@@ -115,8 +115,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should output this hex string containing an OP code', function () {
+    describe('#toBuffer', () => {
+        it('should output this hex string containing an OP code', () => {
             const buf = Buffer.alloc(1)
             buf[0] = new OpCode().fromString('OP_0').toNumber()
             const script = new Script().fromHex(buf.toString('hex'))
@@ -126,8 +126,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should output this buffer containing an OP code', function () {
+    describe('#toBuffer', () => {
+        it('should output this buffer containing an OP code', () => {
             const buf = Buffer.alloc(1)
             buf[0] = new OpCode().fromString('OP_0').toNumber()
             const script = new Script().fromBuffer(buf)
@@ -136,7 +136,7 @@ describe('Script', function () {
             script.toBuffer().toString('hex').should.equal(buf.toString('hex'))
         })
 
-        it('should output this buffer containing another OP code', function () {
+        it('should output this buffer containing another OP code', () => {
             const buf = Buffer.alloc(1)
             buf[0] = new OpCode().fromString('OP_CHECKMULTISIG').toNumber()
             const script = new Script().fromBuffer(buf)
@@ -145,7 +145,7 @@ describe('Script', function () {
             script.toBuffer().toString('hex').should.equal(buf.toString('hex'))
         })
 
-        it('should output this buffer containing three bytes of data', function () {
+        it('should output this buffer containing three bytes of data', () => {
             const buf = Buffer.from([3, 1, 2, 3])
             const script = new Script().fromBuffer(buf)
             script.chunks.length.should.equal(1)
@@ -153,7 +153,7 @@ describe('Script', function () {
             script.toBuffer().toString('hex').should.equal(buf.toString('hex'))
         })
 
-        it('should output this buffer containing OP_PUSHDATA1 and three bytes of data', function () {
+        it('should output this buffer containing OP_PUSHDATA1 and three bytes of data', () => {
             const buf = Buffer.from([0, 0, 1, 2, 3])
             buf[0] = new OpCode().fromString('OP_PUSHDATA1').toNumber()
             buf.writeUInt8(3, 1)
@@ -163,7 +163,7 @@ describe('Script', function () {
             script.toBuffer().toString('hex').should.equal(buf.toString('hex'))
         })
 
-        it('should output this buffer containing OP_PUSHDATA2 and three bytes of data', function () {
+        it('should output this buffer containing OP_PUSHDATA2 and three bytes of data', () => {
             const buf = Buffer.from([0, 0, 0, 1, 2, 3])
             buf[0] = new OpCode().fromString('OP_PUSHDATA2').toNumber()
             buf.writeUInt16LE(3, 1)
@@ -173,7 +173,7 @@ describe('Script', function () {
             script.toBuffer().toString('hex').should.equal(buf.toString('hex'))
         })
 
-        it('should output this buffer containing OP_PUSHDATA4 and three bytes of data', function () {
+        it('should output this buffer containing OP_PUSHDATA4 and three bytes of data', () => {
             const buf = Buffer.from([0, 0, 0, 0, 0, 1, 2, 3])
             buf[0] = new OpCode().fromString('OP_PUSHDATA4').toNumber()
             buf.writeUInt16LE(3, 1)
@@ -183,7 +183,7 @@ describe('Script', function () {
             script.toBuffer().toString('hex').should.equal(buf.toString('hex'))
         })
 
-        it('should output this buffer an OP code, data, and another OP code', function () {
+        it('should output this buffer an OP code, data, and another OP code', () => {
             const buf = Buffer.from([0, 0, 0, 0, 0, 0, 1, 2, 3, 0])
             buf[0] = new OpCode().fromString('OP_0').toNumber()
             buf[1] = new OpCode().fromString('OP_PUSHDATA4').toNumber()
@@ -198,8 +198,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#fromString', function () {
-        it('should parse these known scripts', function () {
+    describe('#fromString', () => {
+        it('should parse these known scripts', () => {
             new Script()
                 .fromString('OP_0 OP_PUSHDATA4 3 0x010203 OP_0')
                 .toString()
@@ -234,8 +234,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#toString', function () {
-        it('should output this buffer an OP code, data, and another OP code', function () {
+    describe('#toString', () => {
+        it('should output this buffer an OP code, data, and another OP code', () => {
             const buf = Buffer.from([0, 0, 0, 0, 0, 0, 1, 2, 3, 0])
             buf[0] = new OpCode().fromString('OP_0').toNumber()
             buf[1] = new OpCode().fromString('OP_PUSHDATA4').toNumber()
@@ -250,8 +250,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#fromBitcoindString', function () {
-        it('should convert from this known string', function () {
+    describe('#fromBitcoindString', () => {
+        it('should convert from this known string', () => {
             new Script().fromBitcoindString('DEPTH 0 EQUAL').toBitcoindString().should.equal('DEPTH 0 EQUAL')
             new Script()
                 .fromBitcoindString(
@@ -267,13 +267,13 @@ describe('Script', function () {
             new Script().fromBitcoindString(str).toBitcoindString().should.equal(str)
         })
 
-        it('should convert to this known string', function () {
+        it('should convert to this known string', () => {
             new Script().fromBitcoindString('DEPTH 0 EQUAL').toBitcoindString().should.equal('DEPTH 0 EQUAL')
         })
     })
 
-    describe('@fromBitcoindString', function () {
-        it('should convert from this known string', function () {
+    describe('@fromBitcoindString', () => {
+        it('should convert from this known string', () => {
             Script.fromBitcoindString('DEPTH 0 EQUAL').toBitcoindString().should.equal('DEPTH 0 EQUAL')
             Script.fromBitcoindString(
                 "'Azzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz' EQUAL"
@@ -288,11 +288,11 @@ describe('Script', function () {
             Script.fromBitcoindString(str).toBitcoindString().should.equal(str)
         })
 
-        it('should convert to this known string', function () {
+        it('should convert to this known string', () => {
             Script.fromBitcoindString('DEPTH 0 EQUAL').toBitcoindString().should.equal('DEPTH 0 EQUAL')
         })
 
-        it('should convert to this known string', function () {
+        it('should convert to this known string', () => {
             Script.fromAsmString(
                 'OP_DUP OP_HASH160 6fa5502ea094d59576898b490d866b32a61b89f6 OP_EQUALVERIFY OP_CHECKSIG'
             )
@@ -301,10 +301,10 @@ describe('Script', function () {
         })
     })
 
-    describe('@fromAsmString', function () {
-        it('should parse this known script in ASM', function () {
-            var asm = 'OP_DUP OP_HASH160 f4c03610e60ad15100929cc23da2f3a799af1725 OP_EQUALVERIFY OP_CHECKSIG'
-            var script = Script.fromAsmString(asm)
+    describe('@fromAsmString', () => {
+        it('should parse this known script in ASM', () => {
+            const asm = 'OP_DUP OP_HASH160 f4c03610e60ad15100929cc23da2f3a799af1725 OP_EQUALVERIFY OP_CHECKSIG'
+            const script = Script.fromAsmString(asm)
             script.chunks[0].opCodeNum.should.equal(OpCode.OP_DUP)
             script.chunks[1].opCodeNum.should.equal(OpCode.OP_HASH160)
             script.chunks[2].opCodeNum.should.equal(20)
@@ -313,18 +313,18 @@ describe('Script', function () {
             script.chunks[4].opCodeNum.should.equal(OpCode.OP_CHECKSIG)
         })
 
-        it('should parse this known problematic script in ASM', function () {
-            var asm = 'OP_RETURN 026d02 0568656c6c6f'
-            var script = Script.fromAsmString(asm)
+        it('should parse this known problematic script in ASM', () => {
+            const asm = 'OP_RETURN 026d02 0568656c6c6f'
+            const script = Script.fromAsmString(asm)
             script.toAsmString().should.equal(asm)
         })
 
-        it('should know this is invalid hex', function () {
-            var asm = 'OP_RETURN 026d02 0568656c6c6fzz'
+        it('should know this is invalid hex', () => {
+            const asm = 'OP_RETURN 026d02 0568656c6c6fzz'
             let errors = 0
             try {
                 errors++
-                var script = Script.fromAsmString(asm)
+                const script = Script.fromAsmString(asm)
                 script.toAsmString().should.equal(asm)
             } catch (err) {
                 err.message.should.equal('invalid hex string in script')
@@ -332,49 +332,49 @@ describe('Script', function () {
             errors.should.equal(1)
         })
 
-        it('should parse this long PUSHDATA1 script in ASM', function () {
-            var buf = Buffer.alloc(220, 0)
-            var asm = 'OP_RETURN ' + buf.toString('hex')
-            var script = Script.fromAsmString(asm)
+        it('should parse this long PUSHDATA1 script in ASM', () => {
+            const buf = Buffer.alloc(220, 0)
+            const asm = 'OP_RETURN ' + buf.toString('hex')
+            const script = Script.fromAsmString(asm)
             script.chunks[1].opCodeNum.should.equal(OpCode.OP_PUSHDATA1)
             script.toAsmString().should.equal(asm)
         })
 
-        it('should parse this long PUSHDATA2 script in ASM', function () {
-            var buf = Buffer.alloc(1024, 0)
-            var asm = 'OP_RETURN ' + buf.toString('hex')
-            var script = Script.fromAsmString(asm)
+        it('should parse this long PUSHDATA2 script in ASM', () => {
+            const buf = Buffer.alloc(1024, 0)
+            const asm = 'OP_RETURN ' + buf.toString('hex')
+            const script = Script.fromAsmString(asm)
             script.chunks[1].opCodeNum.should.equal(OpCode.OP_PUSHDATA2)
             script.toAsmString().should.equal(asm)
         })
 
-        it('should parse this long PUSHDATA4 script in ASM', function () {
-            var buf = Buffer.alloc(Math.pow(2, 17), 0)
-            var asm = 'OP_RETURN ' + buf.toString('hex')
-            var script = Script.fromAsmString(asm)
+        it('should parse this long PUSHDATA4 script in ASM', () => {
+            const buf = Buffer.alloc(Math.pow(2, 17), 0)
+            const asm = 'OP_RETURN ' + buf.toString('hex')
+            const script = Script.fromAsmString(asm)
             script.chunks[1].opCodeNum.should.equal(OpCode.OP_PUSHDATA4)
             script.toAsmString().should.equal(asm)
         })
 
-        it('should return this script correctly', function () {
-            var asm1 = 'OP_FALSE'
-            var asm2 = 'OP_0'
-            var asm3 = '0'
+        it('should return this script correctly', () => {
+            const asm1 = 'OP_FALSE'
+            const asm2 = 'OP_0'
+            const asm3 = '0'
             Script.fromAsmString(asm1).toAsmString().should.equal(asm3)
             Script.fromAsmString(asm2).toAsmString().should.equal(asm3)
             Script.fromAsmString(asm3).toAsmString().should.equal(asm3)
         })
 
-        it('should return this script correctly', function () {
-            var asm1 = 'OP_1NEGATE'
-            var asm2 = '-1'
+        it('should return this script correctly', () => {
+            const asm1 = 'OP_1NEGATE'
+            const asm2 = '-1'
             Script.fromAsmString(asm1).toAsmString().should.equal(asm2)
             Script.fromAsmString(asm2).toAsmString().should.equal(asm2)
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should parse this known script', function () {
+    describe('#fromJSON', () => {
+        it('should parse this known script', () => {
             new Script()
                 .fromJSON('OP_0 OP_PUSHDATA4 3 0x010203 OP_0')
                 .toString()
@@ -382,8 +382,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#toJSON', function () {
-        it('should output this known script', function () {
+    describe('#toJSON', () => {
+        it('should output this known script', () => {
             new Script()
                 .fromString('OP_0 OP_PUSHDATA4 3 0x010203 OP_0')
                 .toJSON()
@@ -391,20 +391,20 @@ describe('Script', function () {
         })
     })
 
-    describe('@fromOpReturnData', function () {
-        it('should create valid op return output', function () {
+    describe('@fromOpReturnData', () => {
+        it('should create valid op return output', () => {
             const script = Script.fromOpReturnData(Buffer.from('yours bitcoin'))
             script.isOpReturn().should.equal(true)
         })
     })
 
-    describe('@fromSafeData', function () {
-        it('should create valid op return output', function () {
+    describe('@fromSafeData', () => {
+        it('should create valid op return output', () => {
             const script = Script.fromSafeData(Buffer.from('yours bitcoin'))
             script.isSafeDataOut().should.equal(true)
         })
 
-        it('should create valid op return output', function () {
+        it('should create valid op return output', () => {
             Script.fromSafeDataArray([Buffer.from('ff', 'hex'), Buffer.from('aa', 'hex')])
                 .toAsmString()
                 .should.equal('0 OP_RETURN ff aa')
@@ -414,15 +414,15 @@ describe('Script', function () {
         })
     })
 
-    describe('@fromSafeDataArray', function () {
-        it('should create valid op return output', function () {
+    describe('@fromSafeDataArray', () => {
+        it('should create valid op return output', () => {
             const script = Script.fromSafeDataArray([Buffer.from('yours bitcoin'), Buffer.from('bsv')])
             script.isSafeDataOut().should.equal(true)
         })
     })
 
-    describe('#getData', function () {
-        it('should create valid op return output', function () {
+    describe('#getData', () => {
+        it('should create valid op return output', () => {
             const script = Script.fromSafeDataArray([Buffer.from('yours bitcoin'), Buffer.from('bsv')])
             script.isSafeDataOut().should.equal(true)
             const bufs = script.getData()
@@ -431,8 +431,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#fromPubKeyHash', function () {
-        it('should create pubKeyHash output script', function () {
+    describe('#fromPubKeyHash', () => {
+        it('should create pubKeyHash output script', () => {
             const hashBuf = Buffer.alloc(20)
             hashBuf.fill(0)
             new Script()
@@ -444,8 +444,8 @@ describe('Script', function () {
         })
     })
 
-    describe('@fromPubKeyHash', function () {
-        it('should create pubKeyHash output script', function () {
+    describe('@fromPubKeyHash', () => {
+        it('should create pubKeyHash output script', () => {
             const hashBuf = Buffer.alloc(20)
             hashBuf.fill(0)
             Script.fromPubKeyHash(hashBuf)
@@ -456,8 +456,8 @@ describe('Script', function () {
         })
     })
 
-    describe('@sortPubKeys', function () {
-        it('should sort these pubKeys in a known order', function () {
+    describe('@sortPubKeys', () => {
+        it('should sort these pubKeys in a known order', () => {
             const testPubKeysHex = [
                 '02c525d65d18be8fb36ab50a21bee02ac9fdc2c176fa18791ac664ea4b95572ae0',
                 '02b937d54b550a3afdc2819772822d25869495f9e588b56a0205617d80514f0758',
@@ -475,8 +475,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#fromPubKeys', function () {
-        it('should generate this known script from a list of public keys', function () {
+    describe('#fromPubKeys', () => {
+        it('should generate this known script from a list of public keys', () => {
             const privKey = new PrivKey().fromBn(new Bn(5))
             const pubKey = new PubKey().fromPrivKey(privKey)
             const script = new Script().fromPubKeys(2, [pubKey, pubKey, pubKey])
@@ -487,7 +487,7 @@ describe('Script', function () {
                 )
         })
 
-        it('should generate this known script from a list of public keys, sorted', function () {
+        it('should generate this known script from a list of public keys, sorted', () => {
             const pubKey1 = new PubKey().fromHex('02c525d65d18be8fb36ab50a21bee02ac9fdc2c176fa18791ac664ea4b95572ae0')
             const pubKey2 = new PubKey().fromHex('02b937d54b550a3afdc2819772822d25869495f9e588b56a0205617d80514f0758')
             const script = new Script().fromPubKeys(2, [pubKey1, pubKey2])
@@ -498,7 +498,7 @@ describe('Script', function () {
                 )
         })
 
-        it('should generate this known script from a list of public keys, sorted explicitly', function () {
+        it('should generate this known script from a list of public keys, sorted explicitly', () => {
             const pubKey1 = new PubKey().fromHex('02c525d65d18be8fb36ab50a21bee02ac9fdc2c176fa18791ac664ea4b95572ae0')
             const pubKey2 = new PubKey().fromHex('02b937d54b550a3afdc2819772822d25869495f9e588b56a0205617d80514f0758')
             const script = new Script().fromPubKeys(2, [pubKey1, pubKey2], true)
@@ -509,7 +509,7 @@ describe('Script', function () {
                 )
         })
 
-        it('should generate this known script from a list of public keys, unsorted', function () {
+        it('should generate this known script from a list of public keys, unsorted', () => {
             const pubKey1 = new PubKey().fromHex('02c525d65d18be8fb36ab50a21bee02ac9fdc2c176fa18791ac664ea4b95572ae0')
             const pubKey2 = new PubKey().fromHex('02b937d54b550a3afdc2819772822d25869495f9e588b56a0205617d80514f0758')
             const script = new Script().fromPubKeys(2, [pubKey1, pubKey2], false)
@@ -521,8 +521,8 @@ describe('Script', function () {
         })
     })
 
-    describe('@fromPubKeys', function () {
-        it('should generate this known script from a list of public keys', function () {
+    describe('@fromPubKeys', () => {
+        it('should generate this known script from a list of public keys', () => {
             const privKey = PrivKey.fromBn(new Bn(5))
             const pubKey = PubKey.fromPrivKey(privKey)
             const script = Script.fromPubKeys(2, [pubKey, pubKey, pubKey])
@@ -533,7 +533,7 @@ describe('Script', function () {
                 )
         })
 
-        it('should generate this known script from a list of public keys, sorted', function () {
+        it('should generate this known script from a list of public keys, sorted', () => {
             const pubKey1 = PubKey.fromHex('02c525d65d18be8fb36ab50a21bee02ac9fdc2c176fa18791ac664ea4b95572ae0')
             const pubKey2 = PubKey.fromHex('02b937d54b550a3afdc2819772822d25869495f9e588b56a0205617d80514f0758')
             const script = Script.fromPubKeys(2, [pubKey1, pubKey2])
@@ -544,7 +544,7 @@ describe('Script', function () {
                 )
         })
 
-        it('should generate this known script from a list of public keys, sorted explicitly', function () {
+        it('should generate this known script from a list of public keys, sorted explicitly', () => {
             const pubKey1 = PubKey.fromHex('02c525d65d18be8fb36ab50a21bee02ac9fdc2c176fa18791ac664ea4b95572ae0')
             const pubKey2 = PubKey.fromHex('02b937d54b550a3afdc2819772822d25869495f9e588b56a0205617d80514f0758')
             const script = Script.fromPubKeys(2, [pubKey1, pubKey2], true)
@@ -555,7 +555,7 @@ describe('Script', function () {
                 )
         })
 
-        it('should generate this known script from a list of public keys, unsorted', function () {
+        it('should generate this known script from a list of public keys, unsorted', () => {
             const pubKey1 = PubKey.fromHex('02c525d65d18be8fb36ab50a21bee02ac9fdc2c176fa18791ac664ea4b95572ae0')
             const pubKey2 = PubKey.fromHex('02b937d54b550a3afdc2819772822d25869495f9e588b56a0205617d80514f0758')
             const script = Script.fromPubKeys(2, [pubKey1, pubKey2], false)
@@ -567,8 +567,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#removeCodeseparators', function () {
-        it('should remove any OP_CODESEPARATORs', function () {
+    describe('#removeCodeseparators', () => {
+        it('should remove any OP_CODESEPARATORs', () => {
             new Script()
                 .writeString('OP_CODESEPARATOR OP_0 OP_CODESEPARATOR')
                 .removeCodeseparators()
@@ -577,8 +577,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#isPushOnly', function () {
-        it("should know these scripts are or aren't push only", function () {
+    describe('#isPushOnly', () => {
+        it("should know these scripts are or aren't push only", () => {
             new Script().writeString('OP_0').isPushOnly().should.equal(true)
             new Script().writeString('OP_0 OP_RETURN').isPushOnly().should.equal(false)
             new Script().writeString('OP_PUSHDATA1 5 0x1010101010').isPushOnly().should.equal(true)
@@ -588,12 +588,12 @@ describe('Script', function () {
         })
     })
 
-    describe('#isOpReturn', function () {
-        it('should know this is a (blank) OP_RETURN script', function () {
+    describe('#isOpReturn', () => {
+        it('should know this is a (blank) OP_RETURN script', () => {
             new Script().writeString('OP_RETURN').isOpReturn().should.equal(true)
         })
 
-        it('should know this is an OP_RETURN script', function () {
+        it('should know this is an OP_RETURN script', () => {
             const buf = Buffer.alloc(40)
             buf.fill(0)
             new Script()
@@ -602,7 +602,7 @@ describe('Script', function () {
                 .should.equal(true)
         })
 
-        it('should know this is not an OP_RETURN script', function () {
+        it('should know this is not an OP_RETURN script', () => {
             const buf = Buffer.alloc(40)
             buf.fill(0)
             new Script()
@@ -612,8 +612,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#isPubKeyHashIn', function () {
-        it('should classify this known pubKeyHashin', function () {
+    describe('#isPubKeyHashIn', () => {
+        it('should classify this known pubKeyHashin', () => {
             new Script()
                 .writeString(
                     '73 0x3046022100bb3c194a30e460d81d34be0a230179c043a656f67e3c5c8bf47eceae7c4042ee0221008bf54ca11b2985285be0fd7a212873d243e6e73f5fad57e8eb14c4f39728b8c601 65 0x04e365859b3c78a8b7c202412b949ebca58e147dba297be29eee53cd3e1d300a6419bc780cc9aec0dc94ed194e91c8f6433f1b781ee00eac0ead2aae1e8e0712c6'
@@ -622,7 +622,7 @@ describe('Script', function () {
                 .should.equal(true)
         })
 
-        it('should classify this known non-pubKeyHashin', function () {
+        it('should classify this known non-pubKeyHashin', () => {
             new Script()
                 .writeString(
                     '73 0x3046022100bb3c194a30e460d81d34be0a230179c043a656f67e3c5c8bf47eceae7c4042ee0221008bf54ca11b2985285be0fd7a212873d243e6e73f5fad57e8eb14c4f39728b8c601 65 0x04e365859b3c78a8b7c202412b949ebca58e147dba297be29eee53cd3e1d300a6419bc780cc9aec0dc94ed194e91c8f6433f1b781ee00eac0ead2aae1e8e0712c6 OP_CHECKSIG'
@@ -632,15 +632,15 @@ describe('Script', function () {
         })
     })
 
-    describe('#isPubKeyHashOut', function () {
-        it('should classify this known pubKeyHashout as pubKeyHashout', function () {
+    describe('#isPubKeyHashOut', () => {
+        it('should classify this known pubKeyHashout as pubKeyHashout', () => {
             new Script()
                 .writeString('OP_DUP OP_HASH160 20 0000000000000000000000000000000000000000 OP_EQUALVERIFY OP_CHECKSIG')
                 .isPubKeyHashOut()
                 .should.equal(true)
         })
 
-        it('should classify this known non-pubKeyHashout as not pubKeyHashout', function () {
+        it('should classify this known non-pubKeyHashout as not pubKeyHashout', () => {
             new Script()
                 .writeString('OP_DUP OP_HASH160 20 0000000000000000000000000000000000000000')
                 .isPubKeyHashOut()
@@ -648,12 +648,12 @@ describe('Script', function () {
         })
     })
 
-    describe('#isScriptHashIn', function () {
-        it('should classify this known scriptHashin', function () {
+    describe('#isScriptHashIn', () => {
+        it('should classify this known scriptHashin', () => {
             new Script().writeString('20 0000000000000000000000000000000000000000').isScriptHashIn().should.equal(true)
         })
 
-        it('should classify this known non-scriptHashin', function () {
+        it('should classify this known non-scriptHashin', () => {
             new Script()
                 .writeString('20 0000000000000000000000000000000000000000 OP_CHECKSIG')
                 .isScriptHashIn()
@@ -661,15 +661,15 @@ describe('Script', function () {
         })
     })
 
-    describe('#isScriptHashOut', function () {
-        it('should classify this known pubKeyHashout as pubKeyHashout', function () {
+    describe('#isScriptHashOut', () => {
+        it('should classify this known pubKeyHashout as pubKeyHashout', () => {
             new Script()
                 .writeString('OP_HASH160 20 0x0000000000000000000000000000000000000000 OP_EQUAL')
                 .isScriptHashOut()
                 .should.equal(true)
         })
 
-        it('should classify these known non-pubKeyHashout as not pubKeyHashout', function () {
+        it('should classify these known non-pubKeyHashout as not pubKeyHashout', () => {
             new Script()
                 .writeString('OP_HASH160 20 0x0000000000000000000000000000000000000000 OP_EQUAL OP_EQUAL')
                 .isScriptHashOut()
@@ -681,8 +681,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#isMultiSigIn', function () {
-        it('should know this is a valid multisig input', function () {
+    describe('#isMultiSigIn', () => {
+        it('should know this is a valid multisig input', () => {
             new Script()
                 .writeString(
                     'OP_0 71 0x3044022053cacd1a0720e3497b3e78dedfc3ac144b3ff8fb0e231a4121bf4c18a05e606702205d4c69f2611cbca41c8a392b4c274cb07477bae78efef45c65517e4fdea5c0d801 71 0x3044022017dda0d737a9a65b262a1a8da97e73c23550351d6337ca13a8a1dbdbeae2775d02202fe4c031050d9d4ee0a2b1d5302869e1432577129f842c952462fca92a7b012901'
@@ -691,7 +691,7 @@ describe('Script', function () {
                 .should.equal(true)
         })
 
-        it('should know this is not a valid multisig input', function () {
+        it('should know this is not a valid multisig input', () => {
             new Script()
                 .writeString(
                     'OP_1 71 0x3044022053cacd1a0720e3497b3e78dedfc3ac144b3ff8fb0e231a4121bf4c18a05e606702205d4c69f2611cbca41c8a392b4c274cb07477bae78efef45c65517e4fdea5c0d801 71 0x3044022017dda0d737a9a65b262a1a8da97e73c23550351d6337ca13a8a1dbdbeae2775d02202fe4c031050d9d4ee0a2b1d5302869e1432577129f842c952462fca92a7b012901'
@@ -700,13 +700,13 @@ describe('Script', function () {
                 .should.equal(false)
         })
 
-        it('should know this is not a valid multisig input', function () {
+        it('should know this is not a valid multisig input', () => {
             new Script().writeString('OP_0').isMultiSigIn().should.equal(false)
         })
     })
 
-    describe('#isMultiSigOut', function () {
-        it('should know this is a valid multisig output', function () {
+    describe('#isMultiSigOut', () => {
+        it('should know this is a valid multisig output', () => {
             new Script()
                 .writeString(
                     'OP_1 33 0x029cf97e1052008852da9d107411b2d47aad387612558fa864b723c484f8931176 33 0x02f23ab919b3a4795c75552b3985982f54c4164a26948b9fe87625705f694e7aa9 OP_2 OP_CHECKMULTISIG'
@@ -715,7 +715,7 @@ describe('Script', function () {
                 .should.equal(true)
         })
 
-        it('should know this is a valid multisig output', function () {
+        it('should know this is a valid multisig output', () => {
             new Script()
                 .writeString(
                     'OP_2 33 0x029cf97e1052008852da9d107411b2d47aad387612558fa864b723c484f8931176 33 0x02f23ab919b3a4795c75552b3985982f54c4164a26948b9fe87625705f694e7aa9 OP_2 OP_CHECKMULTISIG'
@@ -724,7 +724,7 @@ describe('Script', function () {
                 .should.equal(true)
         })
 
-        it('should know this is not a valid multisig output', function () {
+        it('should know this is not a valid multisig output', () => {
             new Script()
                 .writeString(
                     'OP_2 33 0x029cf97e1052008852da9d107411b2d47aad387612558fa864b723c484f8931176 33 0x02f23ab919b3a4795c75552b3985982f54c4164a26948b9fe87625705f694e7aa9 OP_1 OP_CHECKMULTISIG'
@@ -733,7 +733,7 @@ describe('Script', function () {
                 .should.equal(false)
         })
 
-        it('should know this is not a valid multisig output', function () {
+        it('should know this is not a valid multisig output', () => {
             new Script()
                 .writeString(
                     'OP_2 33 0x029cf97e1052008852da9d107411b2d47aad387612558fa864b723c484f8931176 33 0x02f23ab919b3a4795c75552b3985982f54c4164a26948b9fe87625705f694e7aa9 OP_2 OP_RETURN'
@@ -742,7 +742,7 @@ describe('Script', function () {
                 .should.equal(false)
         })
 
-        it('should know this is not a valid multisig output', function () {
+        it('should know this is not a valid multisig output', () => {
             new Script()
                 .writeString(
                     'OP_2 33 0x029cf97e1052008852da9d107411b2d47aad387612558fa864b723c484f8931176 32 0xf23ab919b3a4795c75552b3985982f54c4164a26948b9fe87625705f694e7aa9 OP_2 OP_CHECKMULTISIG'
@@ -752,8 +752,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#findAndDelete', function () {
-        it('should find and deconste this buffer', function () {
+    describe('#findAndDelete', () => {
+        it('should find and deconste this buffer', () => {
             new Script()
                 .writeString('OP_RETURN 2 0xf0f0')
                 .findAndDelete(new Script().writeString('2 0xf0f0'))
@@ -762,8 +762,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#writeScript', function () {
-        it('should write these scripts', function () {
+    describe('#writeScript', () => {
+        it('should write these scripts', () => {
             const script1 = new Script().fromString('OP_CHECKMULTISIG')
             const script2 = new Script().fromString('OP_CHECKMULTISIG')
             const script = script1.writeScript(script2)
@@ -771,8 +771,8 @@ describe('Script', function () {
         })
     })
 
-    describe('@writeScript', function () {
-        it('should write these scripts', function () {
+    describe('@writeScript', () => {
+        it('should write these scripts', () => {
             const script1 = Script.fromString('OP_CHECKMULTISIG')
             const script2 = Script.fromString('OP_CHECKMULTISIG')
             const script = script1.writeScript(script2)
@@ -780,28 +780,28 @@ describe('Script', function () {
         })
     })
 
-    describe('#writeOpCode', function () {
-        it('should write this op', function () {
+    describe('#writeOpCode', () => {
+        it('should write this op', () => {
             new Script().writeOpCode(OpCode.OP_CHECKMULTISIG).toString().should.equal('OP_CHECKMULTISIG')
         })
     })
 
-    describe('@writeOpCode', function () {
-        it('should write this op', function () {
+    describe('@writeOpCode', () => {
+        it('should write this op', () => {
             Script.writeOpCode(OpCode.OP_CHECKMULTISIG).toString().should.equal('OP_CHECKMULTISIG')
         })
     })
 
-    describe('#setChunkOpCode', function () {
-        it('should set this op', function () {
+    describe('#setChunkOpCode', () => {
+        it('should set this op', () => {
             const script = new Script().writeOpCode(OpCode.OP_CHECKMULTISIG)
             script.setChunkOpCode(0, OpCode.OP_CHECKSEQUENCEVERIFY)
             script.chunks[0].opCodeNum.should.equal(OpCode.OP_CHECKSEQUENCEVERIFY)
         })
     })
 
-    describe('#writeBn', function () {
-        it('should write these numbers', function () {
+    describe('#writeBn', () => {
+        it('should write these numbers', () => {
             new Script().writeBn(new Bn(0)).toBuffer().toString('hex').should.equal('00')
             new Script().writeBn(new Bn(1)).toBuffer().toString('hex').should.equal('51')
             new Script().writeBn(new Bn(16)).toBuffer().toString('hex').should.equal('60')
@@ -810,8 +810,8 @@ describe('Script', function () {
         })
     })
 
-    describe('@writeBn', function () {
-        it('should write these numbers', function () {
+    describe('@writeBn', () => {
+        it('should write these numbers', () => {
             Script.writeBn(new Bn(0)).toBuffer().toString('hex').should.equal('00')
             Script.writeBn(new Bn(1)).toBuffer().toString('hex').should.equal('51')
             Script.writeBn(new Bn(16)).toBuffer().toString('hex').should.equal('60')
@@ -820,8 +820,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#writeNumber', function () {
-        it('should write these numbers', function () {
+    describe('#writeNumber', () => {
+        it('should write these numbers', () => {
             new Script().writeNumber(0).toBuffer().toString('hex').should.equal('00')
             new Script().writeNumber(1).toBuffer().toString('hex').should.equal('51')
             new Script().writeNumber(16).toBuffer().toString('hex').should.equal('60')
@@ -830,8 +830,8 @@ describe('Script', function () {
         })
     })
 
-    describe('@writeNumber', function () {
-        it('should write these numbers', function () {
+    describe('@writeNumber', () => {
+        it('should write these numbers', () => {
             Script.writeNumber(0).toBuffer().toString('hex').should.equal('00')
             Script.writeNumber(1).toBuffer().toString('hex').should.equal('51')
             Script.writeNumber(16).toBuffer().toString('hex').should.equal('60')
@@ -840,8 +840,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#setChunkBn', function () {
-        it('should set this bn', function () {
+    describe('#setChunkBn', () => {
+        it('should set this bn', () => {
             const script = new Script().writeOpCode(OpCode.OP_CHECKMULTISIG)
             script.setChunkBn(0, new Bn(5000000000000000))
             script.chunks[0].buf
@@ -850,8 +850,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#writeBuffer', function () {
-        it('should write these push data', function () {
+    describe('#writeBuffer', () => {
+        it('should write these push data', () => {
             let buf = Buffer.alloc(1)
             buf.fill(0)
             new Script().writeBuffer(buf).toString().should.equal('1 0x00')
@@ -876,8 +876,8 @@ describe('Script', function () {
         })
     })
 
-    describe('@writeBuffer', function () {
-        it('should write these push data', function () {
+    describe('@writeBuffer', () => {
+        it('should write these push data', () => {
             let buf = Buffer.alloc(1)
             buf.fill(0)
             Script.writeBuffer(buf).toString().should.equal('1 0x00')
@@ -899,8 +899,8 @@ describe('Script', function () {
         })
     })
 
-    describe('#setChunkBuffer', function () {
-        it('should set this buffer', function () {
+    describe('#setChunkBuffer', () => {
+        it('should set this buffer', () => {
             const script = new Script().writeOpCode(OpCode.OP_CHECKMULTISIG)
             const buf = new Bn(5000000000000000).toBuffer()
             script.setChunkBuffer(0, buf)
@@ -908,20 +908,20 @@ describe('Script', function () {
         })
     })
 
-    describe('#writeString', function () {
-        it('should write both pushdata and non-pushdata chunks', function () {
+    describe('#writeString', () => {
+        it('should write both pushdata and non-pushdata chunks', () => {
             new Script().writeString('OP_CHECKMULTISIG').toString().should.equal('OP_CHECKMULTISIG')
         })
     })
 
-    describe('@writeString', function () {
-        it('should write both pushdata and non-pushdata chunks', function () {
+    describe('@writeString', () => {
+        it('should write both pushdata and non-pushdata chunks', () => {
             Script.writeString('OP_CHECKMULTISIG').toString().should.equal('OP_CHECKMULTISIG')
         })
     })
 
-    describe('#checkMinimalPush', function () {
-        it('should check these minimal pushes', function () {
+    describe('#checkMinimalPush', () => {
+        it('should check these minimal pushes', () => {
             let buf
             new Script().writeBn(new Bn(1)).checkMinimalPush(0).should.equal(true)
             new Script().writeBn(new Bn(0)).checkMinimalPush(0).should.equal(true)
@@ -945,12 +945,13 @@ describe('Script', function () {
         })
     })
 
-    describe('vectors', function () {
-        scriptValid.forEach(function (a, i) {
+    describe('vectors', () => {
+        // eslint-disable-next-line ban/ban
+        scriptValid.forEach((a, i) => {
             if (a.length === 1) {
                 return
             }
-            it('should not fail when reading scriptValid vector ' + i, function () {
+            it('should not fail when reading scriptValid vector ' + i, () => {
                 ;(function () {
                     new Script().fromBitcoindString(a[0]).toString()
                     new Script().fromBitcoindString(a[0]).toBitcoindString()
@@ -968,11 +969,12 @@ describe('Script', function () {
             })
         })
 
-        scriptInvalid.forEach(function (a, i) {
+        // eslint-disable-next-line ban/ban
+        scriptInvalid.forEach((a, i) => {
             if (a.length === 1) {
                 return
             }
-            it('should not fail when reading scriptInvalid vector ' + i, function () {
+            it('should not fail when reading scriptInvalid vector ' + i, () => {
                 ;(function () {
                     new Script().fromBitcoindString(a[0]).toString()
                     new Script().fromBitcoindString(a[0]).toBitcoindString()

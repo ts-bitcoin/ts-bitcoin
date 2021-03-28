@@ -23,7 +23,7 @@ export class Aescbc {
 
     public static decrypt(encBuf: Buffer, cipherKeyBuf: Buffer, ivBuf?: Buffer): Buffer {
         if (!ivBuf) {
-            const ivBuf = encBuf.slice(0, 128 / 8)
+            ivBuf = encBuf.slice(0, 128 / 8)
             const ctBuf = encBuf.slice(128 / 8)
             return Cbc.decrypt(ctBuf, ivBuf, Aes, cipherKeyBuf)
         } else {

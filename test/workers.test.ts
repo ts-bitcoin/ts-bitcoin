@@ -1,14 +1,14 @@
+import should = require('should')
 import { Bip32 } from '../src/bip-32'
 import { Ecies } from '../src/ecies'
 import { Hash } from '../src/hash'
+import { KeyPair } from '../src/key-pair'
 import { PrivKey } from '../src/priv-key'
 import { PubKey } from '../src/pub-key'
-import { KeyPair } from '../src/key-pair'
 import { Workers } from '../src/workers'
-import should = require('should')
 
-describe('Workers', function () {
-    it('should satisfy this basic API', function () {
+describe('Workers', () => {
+    it('should satisfy this basic API', () => {
         const workers = new Workers()
         should.exist(workers.nativeWorkers)
         should.exist(workers)
@@ -55,15 +55,15 @@ describe('Workers', function () {
         ])
     })
 
-    describe('#asyncObjectMethod', function () {
-        it('should compute this method in the workers', async function () {
+    describe('#asyncObjectMethod', () => {
+        it('should compute this method in the workers', async () => {
             const bip32 = new Bip32().fromRandom()
             const workersResult = await Workers.asyncObjectMethod(bip32, 'toString', [])
             const str = JSON.parse(workersResult.resbuf.toString())
             str[0].should.equal('x')
         })
 
-        it('should compute this method with Yours Bitcoin object in args in the workers', async function () {
+        it('should compute this method with Yours Bitcoin object in args in the workers', async () => {
             const privKey = new PrivKey().fromRandom()
             const pubKey1 = new PubKey().fromPrivKey(privKey)
             const workersResult = await Workers.asyncObjectMethod(new PubKey(), 'fromPrivKey', [privKey])
@@ -72,8 +72,8 @@ describe('Workers', function () {
         })
     })
 
-    describe('@asyncClassMethod', function () {
-        it('should compute this method in the workers', async function () {
+    describe('@asyncClassMethod', () => {
+        it('should compute this method in the workers', async () => {
             const buf = Buffer.from([0, 1, 2, 3, 4])
             const args = [buf]
             const workersResult = await Workers.asyncClassMethod(Hash, 'sha1', args)

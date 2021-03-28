@@ -1,14 +1,15 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import should = require('should')
+import { Address } from '../src/address'
+import { Bn } from '../src/bn'
+import { Br } from '../src/br'
+import { KeyPair } from '../src/key-pair'
 import { Script } from '../src/script'
 import { TxIn } from '../src/tx-in'
 import { TxOut } from '../src/tx-out'
 import { VarInt } from '../src/var-int'
-import { Br } from '../src/br'
-import { Bn } from '../src/bn'
-import { KeyPair } from '../src/key-pair'
-import { Address } from '../src/address'
 
-describe('TxIn', function () {
+describe('TxIn', () => {
     const txHashBuf = Buffer.alloc(32)
     txHashBuf.fill(0)
     const txOutNum = 0
@@ -16,14 +17,14 @@ describe('TxIn', function () {
     const scriptVi = VarInt.fromNumber(script.toBuffer().length)
     const nSequence = 0
     const txIn = new TxIn().fromObject({
-        txHashBuf: txHashBuf,
-        txOutNum: txOutNum,
-        scriptVi: scriptVi,
-        script: script,
-        nSequence: nSequence,
+        txHashBuf,
+        txOutNum,
+        scriptVi,
+        script,
+        nSequence,
     })
 
-    it('should make a new txIn', function () {
+    it('should make a new txIn', () => {
         let txIn = new TxIn()
         should.exist(txIn)
         txIn = new TxIn()
@@ -33,20 +34,20 @@ describe('TxIn', function () {
         new TxIn(txHashBuf, 0).txHashBuf.length.should.equal(32)
     })
 
-    describe('#initialize', function () {
-        it('should default to 0xffffffff nSequence', function () {
+    describe('#initialize', () => {
+        it('should default to 0xffffffff nSequence', () => {
             new TxIn().nSequence.should.equal(0xffffffff)
         })
     })
 
-    describe('#fromObject', function () {
-        it('should set these vars', function () {
+    describe('#fromObject', () => {
+        it('should set these vars', () => {
             const txIn = new TxIn().fromObject({
-                txHashBuf: txHashBuf,
-                txOutNum: txOutNum,
-                scriptVi: scriptVi,
-                script: script,
-                nSequence: nSequence,
+                txHashBuf,
+                txOutNum,
+                scriptVi,
+                script,
+                nSequence,
             })
             should.exist(txIn.txHashBuf)
             should.exist(txIn.txOutNum)
@@ -56,22 +57,22 @@ describe('TxIn', function () {
         })
     })
 
-    describe('#fromProperties', function () {
-        it('should make a new txIn', function () {
+    describe('#fromProperties', () => {
+        it('should make a new txIn', () => {
             const txIn = new TxIn().fromProperties(txHashBuf, txOutNum, script, nSequence)
             should.exist(txIn.scriptVi)
         })
     })
 
-    describe('@fromProperties', function () {
-        it('should make a new txIn', function () {
+    describe('@fromProperties', () => {
+        it('should make a new txIn', () => {
             const txIn = TxIn.fromProperties(txHashBuf, txOutNum, script, nSequence)
             should.exist(txIn.scriptVi)
         })
     })
 
-    describe('#setScript', function () {
-        it('should calculate the varInt size correctly', function () {
+    describe('#setScript', () => {
+        it('should calculate the varInt size correctly', () => {
             const txIn2 = new TxIn().fromJSON(txIn.toJSON())
             txIn2
                 .setScript(new Script().fromString('OP_RETURN OP_RETURN OP_RETURN'))
@@ -80,8 +81,8 @@ describe('TxIn', function () {
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should set these vars', function () {
+    describe('#fromJSON', () => {
+        it('should set these vars', () => {
             const txIn2 = new TxIn().fromJSON(txIn.toJSON())
             should.exist(txIn2.txHashBuf)
             should.exist(txIn2.txOutNum)
@@ -91,8 +92,8 @@ describe('TxIn', function () {
         })
     })
 
-    describe('#toJSON', function () {
-        it('should set these vars', function () {
+    describe('#toJSON', () => {
+        it('should set these vars', () => {
             const json = txIn.toJSON()
             should.exist(json.txHashBuf)
             should.exist(json.txOutNum)
@@ -102,8 +103,8 @@ describe('TxIn', function () {
         })
     })
 
-    describe('#fromHex', function () {
-        it('should convert this known buffer', function () {
+    describe('#fromHex', () => {
+        it('should convert this known buffer', () => {
             const hex = '00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000'
             const txIn = new TxIn().fromHex(hex)
             txIn.scriptVi.toNumber().should.equal(1)
@@ -111,8 +112,8 @@ describe('TxIn', function () {
         })
     })
 
-    describe('#fromBuffer', function () {
-        it('should convert this known buffer', function () {
+    describe('#fromBuffer', () => {
+        it('should convert this known buffer', () => {
             const hex = '00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000'
             const buf = Buffer.from(hex, 'hex')
             const txIn = new TxIn().fromBuffer(buf)
@@ -121,8 +122,8 @@ describe('TxIn', function () {
         })
     })
 
-    describe('#fromBr', function () {
-        it('should convert this known buffer', function () {
+    describe('#fromBr', () => {
+        it('should convert this known buffer', () => {
             const hex = '00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000'
             const buf = Buffer.from(hex, 'hex')
             const br = new Br(buf)
@@ -132,24 +133,24 @@ describe('TxIn', function () {
         })
     })
 
-    describe('#toHex', function () {
-        it('should convert this known hex', function () {
+    describe('#toHex', () => {
+        it('should convert this known hex', () => {
             txIn.toHex().should.equal(
                 '00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000'
             )
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should convert this known buffer', function () {
+    describe('#toBuffer', () => {
+        it('should convert this known buffer', () => {
             txIn.toBuffer()
                 .toString('hex')
                 .should.equal('00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000')
         })
     })
 
-    describe('#toBw', function () {
-        it('should convert this known buffer', function () {
+    describe('#toBw', () => {
+        it('should convert this known buffer', () => {
             txIn.toBw()
                 .toBuffer()
                 .toString('hex')
@@ -157,8 +158,8 @@ describe('TxIn', function () {
         })
     })
 
-    describe('#fromPubKeyHashTxOut', function () {
-        it('should convert from pubKeyHash out', function () {
+    describe('#fromPubKeyHashTxOut', () => {
+        it('should convert from pubKeyHash out', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
             const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))

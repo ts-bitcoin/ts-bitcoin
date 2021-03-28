@@ -7,14 +7,14 @@
  * can leave out the scriptVi, which is computed automatically if you leave it
  * out.)
  */
+import { Br } from './br'
 import { Bw } from './bw'
-import { VarInt } from './var-int'
 import { OpCode } from './op-code'
+import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Struct } from './struct'
-import { Br } from './br'
 import { TxOut } from './tx-out'
-import { PubKey } from './pub-key'
+import { VarInt } from './var-int'
 
 export interface TxInLike {
     txHashBuf: string

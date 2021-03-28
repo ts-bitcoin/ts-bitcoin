@@ -42,7 +42,12 @@ export class Workers {
         return workersResult
     }
 
-    public static asyncObjectMethod(obj: any, methodname: string, args: any[], id?: number): WorkersResult {
+    public static async asyncObjectMethod(
+        obj: any,
+        methodname: string,
+        args: any[],
+        id?: number
+    ): Promise<WorkersResult> {
         if (!globalWorkers) {
             globalWorkers = new Workers()
         }
@@ -58,7 +63,12 @@ export class Workers {
         return workersResult
     }
 
-    public static asyncClassMethod(classObj: any, methodname: string, args: any[], id?: number): WorkersResult {
+    public static async asyncClassMethod(
+        classObj: any,
+        methodname: string,
+        args: any[],
+        id?: number
+    ): Promise<WorkersResult> {
         if (!globalWorkers) {
             globalWorkers = new Workers()
         }

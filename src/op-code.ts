@@ -210,3 +210,4 @@ for (const opCodeStr in OpCodeValue) {
 }
 
 export const OpCode: typeof _OpCode & (new () => _OpCode) & typeof OpCodeValue = _OpCode as any
+export type OpCode = _OpCode

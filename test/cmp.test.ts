@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import { cmp } from '../src/cmp'
 import 'should'
 
-describe('cmp', function () {
-    it('should know if these buffers are equal', function () {
-        let buf1, buf2
+describe('cmp', () => {
+    it('should know if these buffers are equal', () => {
+        let buf1
+        let buf2
 
         buf1 = Buffer.from([])
         buf2 = Buffer.from([])

@@ -2,13 +2,13 @@
  * Transaction Verifier
  * ====================
  */
-import { Bn } from './bn'
 import { Block } from './block'
+import { Bn } from './bn'
 import { Interp } from './interp'
 import { Struct } from './struct'
 import { Tx } from './tx'
-import { Workers } from './workers'
 import { TxOutMap } from './tx-out-map'
+import { Workers } from './workers'
 
 export class TxVerifier extends Struct {
     public tx: Tx

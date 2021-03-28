@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+import should = require('should')
+import * as sinon from 'sinon'
 import { Bn } from '../src/bn'
 import { Br } from '../src/br'
+import { Interp } from '../src/interp'
 import { KeyPair } from '../src/key-pair'
 import { Script } from '../src/script'
 import { Sig } from '../src/sig'
@@ -7,18 +11,15 @@ import { Tx } from '../src/tx'
 import { TxIn } from '../src/tx-in'
 import { TxOut } from '../src/tx-out'
 import { VarInt } from '../src/var-int'
-import { Interp } from '../src/interp'
-import should = require('should')
-import * as sinon from 'sinon'
 
-import * as vectorsBitcoindSighash from './vectors/bitcoind/sighash.json'
-import * as vectorsBitcoinABCSighash from './vectors/bitcoin-abc/sighash.json'
-import * as vectorsBitcoindTxValid from './vectors/bitcoind/tx_valid.json'
-import * as vectorsBitcoindTxInvalid from './vectors/bitcoind/tx_invalid.json'
-import * as largesttxvector from './vectors/largesttx.json'
 import * as fixture from './vectors/bip69.json'
+import * as vectorsBitcoinABCSighash from './vectors/bitcoin-abc/sighash.json'
+import * as vectorsBitcoindSighash from './vectors/bitcoind/sighash.json'
+import * as vectorsBitcoindTxInvalid from './vectors/bitcoind/tx_invalid.json'
+import * as vectorsBitcoindTxValid from './vectors/bitcoind/tx_valid.json'
+import * as largesttxvector from './vectors/largesttx.json'
 
-describe('Tx', function () {
+describe('Tx', () => {
     const txIn = new TxIn().fromBuffer(
         Buffer.from('00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000', 'hex')
     )
@@ -40,7 +41,7 @@ describe('Tx', function () {
         '01000000029e8d016a7b0dc49a325922d05da1f916d1e4d4f0cb840c9727f3d22ce8d1363f000000008c493046022100e9318720bee5425378b4763b0427158b1051eec8b08442ce3fbfbf7b30202a44022100d4172239ebd701dae2fbaaccd9f038e7ca166707333427e3fb2a2865b19a7f27014104510c67f46d2cbb29476d1f0b794be4cb549ea59ab9cc1e731969a7bf5be95f7ad5e7f904e5ccf50a9dc1714df00fbeb794aa27aaff33260c1032d931a75c56f2ffffffffa3195e7a1ab665473ff717814f6881485dc8759bebe97e31c301ffe7933a656f020000008b48304502201c282f35f3e02a1f32d2089265ad4b561f07ea3c288169dedcf2f785e6065efa022100e8db18aadacb382eed13ee04708f00ba0a9c40e3b21cf91da8859d0f7d99e0c50141042b409e1ebbb43875be5edde9c452c82c01e3903d38fa4fd89f3887a52cb8aea9dc8aec7e2c9d5b3609c03eb16259a2537135a1bf0f9c5fbbcbdbaf83ba402442ffffffff02206b1000000000001976a91420bb5c3bfaef0231dc05190e7f1c8e22e098991e88acf0ca0100000000001976a9149e3e2d23973a04ec1b02be97c30ab9f2f27c3b2c88ac00000000'
     const tx2buf = Buffer.from(tx2hex, 'hex')
 
-    it('should make a new transaction', function () {
+    it('should make a new transaction', () => {
         let tx = new Tx()
         should.exist(tx)
         tx = new Tx()
@@ -57,8 +58,8 @@ describe('Tx', function () {
         tx.nLockTime.should.equal(0)
     })
 
-    describe('#constructor', function () {
-        it('should set these known defaults', function () {
+    describe('#constructor', () => {
+        it('should set these known defaults', () => {
             const tx = new Tx()
             tx.versionBytesNum.should.equal(1)
             tx.txInsVi.toNumber().should.equal(0)
@@ -69,8 +70,8 @@ describe('Tx', function () {
         })
     })
 
-    describe('#clone', function () {
-        it('should clone a tx', function () {
+    describe('#clone', () => {
+        it('should clone a tx', () => {
             const tx1 = Tx.fromHex(tx2hex)
             const tx2 = tx1.clone()
             tx2.should.not.equal(tx1)
@@ -78,8 +79,8 @@ describe('Tx', function () {
         })
     })
 
-    describe('#cloneByBuffer', function () {
-        it('should clone a tx by buffer', function () {
+    describe('#cloneByBuffer', () => {
+        it('should clone a tx by buffer', () => {
             const tx1 = Tx.fromHex(tx2hex)
             tx1.toJSON = sinon.spy()
             const tx2 = tx1.cloneByBuffer()
@@ -89,8 +90,8 @@ describe('Tx', function () {
         })
     })
 
-    describe('#fromObject', function () {
-        it('should set all the basic parameters', function () {
+    describe('#fromObject', () => {
+        it('should set all the basic parameters', () => {
             const tx = new Tx().fromObject({
                 versionBytesNum: 0,
                 txInsVi: VarInt.fromNumber(1),
@@ -108,8 +109,8 @@ describe('Tx', function () {
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should set all the basic parameters', function () {
+    describe('#fromJSON', () => {
+        it('should set all the basic parameters', () => {
             const tx = new Tx().fromJSON({
                 versionBytesNum: 0,
                 txInsVi: VarInt.fromNumber(1).toJSON(),
@@ -127,8 +128,8 @@ describe('Tx', function () {
         })
     })
 
-    describe('#toJSON', function () {
-        it('should recover all the basic parameters', function () {
+    describe('#toJSON', () => {
+        it('should recover all the basic parameters', () => {
             const json = tx.toJSON()
             should.exist(json.versionBytesNum)
             should.exist(json.txInsVi)
@@ -139,56 +140,56 @@ describe('Tx', function () {
         })
     })
 
-    describe('#fromHex', function () {
-        it('should recover from this known tx', function () {
+    describe('#fromHex', () => {
+        it('should recover from this known tx', () => {
             new Tx().fromHex(txhex).toHex().should.equal(txhex)
         })
 
-        it('should recover from this known tx from the blockchain', function () {
+        it('should recover from this known tx from the blockchain', () => {
             new Tx().fromHex(tx2hex).toHex().should.equal(tx2hex)
         })
     })
 
-    describe('#fromBuffer', function () {
-        it('should recover from this known tx', function () {
+    describe('#fromBuffer', () => {
+        it('should recover from this known tx', () => {
             new Tx().fromBuffer(txbuf).toBuffer().toString('hex').should.equal(txhex)
         })
 
-        it('should recover from this known tx from the blockchain', function () {
+        it('should recover from this known tx from the blockchain', () => {
             new Tx().fromBuffer(tx2buf).toBuffer().toString('hex').should.equal(tx2hex)
         })
     })
 
-    describe('#fromBr', function () {
-        it('should recover from this known tx', function () {
+    describe('#fromBr', () => {
+        it('should recover from this known tx', () => {
             new Tx().fromBr(new Br(txbuf)).toBuffer().toString('hex').should.equal(txhex)
         })
     })
 
-    describe('#toHex', function () {
-        it('should produce this known tx', function () {
+    describe('#toHex', () => {
+        it('should produce this known tx', () => {
             new Tx().fromHex(txhex).toHex().should.equal(txhex)
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should produce this known tx', function () {
+    describe('#toBuffer', () => {
+        it('should produce this known tx', () => {
             new Tx().fromBuffer(txbuf).toBuffer().toString('hex').should.equal(txhex)
         })
     })
 
-    describe('#toBw', function () {
-        it('should produce this known tx', function () {
+    describe('#toBw', () => {
+        it('should produce this known tx', () => {
             new Tx().fromBuffer(txbuf).toBw().toBuffer().toString('hex').should.equal(txhex)
         })
     })
 
-    describe('#sighash', function () {
-        it('should hash this transaction', function () {
+    describe('#sighash', () => {
+        it('should hash this transaction', () => {
             tx.sighash(0, 0, new Script()).length.should.equal(32)
         })
 
-        it('should return 1 for the SIGHASH_SINGLE bug', function () {
+        it('should return 1 for the SIGHASH_SINGLE bug', () => {
             const tx = Tx.fromBuffer(tx2buf)
             tx.txOuts.length = 1
             tx.txOutsVi = VarInt.fromNumber(1)
@@ -198,13 +199,13 @@ describe('Tx', function () {
         })
     })
 
-    describe('#asyncSighash', function () {
-        it('should hash this transaction', async function () {
+    describe('#asyncSighash', () => {
+        it('should hash this transaction', async () => {
             const hashBuf = await tx.asyncSighash(0, 0, new Script())
             hashBuf.length.should.equal(32)
         })
 
-        it('should return 1 for the SIGHASH_SINGLE bug', async function () {
+        it('should return 1 for the SIGHASH_SINGLE bug', async () => {
             const tx = Tx.fromBuffer(tx2buf)
             tx.txOuts.length = 1
             tx.txOutsVi = VarInt.fromNumber(1)
@@ -213,8 +214,8 @@ describe('Tx', function () {
         })
     })
 
-    describe('#sign', function () {
-        it('should return a signature', function () {
+    describe('#sign', () => {
+        it('should return a signature', () => {
             const keyPair = new KeyPair().fromRandom()
             const sig1 = tx.sign(keyPair, Sig.SIGHASH_ALL, 0, new Script())
             should.exist(sig1)
@@ -225,8 +226,8 @@ describe('Tx', function () {
         })
     })
 
-    describe('#asyncSign', function () {
-        it('should return a signature', async function () {
+    describe('#asyncSign', () => {
+        it('should return a signature', async () => {
             const keyPair = new KeyPair().fromRandom()
             const sig1 = tx.sign(keyPair, Sig.SIGHASH_ALL, 0, new Script())
             const sig1b = await tx.asyncSign(keyPair, Sig.SIGHASH_ALL, 0, new Script())
@@ -240,16 +241,16 @@ describe('Tx', function () {
         })
     })
 
-    describe('#verify', function () {
-        it('should return a signature', function () {
+    describe('#verify', () => {
+        it('should return a signature', () => {
             const keyPair = new KeyPair().fromRandom()
             const sig1 = tx.sign(keyPair, Sig.SIGHASH_ALL, 0, new Script())
             tx.verify(sig1, keyPair.pubKey, 0, new Script()).should.equal(true)
         })
     })
 
-    describe('#asyncVerify', function () {
-        it('should return a signature', async function () {
+    describe('#asyncVerify', () => {
+        it('should return a signature', async () => {
             const keyPair = new KeyPair().fromRandom()
             const sig1 = tx.sign(keyPair, Sig.SIGHASH_ALL, 0, new Script())
             const verified = await tx.asyncVerify(sig1, keyPair.pubKey, 0, new Script())
@@ -257,16 +258,16 @@ describe('Tx', function () {
         })
     })
 
-    describe('#hash', function () {
-        it('should correctly calculate the hash of this known transaction', function () {
+    describe('#hash', () => {
+        it('should correctly calculate the hash of this known transaction', () => {
             const tx = Tx.fromBuffer(tx2buf)
             const txHashBuf = Buffer.from(Array.apply([], Buffer.from(tx2idhex, 'hex')).reverse())
             tx.hash().toString('hex').should.equal(txHashBuf.toString('hex'))
         })
     })
 
-    describe('#asyncHash', function () {
-        it('should correctly calculate the hash of this known transaction', async function () {
+    describe('#asyncHash', () => {
+        it('should correctly calculate the hash of this known transaction', async () => {
             const tx = Tx.fromBuffer(tx2buf)
             const txHashBuf = Buffer.from(Array.apply([], Buffer.from(tx2idhex, 'hex')).reverse())
             const hashBuf = await tx.asyncHash()
@@ -274,23 +275,23 @@ describe('Tx', function () {
         })
     })
 
-    describe('#id', function () {
-        it('should correctly calculate the id of this known transaction', function () {
+    describe('#id', () => {
+        it('should correctly calculate the id of this known transaction', () => {
             const tx = Tx.fromBuffer(tx2buf)
             tx.id().should.equal(tx2idhex)
         })
     })
 
-    describe('#asyncId', function () {
-        it('should correctly calculate the id of this known transaction', async function () {
+    describe('#asyncId', () => {
+        it('should correctly calculate the id of this known transaction', async () => {
             const tx = Tx.fromBuffer(tx2buf)
             const idbuf = await tx.asyncId()
             idbuf.should.equal(tx2idhex)
         })
     })
 
-    describe('#addTxIn', function () {
-        it('should add an input', function () {
+    describe('#addTxIn', () => {
+        it('should add an input', () => {
             const txIn = new TxIn()
             const tx = new Tx()
             tx.txInsVi.toNumber().should.equal(0)
@@ -300,8 +301,8 @@ describe('Tx', function () {
         })
     })
 
-    describe('#addTxOut', function () {
-        it('should add an output', function () {
+    describe('#addTxOut', () => {
+        it('should add an output', () => {
             const txOut = new TxOut()
             const tx = new Tx()
             tx.txOutsVi.toNumber().should.equal(0)
@@ -311,7 +312,7 @@ describe('Tx', function () {
         })
     })
 
-    describe('bectors: bip69 (from bitcoinjs)', function () {
+    describe('bectors: bip69 (from bitcoinjs)', () => {
         // returns index-based order of sorted against original
         function getIndexOrder(original, sorted) {
             return sorted.map((value) => {
@@ -319,6 +320,7 @@ describe('Tx', function () {
             })
         }
 
+        // eslint-disable-next-line ban/ban
         fixture.inputs.forEach((inputSet) => {
             it(inputSet.description, () => {
                 const tx = new Tx()
@@ -335,10 +337,11 @@ describe('Tx', function () {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         fixture.outputs.forEach((outputSet) => {
             it(outputSet.description, () => {
                 const tx = new Tx()
-                const txOuts = outputSet.outputs.map(function (output) {
+                const txOuts = outputSet.outputs.map((output) => {
                     const txOut = TxOut.fromProperties(new Bn(output.value), Script.fromAsmString(output.script))
                     return txOut
                 })
@@ -349,8 +352,8 @@ describe('Tx', function () {
         })
     })
 
-    describe('vectors: a 1mb transaction', function () {
-        it('should find the correct id of this (valid, on the blockchain) 1 mb transaction', function () {
+    describe('vectors: a 1mb transaction', () => {
+        it('should find the correct id of this (valid, on the blockchain) 1 mb transaction', () => {
             const txidhex = largesttxvector.txidhex
             const txhex = largesttxvector.txhex
             const tx = Tx.fromHex(txhex)
@@ -359,12 +362,13 @@ describe('Tx', function () {
         })
     })
 
-    describe('vectors: sighash and serialization', function () {
-        vectorsBitcoindSighash.forEach(function (vector, i) {
+    describe('vectors: sighash and serialization', () => {
+        // eslint-disable-next-line ban/ban
+        vectorsBitcoindSighash.forEach((vector, i) => {
             if (i === 0) {
                 return
             }
-            it('should pass bitcoind sighash test vector ' + i, function () {
+            it('should pass bitcoind sighash test vector ' + i, () => {
                 const txbuf = Buffer.from(vector[0] as any, 'hex')
                 const scriptbuf = Buffer.from(vector[1] as any, 'hex')
                 const subScript = new Script().fromBuffer(scriptbuf)
@@ -383,11 +387,12 @@ describe('Tx', function () {
             })
         })
 
-        vectorsBitcoinABCSighash.forEach(function (vector, i) {
+        // eslint-disable-next-line ban/ban
+        vectorsBitcoinABCSighash.forEach((vector, i) => {
             if (i === 0) {
                 return
             }
-            it('should pass bitcoin-abc sighash test vector ' + i, function () {
+            it('should pass bitcoin-abc sighash test vector ' + i, () => {
                 if (vector[0] === 'Test vectors for SIGHASH_FORKID') {
                     return
                 }
@@ -415,11 +420,12 @@ describe('Tx', function () {
         })
 
         let j = 0
-        vectorsBitcoindTxValid.forEach(function (vector, i) {
+        // eslint-disable-next-line ban/ban
+        vectorsBitcoindTxValid.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }
-            it('should correctly serialized/deserialize tx_valid test vector ' + j, function () {
+            it('should correctly serialized/deserialize tx_valid test vector ' + j, () => {
                 const txhex = vector[1]
                 const txbuf = Buffer.from(vector[1] as any, 'hex')
                 const tx = Tx.fromBuffer(txbuf)
@@ -429,11 +435,12 @@ describe('Tx', function () {
         })
 
         j = 0
-        vectorsBitcoindTxInvalid.forEach(function (vector, i) {
+        // eslint-disable-next-line ban/ban
+        vectorsBitcoindTxInvalid.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }
-            it('should correctly serialized/deserialize tx_invalid test vector ' + j, function () {
+            it('should correctly serialized/deserialize tx_invalid test vector ' + j, () => {
                 const txhex = vector[1]
                 const txbuf = Buffer.from(vector[1] as any, 'hex')
                 const tx = Tx.fromBuffer(txbuf)

@@ -5,10 +5,10 @@
  * A private key is used for signing transactions (or messages). The primary
  * way to use this is new PrivKey().fromRandom(), or new PrivKey().fromBuffer(buf).
  */
-import { Bn } from './bn'
-import { Point } from './point'
-import { Constants, NetworkConstants } from './constants'
 import { Base58Check } from './base-58-check'
+import { Bn } from './bn'
+import { Constants, NetworkConstants } from './constants'
+import { Point } from './point'
 import { Random } from './random'
 import { Struct } from './struct'
 
@@ -33,7 +33,9 @@ export class PrivKey extends Struct {
     }
 
     public fromRandom(): this {
-        let privBuf: Buffer, bn: Bn, condition: boolean
+        let privBuf: Buffer
+        let bn: Bn
+        let condition: boolean
 
         do {
             privBuf = Random.getRandomBuffer(32)
@@ -42,7 +44,7 @@ export class PrivKey extends Struct {
         } while (!condition)
 
         this.fromObject({
-            bn: bn,
+            bn,
             compressed: true,
         })
         return this

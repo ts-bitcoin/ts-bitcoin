@@ -12,7 +12,9 @@ import { Struct } from './struct'
 import { Tx } from './tx'
 import { TxOut } from './tx-out'
 
-export type TxOutMapLike = { [label: string]: string }
+export interface TxOutMapLike {
+    [label: string]: string
+}
 
 export class TxOutMap extends Struct {
     public map: Map<string, TxOut>
@@ -23,16 +25,16 @@ export class TxOutMap extends Struct {
 
     public toJSON(): TxOutMapLike {
         const json = {}
-        this.map.forEach((txOut, label) => {
+        for (const [label, txOut] of this.map.entries()) {
             json[label] = txOut.toHex()
-        })
+        }
         return json
     }
 
     public fromJSON(json: TxOutMapLike): this {
-        Object.keys(json).forEach((label) => {
+        for (const label of Object.keys(json)) {
             this.map.set(label, TxOut.fromHex(json[label]))
-        })
+        }
         return this
     }
 
@@ -49,10 +51,10 @@ export class TxOutMap extends Struct {
 
     public setTx(tx: Tx): this {
         const txhashhex = tx.hash().toString('hex')
-        tx.txOuts.forEach((txOut, index) => {
+        for (const [index, txOut] of tx.txOuts.entries()) {
             const label = txhashhex + ':' + index
             this.map.set(label, txOut)
-        })
+        }
         return this
     }
 }

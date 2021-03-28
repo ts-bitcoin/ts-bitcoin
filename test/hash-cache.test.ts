@@ -1,12 +1,12 @@
-import { HashCache } from '../src/hash-cache'
 import should = require('should')
+import { HashCache } from '../src/hash-cache'
 
-describe('HashCache', function () {
+describe('HashCache', () => {
     const prevoutsHashBuf = Buffer.from('01'.repeat(32), 'hex')
     const sequenceHashBuf = Buffer.from('02'.repeat(32), 'hex')
     const outputsHashBuf = Buffer.from('03'.repeat(32), 'hex')
 
-    it('should satisfy this basic API', function () {
+    it('should satisfy this basic API', () => {
         const hashCache = new HashCache(prevoutsHashBuf, sequenceHashBuf, outputsHashBuf)
         should.exist(hashCache)
         hashCache.prevoutsHashBuf.length.should.equal(32)
@@ -14,8 +14,8 @@ describe('HashCache', function () {
         hashCache.outputsHashBuf.length.should.equal(32)
     })
 
-    describe('#fromBuffer', function () {
-        it('should parse this known message', function () {
+    describe('#fromBuffer', () => {
+        it('should parse this known message', () => {
             const hashCache = new HashCache().fromBuffer(
                 new HashCache(prevoutsHashBuf, sequenceHashBuf, outputsHashBuf).toBuffer()
             )
@@ -27,8 +27,8 @@ describe('HashCache', function () {
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should parse this known message', function () {
+    describe('#toBuffer', () => {
+        it('should parse this known message', () => {
             const hashCache = new HashCache(prevoutsHashBuf, sequenceHashBuf, outputsHashBuf)
             hashCache
                 .toBuffer()
@@ -39,8 +39,8 @@ describe('HashCache', function () {
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should parse this known json hashCache', function () {
+    describe('#fromJSON', () => {
+        it('should parse this known json hashCache', () => {
             new HashCache()
                 .fromJSON(
                     JSON.parse(
@@ -54,8 +54,8 @@ describe('HashCache', function () {
         })
     })
 
-    describe('#toJSON', function () {
-        it('should create this known message', function () {
+    describe('#toJSON', () => {
+        it('should create this known message', () => {
             JSON.stringify(new HashCache(prevoutsHashBuf, sequenceHashBuf, outputsHashBuf).toJSON()).should.equal(
                 '{"prevoutsHashBuf":"0101010101010101010101010101010101010101010101010101010101010101","sequenceHashBuf":"0202020202020202020202020202020202020202020202020202020202020202","outputsHashBuf":"0303030303030303030303030303030303030303030303030303030303030303"}'
             )

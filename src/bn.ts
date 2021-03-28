@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Big Number
  * ==========
@@ -32,9 +33,9 @@ function BnLegacy(n, base, ...rest) {
     _Bn.call(this, n, base, ...rest)
 }
 
-Object.keys(_Bn).forEach(function (key) {
+for (const key of Object.keys(_Bn)) {
     BnLegacy[key] = _Bn[key]
-})
+}
 ;(BnLegacy as any).prototype = Object.create(_Bn.prototype)
 BnLegacy.prototype.constructor = BnLegacy
 

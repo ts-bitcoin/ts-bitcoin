@@ -112,9 +112,9 @@ export class Ecdsa extends Struct {
      */
     public static calcrecovery(sig: Sig, pubKey: PubKey, hashBuf: Buffer): Sig {
         const ecdsa = new Ecdsa().fromObject({
-            sig: sig,
-            keyPair: new KeyPair().fromObject({ pubKey: pubKey }),
-            hashBuf: hashBuf,
+            sig,
+            keyPair: new KeyPair().fromObject({ pubKey }),
+            hashBuf,
         })
         return ecdsa.calcrecovery().sig
     }
@@ -262,16 +262,16 @@ export class Ecdsa extends Struct {
 
     public static sig2PubKey(sig: Sig, hashBuf: Buffer): PubKey {
         const ecdsa = new Ecdsa().fromObject({
-            sig: sig,
-            hashBuf: hashBuf,
+            sig,
+            hashBuf,
         })
         return ecdsa.sig2PubKey()
     }
 
     public static async asyncSig2PubKey(sig: Sig, hashBuf: Buffer): Promise<PubKey> {
         const ecdsa = new Ecdsa().fromObject({
-            sig: sig,
-            hashBuf: hashBuf,
+            sig,
+            hashBuf,
         })
         const pubKey = await ecdsa.asyncSig2PubKey()
         return pubKey
@@ -284,8 +284,8 @@ export class Ecdsa extends Struct {
 
         try {
             this.keyPair.pubKey.validate()
-        } catch (e) {
-            return 'Invalid pubKey: ' + e
+        } catch (err) {
+            return 'Invalid pubKey: ' + err
         }
 
         const r = this.sig.r
@@ -340,7 +340,10 @@ export class Ecdsa extends Struct {
 
         // try different values of k until r, s are valid
         let badrs = 0
-        let k, Q, r, s
+        let k
+        let Q
+        let r
+        let s
         do {
             if (!this.k || badrs > 0) {
                 this.deterministicK(badrs)
@@ -367,8 +370,8 @@ export class Ecdsa extends Struct {
             s = Point.getN().sub(s)
         }
         this.sig = Sig.fromObject({
-            r: r,
-            s: s,
+            r,
+            s,
             compressed: this.keyPair.pubKey.compressed,
         })
         return this
@@ -418,18 +421,18 @@ export class Ecdsa extends Struct {
     public static sign(hashBuf: Buffer, keyPair: KeyPair, endian?: 'big' | 'little'): Sig {
         return new Ecdsa()
             .fromObject({
-                hashBuf: hashBuf,
-                endian: endian,
-                keyPair: keyPair,
+                hashBuf,
+                endian,
+                keyPair,
             })
             .sign().sig
     }
 
     public static async asyncSign(hashBuf: Buffer, keyPair: KeyPair, endian?: 'big' | 'little'): Promise<Sig> {
         const ecdsa = new Ecdsa().fromObject({
-            hashBuf: hashBuf,
-            endian: endian,
-            keyPair: keyPair,
+            hashBuf,
+            endian,
+            keyPair,
         })
         await ecdsa.asyncSign()
         return ecdsa.sig
@@ -444,10 +447,10 @@ export class Ecdsa extends Struct {
     ): boolean {
         return new Ecdsa()
             .fromObject({
-                hashBuf: hashBuf,
-                endian: endian,
-                sig: sig,
-                keyPair: new KeyPair().fromObject({ pubKey: pubKey }),
+                hashBuf,
+                endian,
+                sig,
+                keyPair: new KeyPair().fromObject({ pubKey }),
             })
             .verify(enforceLowS).verified
     }
@@ -460,10 +463,10 @@ export class Ecdsa extends Struct {
         enforceLowS = true
     ): Promise<boolean> {
         const ecdsa = new Ecdsa().fromObject({
-            hashBuf: hashBuf,
-            endian: endian,
-            sig: sig,
-            keyPair: new KeyPair().fromObject({ pubKey: pubKey }),
+            hashBuf,
+            endian,
+            sig,
+            keyPair: new KeyPair().fromObject({ pubKey }),
         })
         await ecdsa.asyncVerify(enforceLowS)
         return ecdsa.verified

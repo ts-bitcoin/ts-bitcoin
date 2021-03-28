@@ -1,38 +1,39 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import should = require('should')
-import { Struct } from '../src/struct'
 import * as sinon from 'sinon'
 import { Br } from '../src/br'
+import { Struct } from '../src/struct'
 
-describe('Struct', function () {
-    it('should make a new struct', function () {
+describe('Struct', () => {
+    it('should make a new struct', () => {
         let struct = new Struct()
         should.exist(struct)
         struct = new Struct()
         should.exist(struct)
     })
 
-    describe('#fromObject', function () {
-        it('should set from an object', function () {
+    describe('#fromObject', () => {
+        it('should set from an object', () => {
             ;(new Struct().fromObject({ test: 'test' }) as any).test.should.equal('test')
             Object.keys(new Struct().fromObject({})).length.should.equal(0)
         })
     })
 
-    describe('@fromObject', function () {
-        it('should set from an object', function () {
+    describe('@fromObject', () => {
+        it('should set from an object', () => {
             ;(Struct.fromObject({ test: 'test' }) as any).test.should.equal('test')
             Object.keys(Struct.fromObject({})).length.should.equal(0)
         })
     })
 
-    describe('#fromBr', function () {
-        it('should throw an error if arg is not a Br', function () {
+    describe('#fromBr', () => {
+        it('should throw an error if arg is not a Br', () => {
             ;(function () {
                 new Struct().fromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 const br = new Br()
                 new Struct().fromBr(br)
@@ -40,14 +41,14 @@ describe('Struct', function () {
         })
     })
 
-    describe('@fromBr', function () {
-        it('should throw an error if arg is not a Br', function () {
+    describe('@fromBr', () => {
+        it('should throw an error if arg is not a Br', () => {
             ;(function () {
                 Struct.fromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 const br = new Br()
                 Struct.fromBr(br)
@@ -55,14 +56,14 @@ describe('Struct', function () {
         })
     })
 
-    describe('#asyncFromBr', function () {
-        it('should throw an error if arg is not a Br', function () {
+    describe('#asyncFromBr', () => {
+        it('should throw an error if arg is not a Br', () => {
             ;(function () {
                 new Struct().asyncFromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 const br = new Br()
                 new Struct().asyncFromBr(br)
@@ -70,14 +71,14 @@ describe('Struct', function () {
         })
     })
 
-    describe('@asyncFromBr', function () {
-        it('should throw an error if arg is not a Br', function () {
+    describe('@asyncFromBr', () => {
+        it('should throw an error if arg is not a Br', () => {
             ;(function () {
                 Struct.asyncFromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 const br = new Br()
                 Struct.asyncFromBr(br)
@@ -85,92 +86,92 @@ describe('Struct', function () {
         })
     })
 
-    describe('#toBw', function () {
-        it('should throw a not implemented error', function () {
+    describe('#toBw', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().toBw()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#asyncToBw', function () {
-        it('should throw a not implemented error', function () {
+    describe('#asyncToBw', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().asyncToBw()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#genFromBuffers', function () {
-        it('should throw an error', function () {
+    describe('#genFromBuffers', () => {
+        it('should throw an error', () => {
             ;(function () {
                 new Struct().genFromBuffers().next()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#fromBuffer', function () {
-        it('should throw an error if arg is not a buffer', function () {
+    describe('#fromBuffer', () => {
+        it('should throw an error if arg is not a buffer', () => {
             ;(function () {
                 new Struct().fromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
-                var buf = Buffer.from([])
+                const buf = Buffer.from([])
                 new Struct().fromBuffer(buf)
             }.should.throw('not implemented'))
         })
     })
 
-    describe('@fromBuffer', function () {
-        it('should throw an error if arg is not a buffer', function () {
+    describe('@fromBuffer', () => {
+        it('should throw an error if arg is not a buffer', () => {
             ;(function () {
                 Struct.fromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
-                var buf = Buffer.from([])
+                const buf = Buffer.from([])
                 Struct.fromBuffer(buf)
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#asyncFromBuffer', function () {
-        it('should throw an error if arg is not a buffer', function () {
+    describe('#asyncFromBuffer', () => {
+        it('should throw an error if arg is not a buffer', () => {
             ;(function () {
                 new Struct().asyncFromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
-                var buf = Buffer.from([])
+                const buf = Buffer.from([])
                 new Struct().asyncFromBuffer(buf)
             }.should.throw('not implemented'))
         })
     })
 
-    describe('@asyncFromBuffer', function () {
-        it('should throw an error if arg is not a buffer', function () {
+    describe('@asyncFromBuffer', () => {
+        it('should throw an error if arg is not a buffer', () => {
             ;(function () {
                 Struct.asyncFromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
-                var buf = Buffer.from([])
+                const buf = Buffer.from([])
                 Struct.asyncFromBuffer(buf)
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#fromFastBuffer', function () {
-        it('should call fromBuffer', function () {
+    describe('#fromFastBuffer', () => {
+        it('should call fromBuffer', () => {
             let struct = new Struct()
             struct.fromBuffer = sinon.spy()
             struct = Object.create(struct)
@@ -179,7 +180,7 @@ describe('Struct', function () {
             ;(struct.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
         })
 
-        it('should not call fromBuffer if buf length is zero', function () {
+        it('should not call fromBuffer if buf length is zero', () => {
             let struct = new Struct()
             struct.fromBuffer = sinon.spy()
             struct = Object.create(struct)
@@ -189,8 +190,8 @@ describe('Struct', function () {
         })
     })
 
-    describe('@fromFastBuffer', function () {
-        it('should call fromBuffer', function () {
+    describe('@fromFastBuffer', () => {
+        it('should call fromBuffer', () => {
             class StructMock extends Struct {}
             StructMock.prototype.fromBuffer = sinon.spy()
             const buf = Buffer.from('00', 'hex')
@@ -198,7 +199,7 @@ describe('Struct', function () {
             ;(StructMock.prototype.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
         })
 
-        it('should not call fromBuffer if buf length is zero', function () {
+        it('should not call fromBuffer if buf length is zero', () => {
             class StructMock extends Struct {}
             StructMock.prototype.fromBuffer = sinon.spy()
             const buf = Buffer.from('', 'hex')
@@ -207,24 +208,24 @@ describe('Struct', function () {
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should throw a not implemented error', function () {
+    describe('#toBuffer', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().toBuffer()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#asyncToBuffer', function () {
-        it('should throw a not implemented error', function () {
+    describe('#asyncToBuffer', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().asyncToBuffer()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#toFastBuffer', function () {
-        it('should call toBuffer', function () {
+    describe('#toFastBuffer', () => {
+        it('should call toBuffer', () => {
             let struct = new Struct()
             struct.toBuffer = sinon.spy()
             struct = Object.create(struct)
@@ -234,7 +235,7 @@ describe('Struct', function () {
             ;(struct.toBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
         })
 
-        it('should return zero-length buffer if object has no keys', function () {
+        it('should return zero-length buffer if object has no keys', () => {
             let struct = new Struct()
             struct.toBuffer = sinon.spy()
             struct = Object.create(struct)
@@ -244,192 +245,192 @@ describe('Struct', function () {
         })
     })
 
-    describe('#fromHex', function () {
-        it('should throw an error for invalid hex string', function () {
+    describe('#fromHex', () => {
+        it('should throw an error for invalid hex string', () => {
             ;(function () {
                 new Struct().fromHex('x00')
             }.should.throw('invalid hex string'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().fromHex('00')
             }.should.throw('not implemented'))
         })
     })
 
-    describe('@fromHex', function () {
-        it('should throw an error for invalid hex string', function () {
+    describe('@fromHex', () => {
+        it('should throw an error for invalid hex string', () => {
             ;(function () {
                 Struct.fromHex('x00')
             }.should.throw('invalid hex string'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 Struct.fromHex('00')
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#fromFastHex', function () {
-        it('should throw an error for invalid hex string', function () {
+    describe('#fromFastHex', () => {
+        it('should throw an error for invalid hex string', () => {
             ;(function () {
                 new Struct().fromFastHex('x00')
             }.should.throw('invalid hex string'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().fromFastHex('00')
             }.should.throw('not implemented'))
         })
     })
 
-    describe('@fromFastHex', function () {
-        it('should throw an error for invalid hex string', function () {
+    describe('@fromFastHex', () => {
+        it('should throw an error for invalid hex string', () => {
             ;(function () {
                 Struct.fromFastHex('x00')
             }.should.throw('invalid hex string'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 Struct.fromFastHex('00')
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#toHex', function () {
-        it('should throw a not implemented error', function () {
+    describe('#toHex', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().toHex()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#asyncToHex', function () {
-        it('should throw a not implemented error', function () {
+    describe('#asyncToHex', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().asyncToHex()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#toFastHex', function () {
-        it('should return an empty string for blank data', function () {
+    describe('#toFastHex', () => {
+        it('should return an empty string for blank data', () => {
             const hex = new Struct().toFastHex()
             ;(typeof hex === 'string').should.equal(true)
             hex.length.should.equal(0)
         })
     })
 
-    describe('#fromString', function () {
-        it('should throw an error for invalid string', function () {
+    describe('#fromString', () => {
+        it('should throw an error for invalid string', () => {
             ;(function () {
                 new Struct().fromString({} as any)
             }.should.throw('str must be a string'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().fromString('00')
             }.should.throw('not implemented'))
         })
     })
 
-    describe('@fromString', function () {
-        it('should throw an error for invalid string', function () {
+    describe('@fromString', () => {
+        it('should throw an error for invalid string', () => {
             ;(function () {
                 Struct.fromString({} as any)
             }.should.throw('str must be a string'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 Struct.fromString('00')
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#asyncFromString', function () {
-        it('should throw an error for invalid string', function () {
+    describe('#asyncFromString', () => {
+        it('should throw an error for invalid string', () => {
             ;(function () {
                 new Struct().asyncFromString({} as any)
             }.should.throw('str must be a string'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().asyncFromString('00')
             }.should.throw('not implemented'))
         })
     })
 
-    describe('@asyncFromString', function () {
-        it('should throw an error for invalid string', function () {
+    describe('@asyncFromString', () => {
+        it('should throw an error for invalid string', () => {
             ;(function () {
                 Struct.asyncFromString({} as any)
             }.should.throw('str must be a string'))
         })
 
-        it('should throw a not implemented error', function () {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 Struct.asyncFromString('00')
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#toString', function () {
-        it('should throw a not implemented error', function () {
+    describe('#toString', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().toString()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#asyncToString', function () {
-        it('should throw a not implemented error', function () {
+    describe('#asyncToString', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().asyncToString()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should throw a not implemented error', function () {
+    describe('#fromJSON', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().fromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
 
-    describe('@fromJSON', function () {
-        it('should throw a not implemented error', function () {
+    describe('@fromJSON', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 Struct.fromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#asyncFromJSON', function () {
-        it('should throw a not implemented error', function () {
+    describe('#asyncFromJSON', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().asyncFromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
 
-    describe('@asyncFromJSON', function () {
-        it('should throw a not implemented error', function () {
+    describe('@asyncFromJSON', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 Struct.asyncFromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#toJSON', function () {
-        it('should convert an object into a json string', function () {
+    describe('#toJSON', () => {
+        it('should convert an object into a json string', () => {
             const obj = new Struct()
             ;(obj as any).arr = [1, 2, 3, 4]
             ;(obj as any).anotherObj = new Struct()
@@ -441,16 +442,16 @@ describe('Struct', function () {
         })
     })
 
-    describe('#asyncToJSON', function () {
-        it('should throw a not implemented error', function () {
+    describe('#asyncToJSON', () => {
+        it('should throw a not implemented error', () => {
             ;(function () {
                 new Struct().asyncToJSON()
             }.should.throw('not implemented'))
         })
     })
 
-    describe('#clone', function () {
-        it('should call cloneByJSON', function () {
+    describe('#clone', () => {
+        it('should call cloneByJSON', () => {
             const struct = new Struct()
             struct.cloneByJSON = sinon.spy()
             struct.clone()
@@ -458,14 +459,14 @@ describe('Struct', function () {
         })
     })
 
-    describe('#cloneByBuffer', function () {
-        it('should call toBuffer', function () {
+    describe('#cloneByBuffer', () => {
+        it('should call toBuffer', () => {
             class Struct2 extends Struct {
-                toBuffer() {
+                public toBuffer() {
                     return {} as any
                 }
 
-                fromBuffer(obj) {
+                public fromBuffer(_obj: any) {
                     return this
                 }
             }
@@ -476,14 +477,14 @@ describe('Struct', function () {
         })
     })
 
-    describe('#cloneByFastBuffer', function () {
-        it('should call toFastBuffer', function () {
+    describe('#cloneByFastBuffer', () => {
+        it('should call toFastBuffer', () => {
             class Struct2 extends Struct {
-                toFastBuffer() {
+                public toFastBuffer() {
                     return {} as any
                 }
 
-                fromFastBuffer(obj) {
+                public fromFastBuffer(_obj: any) {
                     return this
                 }
             }
@@ -494,14 +495,14 @@ describe('Struct', function () {
         })
     })
 
-    describe('#cloneByHex', function () {
-        it('should call toHex', function () {
+    describe('#cloneByHex', () => {
+        it('should call toHex', () => {
             class Struct2 extends Struct {
-                toHex() {
+                public toHex() {
                     return {} as any
                 }
 
-                fromHex(obj) {
+                public fromHex(_obj: any) {
                     return this
                 }
             }
@@ -512,14 +513,14 @@ describe('Struct', function () {
         })
     })
 
-    describe('#cloneByString', function () {
-        it('should call toString', function () {
+    describe('#cloneByString', () => {
+        it('should call toString', () => {
             class Struct2 extends Struct {
-                toString() {
+                public toString() {
                     return {} as any
                 }
 
-                fromString(obj) {
+                public fromString(_obj: any) {
                     return this
                 }
             }
@@ -530,14 +531,14 @@ describe('Struct', function () {
         })
     })
 
-    describe('#cloneByJSON', function () {
-        it('should call toJSON', function () {
+    describe('#cloneByJSON', () => {
+        it('should call toJSON', () => {
             class Struct2 extends Struct {
-                toJSON() {
+                public toJSON() {
                     return {}
                 }
 
-                fromJSON(obj) {
+                public fromJSON(_obj: any) {
                     return this
                 }
             }

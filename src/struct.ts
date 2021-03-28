@@ -35,9 +35,9 @@
  * The "expect" method also facilitates deserializing a sequence of buffers
  * into an object.
  */
+import * as isHex from 'is-hex'
 import { Br } from './br'
 import { Bw } from './bw'
-import * as isHex from 'is-hex'
 
 export class Struct {
     constructor(obj?: any) {
@@ -60,7 +60,7 @@ export class Struct {
         return new this().fromObject(obj) as T
     }
 
-    public fromBr(br: Br, ...rest: any[]): this {
+    public fromBr(br: Br, ..._rest: any[]): this {
         if (!(br instanceof Br)) {
             throw new Error('br must be a buffer reader')
         }
@@ -71,7 +71,7 @@ export class Struct {
         return new this().fromBr(br) as T
     }
 
-    public asyncFromBr(br: Br, ...rest: any[]): Promise<this> {
+    public asyncFromBr(br: Br, ..._rest: any[]): Promise<this> {
         if (!(br instanceof Br)) {
             throw new Error('br must be a buffer reader')
         }
@@ -82,11 +82,11 @@ export class Struct {
         return new this().asyncFromBr(br) as Promise<T>
     }
 
-    public toBw(bw?: Bw): Bw {
+    public toBw(_bw?: Bw): Bw {
         throw new Error('not implemented')
     }
 
-    public asyncToBw(bw?: Bw): Promise<Bw> {
+    public asyncToBw(_bw?: Bw): Promise<Bw> {
         throw new Error('not implemented')
     }
 
@@ -132,8 +132,8 @@ export class Struct {
         const remainderbuf = buf.slice(buf.length - overlen, buf.length)
         buf = buf.slice(0, buf.length - overlen)
         return {
-            buf: buf,
-            remainderbuf: remainderbuf,
+            buf,
+            remainderbuf,
         }
     }
 
@@ -307,7 +307,7 @@ export class Struct {
         return this.asyncToHex()
     }
 
-    public fromJSON(json): this {
+    public fromJSON(_json): this {
         throw new Error('not implemented')
     }
 
@@ -315,7 +315,7 @@ export class Struct {
         return new this().fromJSON(json) as T
     }
 
-    public asyncFromJSON(json, ...rest): Promise<this> {
+    public asyncFromJSON(_json, ..._rest): Promise<this> {
         throw new Error('not implemented')
     }
 
@@ -324,12 +324,12 @@ export class Struct {
     }
 
     public toJSON(): any {
-        var json: Record<string, any> = {}
-        for (var val in this) {
+        const json: Record<string, any> = {}
+        for (const val in this) {
             // arrays
             if (Array.isArray(this[val])) {
                 const arr = []
-                for (var i in this[val]) {
+                for (const i in this[val]) {
                     if (typeof (this[val][i] as any).toJSON === 'function') {
                         arr.push((this[val][i] as any).toJSON())
                     } else {
