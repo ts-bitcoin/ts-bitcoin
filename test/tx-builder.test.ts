@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
+import * as assert from 'assert'
 import should = require('should')
 import * as sinon from 'sinon'
 import { Address } from '../src/address'
@@ -359,6 +360,14 @@ describe('TxBuilder', () => {
 
             const tx = txb.tx
             should(tx.txOuts[0].valueBn.toString()).be.eql(inputAmount.toString())
+        })
+
+        it('should return the built transaction', function () {
+            const txb = prepareTxBuilder()
+
+            const tx = txb.build()
+            assert(tx instanceof Tx, 'should be instance of Tx')
+            assert(tx.hash().equals(txb.tx.hash()), 'should be the same tx')
         })
     })
 
