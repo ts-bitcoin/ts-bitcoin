@@ -362,7 +362,7 @@ describe('TxBuilder', () => {
             should(tx.txOuts[0].valueBn.toString()).be.eql(inputAmount.toString())
         })
 
-        it('should return the built transaction', function () {
+        it('should return the built transaction', () => {
             const txb = prepareTxBuilder()
 
             const tx = txb.build()
