@@ -89,7 +89,7 @@ export class Bsm extends Struct {
     public sign(): this {
         const hashBuf = Bsm.magicHash(this.messageBuf)
         const ecdsa = new Ecdsa().fromObject({
-            hashBuf: hashBuf,
+            hashBuf,
             keyPair: this.keyPair,
         })
         ecdsa.sign()

@@ -3,20 +3,20 @@
  * ===================
  */
 import { Address } from './address'
-import { Constants as Cst } from './constants'
 import { Bn } from './bn'
+import { Constants as Cst } from './constants'
 import { HashCache, HashCacheLike } from './hash-cache'
+import { KeyPair } from './key-pair'
+import { PubKey } from './pub-key'
 import { Script } from './script'
-import { SigOperations, SigOperationsLike } from './sig-operations'
 import { Sig } from './sig'
+import { SigOperations, SigOperationsLike } from './sig-operations'
 import { Struct } from './struct'
 import { Tx } from './tx'
 import { TxIn } from './tx-in'
 import { TxOut } from './tx-out'
 import { TxOutMap, TxOutMapLike } from './tx-out-map'
 import { VarInt } from './var-int'
-import { PubKey } from './pub-key'
-import { KeyPair } from './key-pair'
 
 const Constants = Cst.Default.TxBuilder
 
@@ -281,13 +281,13 @@ export class TxBuilder extends Struct {
 
     public buildOutputs(): Bn {
         let outAmountBn = new Bn(0)
-        this.txOuts.forEach((txOut) => {
+        for (const txOut of this.txOuts) {
             if (txOut.valueBn.lt(this.dust) && !txOut.script.isOpReturn() && !txOut.script.isSafeDataOut()) {
                 throw new Error('cannot create output lesser than dust')
             }
             outAmountBn = outAmountBn.add(txOut.valueBn)
             this.tx.addTxOut(txOut)
-        })
+        }
         return outAmountBn
     }
 
@@ -327,10 +327,10 @@ export class TxBuilder extends Struct {
 
         let size = this.tx.toBuffer().length
 
-        this.tx.txIns.forEach((txIn) => {
+        for (const txIn of this.tx.txIns) {
             const { txHashBuf, txOutNum } = txIn
             const sigOperations = this.sigOperations.get(txHashBuf, txOutNum)
-            sigOperations.forEach((obj) => {
+            for (const obj of sigOperations) {
                 const { nScriptChunk, type } = obj
                 const script = new Script([txIn.script.chunks[nScriptChunk]])
                 const scriptSize = script.toBuffer().length
@@ -342,8 +342,8 @@ export class TxBuilder extends Struct {
                 } else {
                     throw new Error('unsupported sig operations type')
                 }
-            })
-        })
+            }
+        }
 
         // size = size + sigSize * this.tx.txIns.length
         size = size + 1 // assume txInsVi increases by 1 byte

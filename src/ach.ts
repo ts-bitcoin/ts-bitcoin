@@ -9,10 +9,10 @@
  * (256 bit hmac)(128 bit iv)(128+ bits Aes+Cbc encrypted message)
  */
 import { Aescbc } from './aescbc'
+import { cmp } from './cmp'
 import { Hash } from './hash'
 import { Random } from './random'
 import { Workers } from './workers'
-import { cmp } from './cmp'
 
 export class Ach {
     public static encrypt(messageBuf: Buffer, cipherKeyBuf: Buffer, ivBuf?: Buffer): Buffer {

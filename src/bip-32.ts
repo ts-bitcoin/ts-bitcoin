@@ -15,9 +15,9 @@
  *
  * It has faced mostly cosmetic alterations since it was copied.
  */
+import { Base58Check } from './base-58-check'
 import { Bn } from './bn'
 import { Bw } from './bw'
-import { Base58Check } from './base-58-check'
 import { Constants, NetworkConstants } from './constants'
 import { Hash } from './hash'
 import { Point } from './point'
@@ -205,12 +205,15 @@ export class Bip32 extends Struct {
             return this
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         let bip32: Bip32 = this
         for (const i in e) {
             const c = e[i]
 
             if (i === '0') {
-                if (c !== 'm') throw new Error('invalid path')
+                if (c !== 'm') {
+                    throw new Error('invalid path')
+                }
                 continue
             }
 
@@ -241,7 +244,7 @@ export class Bip32 extends Struct {
             throw new Error('i must be a number')
         }
 
-        let ibc: number[] = []
+        const ibc: number[] = []
         ibc.push((i >> 24) & 0xff)
         ibc.push((i >> 16) & 0xff)
         ibc.push((i >> 8) & 0xff)

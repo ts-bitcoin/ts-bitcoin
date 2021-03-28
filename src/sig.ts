@@ -46,10 +46,14 @@ export class Sig extends Struct {
     public fromBuffer(buf: Buffer): this {
         try {
             return this.fromDer(buf, true)
-        } catch (e) {}
+        } catch (e) {
+            // silence
+        }
         try {
             return this.fromCompact(buf)
-        } catch (e) {}
+        } catch (e) {
+            // silence
+        }
         return this.fromTxFormat(buf)
     }
 
@@ -217,18 +221,18 @@ export class Sig extends Struct {
         }
 
         const obj = {
-            header: header,
-            length: length,
-            rheader: rheader,
-            rlength: rlength,
-            rneg: rneg,
-            rbuf: rbuf,
-            r: r,
-            sheader: sheader,
-            slength: slength,
-            sneg: sneg,
-            sbuf: sbuf,
-            s: s,
+            header,
+            length,
+            rheader,
+            rlength,
+            rneg,
+            rbuf,
+            r,
+            sheader,
+            slength,
+            sneg,
+            sbuf,
+            s,
         }
 
         return obj

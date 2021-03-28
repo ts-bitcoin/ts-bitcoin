@@ -6,10 +6,10 @@
  */
 import { Br } from './br'
 import { Bw } from './bw'
+import { cmp } from './cmp'
 import { Constants, getConstants, NetworkConstants } from './constants'
 import { Hash } from './hash'
 import { Struct } from './struct'
-import { cmp } from './cmp'
 
 export class Msg extends Struct {
     public constants: NetworkConstants
@@ -168,7 +168,7 @@ export class Msg extends Struct {
 
     public async asyncValidate(): Promise<void> {
         const isValid = await this.asyncIsValid()
-        if (isValid !== true) {
+        if (!isValid) {
             throw new Error('invalid message')
         }
     }

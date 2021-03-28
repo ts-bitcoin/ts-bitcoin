@@ -55,19 +55,19 @@ export class Tx extends Struct {
 
     public fromJSON(json: TxLike): this {
         const txIns: TxIn[] = []
-        json.txIns.forEach(function (txIn) {
+        for (const txIn of json.txIns) {
             txIns.push(new TxIn().fromJSON(txIn))
-        })
+        }
         const txOuts: TxOut[] = []
-        json.txOuts.forEach(function (txOut) {
+        for (const txOut of json.txOuts) {
             txOuts.push(new TxOut().fromJSON(txOut))
-        })
+        }
         this.fromObject({
             versionBytesNum: json.versionBytesNum,
             txInsVi: new VarInt().fromJSON(json.txInsVi),
-            txIns: txIns,
+            txIns,
             txOutsVi: new VarInt().fromJSON(json.txOutsVi),
-            txOuts: txOuts,
+            txOuts,
             nLockTime: json.nLockTime,
         })
         return this
@@ -75,19 +75,19 @@ export class Tx extends Struct {
 
     public toJSON(): TxLike {
         const txIns: TxInLike[] = []
-        this.txIns.forEach(function (txIn) {
+        for (const txIn of this.txIns) {
             txIns.push(txIn.toJSON())
-        })
+        }
         const txOuts: TxOutLike[] = []
-        this.txOuts.forEach(function (txOut) {
+        for (const txOut of this.txOuts) {
             txOuts.push(txOut.toJSON())
-        })
+        }
         return {
             versionBytesNum: this.versionBytesNum,
             txInsVi: this.txInsVi.toJSON(),
-            txIns: txIns,
+            txIns,
             txOutsVi: this.txOutsVi.toJSON(),
-            txOuts: txOuts,
+            txOuts,
             nLockTime: this.nLockTime,
         }
     }
@@ -306,7 +306,7 @@ export class Tx extends Struct {
     ): Sig {
         const hashBuf = this.sighash(nHashType, nIn, subScript, valueBn, flags, hashCache)
         const sig = Ecdsa.sign(hashBuf, keyPair, 'little').fromObject({
-            nHashType: nHashType,
+            nHashType,
         })
         return sig
     }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 /**
  * Script Interpreter
  * ==================
@@ -189,17 +190,13 @@ export class Interp extends Struct {
             nIn: json.nIn,
         })
         this.stack = []
-        json.stack.forEach(
-            function (hex) {
-                this.stack.push(Buffer.from(hex, 'hex'))
-            }.bind(this)
-        )
+        for (const hex of json.stack) {
+            this.stack.push(Buffer.from(hex, 'hex'))
+        }
         this.altStack = []
-        json.altStack.forEach(
-            function (hex) {
-                this.altStack.push(Buffer.from(hex, 'hex'))
-            }.bind(this)
-        )
+        for (const hex of json.altStack) {
+            this.altStack.push(Buffer.from(hex, 'hex'))
+        }
         this.fromObject({
             pc: json.pc,
             pBeginCodeHash: json.pBeginCodeHash,
@@ -212,19 +209,19 @@ export class Interp extends Struct {
     }
 
     public fromBr(br: Br): this {
-        let jsonNoTxBufLEn = br.readVarIntNum()
-        let jsonNoTxBuf = br.read(jsonNoTxBufLEn)
+        const jsonNoTxBufLEn = br.readVarIntNum()
+        const jsonNoTxBuf = br.read(jsonNoTxBufLEn)
         this.fromJSONNoTx(JSON.parse(jsonNoTxBuf.toString()))
-        let txbuflen = br.readVarIntNum()
+        const txbuflen = br.readVarIntNum()
         if (txbuflen > 0) {
-            let txbuf = br.read(txbuflen)
+            const txbuf = br.read(txbuflen)
             this.tx = new Tx().fromFastBuffer(txbuf)
         }
         return this
     }
 
     public toJSON(): InterpLike {
-        let json = this.toJSONNoTx()
+        const json = this.toJSONNoTx()
         json.tx = this.tx ? this.tx.toJSON() : undefined
         return json
     }
@@ -233,19 +230,19 @@ export class Interp extends Struct {
      * Convert everything but the tx to JSON.
      */
     public toJSONNoTx(): InterpLike {
-        let stack: string[] = []
-        this.stack.forEach(function (buf) {
+        const stack: string[] = []
+        for (const buf of this.stack) {
             stack.push(buf.toString('hex'))
-        })
-        let altStack: string[] = []
-        this.altStack.forEach(function (buf) {
+        }
+        const altStack: string[] = []
+        for (const buf of this.altStack) {
             altStack.push(buf.toString('hex'))
-        })
+        }
         return {
             script: this.script ? this.script.toJSON() : undefined,
             nIn: this.nIn,
-            stack: stack,
-            altStack: altStack,
+            stack,
+            altStack,
             pc: this.pc,
             pBeginCodeHash: this.pBeginCodeHash,
             nOpCount: this.nOpCount,
@@ -259,11 +256,11 @@ export class Interp extends Struct {
         if (!bw) {
             bw = new Bw()
         }
-        let jsonNoTxBuf = Buffer.from(JSON.stringify(this.toJSONNoTx()))
+        const jsonNoTxBuf = Buffer.from(JSON.stringify(this.toJSONNoTx()))
         bw.writeVarIntNum(jsonNoTxBuf.length)
         bw.write(jsonNoTxBuf)
         if (this.tx) {
-            let txbuf = this.tx.toFastBuffer()
+            const txbuf = this.tx.toFastBuffer()
             bw.writeVarIntNum(txbuf.length)
             bw.write(txbuf)
         } else {
@@ -352,13 +349,13 @@ export class Interp extends Struct {
             this.errStr = 'SCRIPT_ERR_SIG_DER'
             return false
         } else if ((this.flags & Interp.SCRIPT_VERIFY_LOW_S) !== 0) {
-            let sig = new Sig().fromTxFormat(buf)
+            const sig = new Sig().fromTxFormat(buf)
             if (!sig.hasLowS()) {
                 this.errStr = 'SCRIPT_ERR_SIG_DER'
                 return false
             }
         } else if ((this.flags & Interp.SCRIPT_VERIFY_STRICTENC) !== 0) {
-            let sig = new Sig().fromTxFormat(buf)
+            const sig = new Sig().fromTxFormat(buf)
             if (!sig.hasDefinedHashType()) {
                 this.errStr = 'SCRIPT_ERR_SIG_HASHTYPE'
                 return false
@@ -427,7 +424,7 @@ export class Interp extends Struct {
     public checkSequence(nSequence: number): boolean {
         // Relative lock times are supported by comparing the passed
         // in operand to the sequence number of the input.
-        let txToSequence = this.tx.txIns[this.nIn].nSequence
+        const txToSequence = this.tx.txIns[this.nIn].nSequence
 
         // Fail if the transaction's version number is not set high
         // enough to trigger Bip 68 rules.
@@ -445,9 +442,9 @@ export class Interp extends Struct {
 
         // Mask off any bits that do not have consensus-enforced meaning
         // before doing the integer comparisons
-        let nLockTimeMask = TxIn.SEQUENCE_LOCKTIME_TYPE_FLAG | TxIn.SEQUENCE_LOCKTIME_MASK
-        let txToSequenceMasked = txToSequence & nLockTimeMask
-        let nSequenceMasked = nSequence & nLockTimeMask
+        const nLockTimeMask = TxIn.SEQUENCE_LOCKTIME_TYPE_FLAG | TxIn.SEQUENCE_LOCKTIME_MASK
+        const txToSequenceMasked = txToSequence & nLockTimeMask
+        const nSequenceMasked = nSequence & nLockTimeMask
 
         // There are two kinds of nSequence: lock-by-blockheight
         // and lock-by-blocktime, distinguished by whether
@@ -489,7 +486,7 @@ export class Interp extends Struct {
 
         try {
             while (this.pc < this.script.chunks.length) {
-                let fSuccess = this.step()
+                const fSuccess = this.step()
                 if (!fSuccess) {
                     yield false
                 } else {
@@ -519,17 +516,17 @@ export class Interp extends Struct {
      * Based on the inner loop of bitcoin core's EvalScript function
      */
     public step(): boolean {
-        let fRequireMinimal = (this.flags & Interp.SCRIPT_VERIFY_MINIMALDATA) !== 0
+        const fRequireMinimal = (this.flags & Interp.SCRIPT_VERIFY_MINIMALDATA) !== 0
 
         // bool fExec = !count(ifStack.begin(), ifStack.end(), false)
-        let fExec = !(this.ifStack.indexOf(false) + 1)
+        const fExec = !(this.ifStack.indexOf(false) + 1)
 
         //
         // Read instruction
         //
-        let chunk = this.script.chunks[this.pc]
+        const chunk = this.script.chunks[this.pc]
         this.pc++
-        let opCodeNum = chunk.opCodeNum
+        const opCodeNum = chunk.opCodeNum
         if (opCodeNum === undefined) {
             this.errStr = 'SCRIPT_ERR_BAD_OPCODE'
             return false
@@ -592,8 +589,8 @@ export class Interp extends Struct {
                     {
                         // ( -- value)
                         // ScriptNum bn((int)opCode - (int)(OpCode.OP_1 - 1))
-                        let n = opCodeNum - (OpCode.OP_1 - 1)
-                        let buf = new Bn(n).toScriptNumBuffer()
+                        const n = opCodeNum - (OpCode.OP_1 - 1)
+                        const buf = new Bn(n).toScriptNumBuffer()
                         this.stack.push(buf)
                         // The result of these opCodes should always be the minimal way to push the data
                         // they push, so no need for a CheckMinimalPush here.
@@ -636,9 +633,9 @@ export class Interp extends Struct {
                         // Thus as a special case we tell CScriptNum to accept up
                         // to 5-byte bignums, which are good until 2**39-1, well
                         // beyond the 2**32-1 limit of the nLockTime field itself.
-                        let nLockTimebuf = this.stack[this.stack.length - 1]
-                        let nLockTimebn = new Bn().fromScriptNumBuffer(nLockTimebuf, fRequireMinimal, 5)
-                        let nLockTime = nLockTimebn.toNumber()
+                        const nLockTimebuf = this.stack[this.stack.length - 1]
+                        const nLockTimebn = new Bn().fromScriptNumBuffer(nLockTimebuf, fRequireMinimal, 5)
+                        const nLockTime = nLockTimebn.toNumber()
 
                         // In the rare event that the argument may be < 0 due to
                         // some arithmetic being done first, you can always use
@@ -675,9 +672,9 @@ export class Interp extends Struct {
                         // nSequence, like nLockTime, is a 32-bit unsigned integer
                         // field. See the comment in CHECKLOCKTIMEVERIFY regarding
                         // 5-byte numeric operands.
-                        let nSequencebuf = this.stack[this.stack.length - 1]
-                        let nSequencebn = new Bn().fromScriptNumBuffer(nSequencebuf, fRequireMinimal, 5)
-                        let nSequence = nSequencebn.toNumber()
+                        const nSequencebuf = this.stack[this.stack.length - 1]
+                        const nSequencebn = new Bn().fromScriptNumBuffer(nSequencebuf, fRequireMinimal, 5)
+                        const nSequence = nSequencebn.toNumber()
 
                         // In the rare event that the argument may be < 0 due to
                         // some arithmetic being done first, you can always use
@@ -728,7 +725,7 @@ export class Interp extends Struct {
                                 this.errStr = 'SCRIPT_ERR_UNBALANCED_CONDITIONAL'
                                 return false
                             }
-                            let buf = this.stack.pop()
+                            const buf = this.stack.pop()
                             fValue = Interp.castToBool(buf)
                             if (opCodeNum === OpCode.OP_NOTIF) {
                                 fValue = !fValue
@@ -762,8 +759,8 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let buf = this.stack[this.stack.length - 1]
-                        let fValue = Interp.castToBool(buf)
+                        const buf = this.stack[this.stack.length - 1]
+                        const fValue = Interp.castToBool(buf)
                         if (fValue) {
                             this.stack.pop()
                         } else {
@@ -815,8 +812,8 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let buf1 = this.stack[this.stack.length - 2]
-                        let buf2 = this.stack[this.stack.length - 1]
+                        const buf1 = this.stack[this.stack.length - 2]
+                        const buf2 = this.stack[this.stack.length - 1]
                         this.stack.push(buf1)
                         this.stack.push(buf2)
                     }
@@ -829,9 +826,9 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let buf1 = this.stack[this.stack.length - 3]
-                        let buf2 = this.stack[this.stack.length - 2]
-                        let buf3 = this.stack[this.stack.length - 1]
+                        const buf1 = this.stack[this.stack.length - 3]
+                        const buf2 = this.stack[this.stack.length - 2]
+                        const buf3 = this.stack[this.stack.length - 1]
                         this.stack.push(buf1)
                         this.stack.push(buf2)
                         this.stack.push(buf3)
@@ -845,8 +842,8 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let buf1 = this.stack[this.stack.length - 4]
-                        let buf2 = this.stack[this.stack.length - 3]
+                        const buf1 = this.stack[this.stack.length - 4]
+                        const buf2 = this.stack[this.stack.length - 3]
                         this.stack.push(buf1)
                         this.stack.push(buf2)
                     }
@@ -859,7 +856,7 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let spliced = this.stack.splice(this.stack.length - 6, 2)
+                        const spliced = this.stack.splice(this.stack.length - 6, 2)
                         this.stack.push(spliced[0])
                         this.stack.push(spliced[1])
                     }
@@ -872,7 +869,7 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let spliced = this.stack.splice(this.stack.length - 4, 2)
+                        const spliced = this.stack.splice(this.stack.length - 4, 2)
                         this.stack.push(spliced[0])
                         this.stack.push(spliced[1])
                     }
@@ -885,8 +882,8 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let buf = this.stack[this.stack.length - 1]
-                        let fValue = Interp.castToBool(buf)
+                        const buf = this.stack[this.stack.length - 1]
+                        const fValue = Interp.castToBool(buf)
                         if (fValue) {
                             this.stack.push(buf)
                         }
@@ -896,7 +893,7 @@ export class Interp extends Struct {
                 case OpCode.OP_DEPTH:
                     {
                         // -- stacksize
-                        let buf = new Bn(this.stack.length).toScriptNumBuffer()
+                        const buf = new Bn(this.stack.length).toScriptNumBuffer()
                         this.stack.push(buf)
                     }
                     break
@@ -947,8 +944,8 @@ export class Interp extends Struct {
                             return false
                         }
                         let buf = this.stack[this.stack.length - 1]
-                        let bn = new Bn().fromScriptNumBuffer(buf, fRequireMinimal)
-                        let n = bn.toNumber()
+                        const bn = new Bn().fromScriptNumBuffer(buf, fRequireMinimal)
+                        const n = bn.toNumber()
                         this.stack.pop()
                         if (n < 0 || n >= this.stack.length) {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
@@ -971,9 +968,9 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let x1 = this.stack[this.stack.length - 3]
-                        let x2 = this.stack[this.stack.length - 2]
-                        let x3 = this.stack[this.stack.length - 1]
+                        const x1 = this.stack[this.stack.length - 3]
+                        const x2 = this.stack[this.stack.length - 2]
+                        const x3 = this.stack[this.stack.length - 1]
                         this.stack[this.stack.length - 3] = x2
                         this.stack[this.stack.length - 2] = x3
                         this.stack[this.stack.length - 1] = x1
@@ -987,8 +984,8 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let x1 = this.stack[this.stack.length - 2]
-                        let x2 = this.stack[this.stack.length - 1]
+                        const x1 = this.stack[this.stack.length - 2]
+                        const x2 = this.stack[this.stack.length - 1]
                         this.stack[this.stack.length - 2] = x2
                         this.stack[this.stack.length - 1] = x1
                     }
@@ -1010,7 +1007,7 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let bn = new Bn(this.stack[this.stack.length - 1].length)
+                        const bn = new Bn(this.stack[this.stack.length - 1].length)
                         this.stack.push(bn.toScriptNumBuffer())
                     }
                     break
@@ -1026,10 +1023,10 @@ export class Interp extends Struct {
                         this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                         return false
                     }
-                    let buf1 = this.stack[this.stack.length - 2]
-                    let buf2 = this.stack[this.stack.length - 1]
+                    const buf1 = this.stack[this.stack.length - 2]
+                    const buf2 = this.stack[this.stack.length - 1]
 
-                    if (buf1.length != buf2.length) {
+                    if (buf1.length !== buf2.length) {
                         this.errStr = 'SCRIPT_ERR_INVALID_OPERAND_SIZE'
                         return false
                     }
@@ -1061,7 +1058,7 @@ export class Interp extends Struct {
                         this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                         return false
                     }
-                    let buf = this.stack[this.stack.length - 1]
+                    const buf = this.stack[this.stack.length - 1]
                     for (let i = 0; i < buf.length; i++) {
                         buf[i] = ~buf[i]
                     }
@@ -1074,9 +1071,11 @@ export class Interp extends Struct {
                         return false
                     }
 
-                    let buf1 = this.stack[this.stack.length - 2]
+                    const buf1 = this.stack[this.stack.length - 2]
                     let value = new Bn(buf1)
-                    let n = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal).toNumber()
+                    const n = new Bn()
+                        .fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal)
+                        .toNumber()
                     if (n < 0) {
                         this.errStr = 'SCRIPT_ERR_INVALID_NUMBER_RANGE'
                         return false
@@ -1111,9 +1110,9 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let buf1 = this.stack[this.stack.length - 2]
-                        let buf2 = this.stack[this.stack.length - 1]
-                        let fEqual = cmp(buf1, buf2)
+                        const buf1 = this.stack[this.stack.length - 2]
+                        const buf2 = this.stack[this.stack.length - 1]
+                        const fEqual = cmp(buf1, buf2)
                         // OpCode.OP_NOTEQUAL is disabled because it would be too easy to say
                         // something like n != 1 and have some wiseguy pass in 1 with extra
                         // zero bytes after it (numerically, 0x01 == 0x0001 == 0x000001)
@@ -1148,7 +1147,7 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let buf = this.stack[this.stack.length - 1]
+                        const buf = this.stack[this.stack.length - 1]
                         let bn = new Bn().fromScriptNumBuffer(buf, fRequireMinimal)
                         switch (opCodeNum) {
                             case OpCode.OP_1ADD:
@@ -1161,7 +1160,9 @@ export class Interp extends Struct {
                                 bn = bn.neg()
                                 break
                             case OpCode.OP_ABS:
-                                if (bn.lt(0)) bn = bn.neg()
+                                if (bn.lt(0)) {
+                                    bn = bn.neg()
+                                }
                                 break
                             case OpCode.OP_NOT:
                                 bn = new Bn(~~bn.eq(0))
@@ -1198,8 +1199,8 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let bn1 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 2], fRequireMinimal)
-                        let bn2 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal)
+                        const bn1 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 2], fRequireMinimal)
+                        const bn2 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal)
                         let bn = new Bn(0)
 
                         switch (opCodeNum) {
@@ -1298,11 +1299,11 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let bn1 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 3], fRequireMinimal)
-                        let bn2 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 2], fRequireMinimal)
-                        let bn3 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal)
+                        const bn1 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 3], fRequireMinimal)
+                        const bn2 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 2], fRequireMinimal)
+                        const bn3 = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal)
                         // bool fValue = (bn2 <= bn1 && bn1 < bn3)
-                        let fValue = bn2.leq(bn1) && bn1.lt(bn3)
+                        const fValue = bn2.leq(bn1) && bn1.lt(bn3)
                         this.stack.pop()
                         this.stack.pop()
                         this.stack.pop()
@@ -1324,7 +1325,7 @@ export class Interp extends Struct {
                             this.errStr = 'SCRIPT_ERR_INVALID_STACK_OPERATION'
                             return false
                         }
-                        let buf = this.stack[this.stack.length - 1]
+                        const buf = this.stack[this.stack.length - 1]
                         // valtype vchnew Hash((opCode == OpCode.OP_RIPEMD160 || opCode == OpCode.OP_SHA1 || opCode == OpCode.OP_HASH160) ? 20 : 32)
                         let bufHash
                         if (opCodeNum === OpCode.OP_RIPEMD160) {
@@ -1357,17 +1358,17 @@ export class Interp extends Struct {
                             return false
                         }
 
-                        let bufSig = this.stack[this.stack.length - 2]
-                        let bufPubKey = this.stack[this.stack.length - 1]
+                        const bufSig = this.stack[this.stack.length - 2]
+                        const bufPubKey = this.stack[this.stack.length - 1]
 
                         // Subset of script starting at the most recent codeseparator
                         // CScript scriptCode(pBeginCodeHash, pend)
-                        let subScript = new Script().fromObject({
+                        const subScript = new Script().fromObject({
                             chunks: this.script.chunks.slice(this.pBeginCodeHash),
                         })
 
                         // https://github.com/Bitcoin-UAHF/spec/blob/master/replay-protected-sighash.md
-                        let nHashType = bufSig.length > 0 ? bufSig.readUInt8(bufSig.length - 1) : 0
+                        const nHashType = bufSig.length > 0 ? bufSig.readUInt8(bufSig.length - 1) : 0
                         if (nHashType & Sig.SIGHASH_FORKID) {
                             if (!(this.flags & Interp.SCRIPT_ENABLE_SIGHASH_FORKID)) {
                                 this.errStr = 'SCRIPT_ERR_ILLEGAL_FORKID'
@@ -1384,8 +1385,8 @@ export class Interp extends Struct {
 
                         let fSuccess
                         try {
-                            let sig = new Sig().fromTxFormat(bufSig)
-                            let pubKey = new PubKey().fromBuffer(bufPubKey, false)
+                            const sig = new Sig().fromTxFormat(bufSig)
+                            const pubKey = new PubKey().fromBuffer(bufPubKey, false)
                             fSuccess = this.tx.verify(
                                 sig,
                                 pubKey,
@@ -1462,15 +1463,15 @@ export class Interp extends Struct {
                         }
 
                         // Subset of script starting at the most recent codeseparator
-                        let subScript = new Script().fromObject({
+                        const subScript = new Script().fromObject({
                             chunks: this.script.chunks.slice(this.pBeginCodeHash),
                         })
 
                         for (let k = 0; k < nSigsCount; k++) {
-                            let bufSig = this.stack[this.stack.length - isig - k]
+                            const bufSig = this.stack[this.stack.length - isig - k]
 
                             // https://github.com/Bitcoin-UAHF/spec/blob/master/replay-protected-sighash.md
-                            let nHashType = bufSig.length > 0 ? bufSig.readUInt8(bufSig.length - 1) : 0
+                            const nHashType = bufSig.length > 0 ? bufSig.readUInt8(bufSig.length - 1) : 0
                             if (nHashType & Sig.SIGHASH_FORKID) {
                                 if (!(this.flags & Interp.SCRIPT_ENABLE_SIGHASH_FORKID)) {
                                     this.errStr = 'SCRIPT_ERR_ILLEGAL_FORKID'
@@ -1485,9 +1486,9 @@ export class Interp extends Struct {
                         let fSuccess = true
                         while (fSuccess && nSigsCount > 0) {
                             // valtype& vchSig  = stacktop(-isig)
-                            let bufSig = this.stack[this.stack.length - isig]
+                            const bufSig = this.stack[this.stack.length - isig]
                             // valtype& vchPubKey = stacktop(-ikey)
-                            let bufPubKey = this.stack[this.stack.length - ikey]
+                            const bufPubKey = this.stack[this.stack.length - ikey]
 
                             if (!this.checkSigEncoding(bufSig) || !this.checkPubKeyEncoding(bufPubKey)) {
                                 // serror is set
@@ -1496,8 +1497,8 @@ export class Interp extends Struct {
 
                             let fOk
                             try {
-                                let sig = new Sig().fromTxFormat(bufSig)
-                                let pubKey = new PubKey().fromBuffer(bufPubKey, false)
+                                const sig = new Sig().fromTxFormat(bufSig)
+                                const pubKey = new PubKey().fromBuffer(bufPubKey, false)
                                 fOk = this.tx.verify(
                                     sig,
                                     pubKey,
@@ -1570,8 +1571,8 @@ export class Interp extends Struct {
                         return false
                     }
 
-                    let vch1 = this.stack[this.stack.length - 2]
-                    let vch2 = this.stack[this.stack.length - 1]
+                    const vch1 = this.stack[this.stack.length - 2]
+                    const vch2 = this.stack[this.stack.length - 1]
 
                     this.stack[this.stack.length - 2] = Buffer.concat([vch1, vch2])
                     this.stack.pop()
@@ -1583,16 +1584,16 @@ export class Interp extends Struct {
                         return false
                     }
 
-                    let data = this.stack[this.stack.length - 2]
-                    let position = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal)
+                    const data = this.stack[this.stack.length - 2]
+                    const position = new Bn().fromScriptNumBuffer(this.stack[this.stack.length - 1], fRequireMinimal)
 
                     if (position.lt(0) || position.gt(data.length)) {
                         this.errStr = 'SCRIPT_ERR_INVALID_SPLIT_RANGE'
                         return false
                     }
 
-                    let n1 = data.slice(0, position.toNumber())
-                    let n2 = data.slice(position.toNumber())
+                    const n1 = data.slice(0, position.toNumber())
+                    const n2 = data.slice(position.toNumber())
 
                     this.stack.pop()
                     this.stack.pop()
@@ -1625,8 +1626,8 @@ export class Interp extends Struct {
         flags?: number,
         valueBn?: Bn
     ): boolean {
-        let results = this.results(scriptSig, scriptPubKey, tx, nIn, flags, valueBn)
-        for (let success of results) {
+        const results = this.results(scriptSig, scriptPubKey, tx, nIn, flags, valueBn)
+        for (const success of results) {
             if (!success) {
                 return false
             }
@@ -1652,10 +1653,10 @@ export class Interp extends Struct {
 
         this.fromObject({
             script: scriptSig,
-            tx: tx,
-            nIn: nIn,
-            flags: flags,
-            valueBn: valueBn,
+            tx,
+            nIn,
+            flags,
+            valueBn,
         })
 
         if ((flags & Interp.SCRIPT_VERIFY_SIGPUSHONLY) !== 0 && !scriptSig.isPushOnly()) {
@@ -1673,11 +1674,11 @@ export class Interp extends Struct {
         this.initialize()
         this.fromObject({
             script: scriptPubKey,
-            stack: stack,
-            tx: tx,
-            nIn: nIn,
-            flags: flags,
-            valueBn: valueBn,
+            stack,
+            tx,
+            nIn,
+            flags,
+            valueBn,
         })
 
         yield* this.eval()
@@ -1687,7 +1688,7 @@ export class Interp extends Struct {
             yield false
         }
 
-        let buf = this.stack[this.stack.length - 1]
+        const buf = this.stack[this.stack.length - 1]
         if (!Interp.castToBool(buf)) {
             this.errStr = this.errStr || 'SCRIPT_ERR_EVAL_FALSE'
             yield false
@@ -1702,7 +1703,7 @@ export class Interp extends Struct {
             }
 
             // Restore stack.
-            let tmp = stack
+            const tmp = stack
             stack = stackCopy
             stackCopy = tmp
 
@@ -1713,18 +1714,18 @@ export class Interp extends Struct {
                 throw new Error('internal error - stack copy empty')
             }
 
-            let pubKeySerialized = stack[stack.length - 1]
-            let scriptPubKey2 = new Script().fromBuffer(pubKeySerialized)
+            const pubKeySerialized = stack[stack.length - 1]
+            const scriptPubKey2 = new Script().fromBuffer(pubKeySerialized)
             stack.pop()
 
             this.initialize()
             this.fromObject({
                 script: scriptPubKey2,
-                stack: stack,
-                tx: tx,
-                nIn: nIn,
-                flags: flags,
-                valueBn: valueBn,
+                stack,
+                tx,
+                nIn,
+                flags,
+                valueBn,
             })
 
             yield* this.eval()
@@ -1768,11 +1769,11 @@ export class Interp extends Struct {
      * currently executing opcode.
      */
     public getDebugObject() {
-        let pc = this.pc - 1 // pc is incremented immediately after getting
+        const pc = this.pc - 1 // pc is incremented immediately after getting
         return {
             errStr: this.errStr,
             scriptStr: this.script ? this.script.toString() : 'no script found',
-            pc: pc,
+            pc,
             stack: this.stack.map((buf) => buf.toString('hex')),
             altStack: this.altStack.map((buf) => buf.toString('hex')),
             opCodeStr: this.script ? OpCode.fromNumber(this.script.chunks[pc].opCodeNum).toString() : 'no script found',

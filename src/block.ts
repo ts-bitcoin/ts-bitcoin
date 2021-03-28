@@ -10,9 +10,9 @@
  * new Block().fromBuffer(buf), which will parse the block and prepare its insides
  * for you to inspect.
  */
+import { BlockHeader, BlockHeaderLike } from './block-header'
 import { Br } from './br'
 import { Bw } from './bw'
-import { BlockHeader, BlockHeaderLike } from './block-header'
 import { Hash } from './hash'
 import { Merkle } from './merkle'
 import { Struct } from './struct'
@@ -39,26 +39,26 @@ export class Block extends Struct {
 
     public fromJSON(json: BlockLike): this {
         const txs = []
-        json.txs.forEach(function (tx) {
+        for (const tx of json.txs) {
             txs.push(new Tx().fromJSON(tx))
-        })
+        }
         this.fromObject({
             blockHeader: new BlockHeader().fromJSON(json.blockHeader),
             txsVi: new VarInt().fromJSON(json.txsVi),
-            txs: txs,
+            txs,
         })
         return this
     }
 
     public toJSON(): BlockLike {
         const txs = []
-        this.txs.forEach(function (tx) {
+        for (const tx of txs) {
             txs.push(tx.toJSON())
-        })
+        }
         return {
             blockHeader: this.blockHeader.toJSON(),
             txsVi: this.txsVi.toJSON(),
-            txs: txs,
+            txs,
         }
     }
 

@@ -9,8 +9,8 @@
  * of his point and big number classes, we have to wrap all the methods such as
  * getX() to return the Yours Bitcoin point and big number types.
  */
-import { Bn } from './bn'
 import * as elliptic from 'bitcoin-elliptic'
+import { Bn } from './bn'
 
 interface _Point {
     isInfinity(): boolean
@@ -30,20 +30,18 @@ export class Point extends _Point {
     }
 
     public static fromX(isOdd: boolean, x: Bn | number): Point {
-        const _point = ec.curve.pointFromX(x, isOdd)
+        const _p = ec.curve.pointFromX(x, isOdd)
         const point = Object.create(Point.prototype)
-        return point.copyFrom(_point)
+        return point.copyFrom(_p)
     }
 
     public copyFrom(point: Point): this {
         if (!(point instanceof _Point)) {
             throw new Error('point should be an external point')
         }
-        Object.keys(point).forEach(
-            function (key) {
-                this[key] = point[key]
-            }.bind(this)
-        )
+        for (const key of Object.keys(point)) {
+            this[key] = point[key]
+        }
         return this
     }
 

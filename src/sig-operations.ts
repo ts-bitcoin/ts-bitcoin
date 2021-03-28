@@ -13,8 +13,8 @@
  * but may not have access to the private key until the entire tx is sent to
  * where the private keys are.
  */
-import { Struct } from './struct'
 import { Sig } from './sig'
+import { Struct } from './struct'
 
 interface SigOperationsMapItem {
     nScriptChunk: number
@@ -24,7 +24,9 @@ interface SigOperationsMapItem {
     log?: any
 }
 
-export type SigOperationsLike = { [label: string]: SigOperationsMapItem[] }
+export interface SigOperationsLike {
+    [label: string]: SigOperationsMapItem[]
+}
 
 export class SigOperations extends Struct {
     public map: Map<string, SigOperationsMapItem[]>
@@ -35,7 +37,7 @@ export class SigOperations extends Struct {
 
     public toJSON(): { [label: string]: SigOperationsMapItem[] } {
         const json = {}
-        this.map.forEach((arr, label) => {
+        for (const [label, arr] of this.map.entries()) {
             json[label] = arr.map((obj) => ({
                 nScriptChunk: obj.nScriptChunk,
                 type: obj.type, // 'sig' or 'pubKey'
@@ -43,12 +45,12 @@ export class SigOperations extends Struct {
                 nHashType: obj.nHashType,
                 log: obj.log,
             }))
-        })
+        }
         return json
     }
 
     public fromJSON(json: { [label: string]: SigOperationsMapItem[] }): this {
-        Object.keys(json).forEach((label) => {
+        for (const label of Object.keys(json)) {
             this.map.set(
                 label,
                 json[label].map((obj) => ({
@@ -59,7 +61,7 @@ export class SigOperations extends Struct {
                     log: obj.log,
                 }))
             )
-        })
+        }
         return this
     }
 

@@ -51,13 +51,14 @@ export class Script extends Struct {
             const opCodeNum = br.readUInt8()
 
             let len = 0
+            // eslint-disable-next-line @typescript-eslint/no-shadow
             let buf = Buffer.from([])
             if (opCodeNum > 0 && opCodeNum < OpCode.OP_PUSHDATA1) {
                 len = opCodeNum
                 this.chunks.push({
                     buf: br.read(len),
-                    len: len,
-                    opCodeNum: opCodeNum,
+                    len,
+                    opCodeNum,
                 })
             } else if (opCodeNum === OpCode.OP_PUSHDATA1) {
                 try {
@@ -67,9 +68,9 @@ export class Script extends Struct {
                     br.read()
                 }
                 this.chunks.push({
-                    buf: buf,
-                    len: len,
-                    opCodeNum: opCodeNum,
+                    buf,
+                    len,
+                    opCodeNum,
                 })
             } else if (opCodeNum === OpCode.OP_PUSHDATA2) {
                 try {
@@ -79,9 +80,9 @@ export class Script extends Struct {
                     br.read()
                 }
                 this.chunks.push({
-                    buf: buf,
-                    len: len,
-                    opCodeNum: opCodeNum,
+                    buf,
+                    len,
+                    opCodeNum,
                 })
             } else if (opCodeNum === OpCode.OP_PUSHDATA4) {
                 try {
@@ -91,13 +92,13 @@ export class Script extends Struct {
                     br.read()
                 }
                 this.chunks.push({
-                    buf: buf,
-                    len: len,
-                    opCodeNum: opCodeNum,
+                    buf,
+                    len,
+                    opCodeNum,
                 })
             } else {
                 this.chunks.push({
-                    opCodeNum: opCodeNum,
+                    opCodeNum,
                 })
             }
         }
@@ -145,7 +146,9 @@ export class Script extends Struct {
             try {
                 const opCode = new OpCode().fromString(token)
                 opCodeNum = opCode.toNumber()
-            } catch (err) {}
+            } catch (err) {
+                // silence
+            }
 
             if (opCodeNum === undefined) {
                 opCodeNum = parseInt(token, 10)
@@ -153,7 +156,7 @@ export class Script extends Struct {
                     this.chunks.push({
                         buf: Buffer.from(tokens[i + 1].slice(2), 'hex'),
                         len: opCodeNum,
-                        opCodeNum: opCodeNum,
+                        opCodeNum,
                     })
                     i = i + 2
                 } else if (opCodeNum === 0) {
@@ -175,12 +178,12 @@ export class Script extends Struct {
                 this.chunks.push({
                     buf: Buffer.from(tokens[i + 2].slice(2), 'hex'),
                     len: parseInt(tokens[i + 1], 10),
-                    opCodeNum: opCodeNum,
+                    opCodeNum,
                 })
                 i = i + 3
             } else {
                 this.chunks.push({
-                    opCodeNum: opCodeNum,
+                    opCodeNum,
                 })
                 i = i + 1
             }
@@ -292,7 +295,8 @@ export class Script extends Struct {
         let i = 0
         while (i < tokens.length) {
             const token = tokens[i]
-            let opCode, opCodeNum
+            let opCode: OpCode
+            let opCodeNum: number
             try {
                 opCode = OpCode.fromString(token)
                 opCodeNum = opCode.toNumber()
@@ -306,13 +310,13 @@ export class Script extends Struct {
             if (token === '0') {
                 opCodeNum = 0
                 this.chunks.push({
-                    opCodeNum: opCodeNum,
+                    opCodeNum,
                 })
                 i = i + 1
             } else if (token === '-1') {
                 opCodeNum = OpCode.OP_1NEGATE
                 this.chunks.push({
-                    opCodeNum: opCodeNum,
+                    opCodeNum,
                 })
                 i = i + 1
             } else if (opCode === undefined) {
@@ -332,14 +336,14 @@ export class Script extends Struct {
                     opCodeNum = OpCode.OP_PUSHDATA4
                 }
                 this.chunks.push({
-                    buf: buf,
+                    buf,
                     len: buf.length,
-                    opCodeNum: opCodeNum,
+                    opCodeNum,
                 })
                 i = i + 1
             } else {
                 this.chunks.push({
-                    opCodeNum: opCodeNum,
+                    opCodeNum,
                 })
                 i = i + 1
             }
@@ -355,9 +359,9 @@ export class Script extends Struct {
      * Output the script to the script string format used in bitcoind data tests.
      */
     public toAsmString(): string {
-        var str = ''
-        for (var i = 0; i < this.chunks.length; i++) {
-            var chunk = this.chunks[i]
+        let str = ''
+        for (let i = 0; i < this.chunks.length; i++) {
+            const chunk = this.chunks[i]
             str += this._chunkToString(chunk)
         }
 
@@ -365,8 +369,8 @@ export class Script extends Struct {
     }
 
     private _chunkToString(chunk: ScriptChunk): string {
-        var opCodeNum = chunk.opCodeNum
-        var str = ''
+        const opCodeNum = chunk.opCodeNum
+        let str = ''
         if (!chunk.buf) {
             // no data chunk
             if (typeof OpCode.str[opCodeNum] !== 'undefined') {
@@ -382,7 +386,7 @@ export class Script extends Struct {
                     str = str + ' ' + new OpCode(opCodeNum).toString()
                 }
             } else {
-                var numstr = opCodeNum.toString(16)
+                let numstr = opCodeNum.toString(16)
                 if (numstr.length % 2 !== 0) {
                     numstr = '0' + numstr
                 }
@@ -498,7 +502,7 @@ export class Script extends Struct {
         if (typeof m !== 'number') {
             throw new Error('m must be a number')
         }
-        if (sort === true) {
+        if (sort) {
             pubKeys = Script.sortPubKeys(pubKeys)
         }
         this.writeOpCode(m + OpCode.OP_1 - 1)
@@ -554,8 +558,8 @@ export class Script extends Struct {
         if (this.chunks[0].opCodeNum !== OpCode.OP_FALSE) {
             return false
         }
-        var chunks = this.chunks.slice(1)
-        var script2 = new Script(chunks)
+        const chunks = this.chunks.slice(1)
+        const script2 = new Script(chunks)
         return script2.isOpReturn()
     }
 
@@ -734,13 +738,13 @@ export class Script extends Struct {
         return new this().writeBn(bn)
     }
 
-    public writeNumber(number: number): this {
-        this.writeBn(new Bn().fromNumber(number))
+    public writeNumber(num: number): this {
+        this.writeBn(new Bn().fromNumber(num))
         return this
     }
 
-    public static writeNumber(number: number): Script {
-        return new this().writeNumber(number)
+    public static writeNumber(num: number): Script {
+        return new this().writeNumber(num)
     }
 
     public setChunkBn(i: number, bn: Bn): this {
@@ -767,9 +771,9 @@ export class Script extends Struct {
             throw new Error("You can't push that much data")
         }
         this.chunks.push({
-            buf: buf,
-            len: len,
-            opCodeNum: opCodeNum,
+            buf,
+            len,
+            opCodeNum,
         })
         return this
     }

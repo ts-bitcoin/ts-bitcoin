@@ -120,7 +120,8 @@ export class Br {
 
     public readVarIntNum(): number {
         const first = this.readUInt8()
-        let bn, n
+        let bn: Bn
+        let n: number
         switch (first) {
             case 0xfd:
                 return this.readUInt16LE()

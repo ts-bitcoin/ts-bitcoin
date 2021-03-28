@@ -8,11 +8,11 @@
  * const privKey = keyPair.privKey
  * const pubKey = keyPair.pubKey
  */
-import { PrivKey as DefaultPrivKey, PrivKey } from './priv-key'
+import { Br } from './br'
+import { Bw } from './bw'
+import { PrivKey as DefaultPrivKey } from './priv-key'
 import { PubKey } from './pub-key'
 import { Struct } from './struct'
-import { Bw } from './bw'
-import { Br } from './br'
 
 interface KeyPairLike {
     privKey: string
@@ -86,23 +86,23 @@ export class KeyPair extends Struct {
         return keyPair
     }
 
-    public fromPrivKey(privKey: PrivKey): this {
+    public fromPrivKey(privKey: DefaultPrivKey): this {
         this.privKey = privKey
         this.pubKey = new PubKey().fromPrivKey(privKey)
         return this
     }
 
-    public static fromPrivKey(privKey: PrivKey): KeyPair {
+    public static fromPrivKey(privKey: DefaultPrivKey): KeyPair {
         return new this().fromPrivKey(privKey)
     }
 
-    public async asyncFromPrivKey(privKey: PrivKey): Promise<this> {
+    public async asyncFromPrivKey(privKey: DefaultPrivKey): Promise<this> {
         this.privKey = privKey
         this.pubKey = await new PubKey().asyncFromPrivKey(privKey)
         return this
     }
 
-    public static asyncFromPrivKey(privKey: PrivKey): Promise<KeyPair> {
+    public static asyncFromPrivKey(privKey: DefaultPrivKey): Promise<KeyPair> {
         return new this().asyncFromPrivKey(privKey)
     }
 

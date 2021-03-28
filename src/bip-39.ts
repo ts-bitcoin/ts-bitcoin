@@ -14,14 +14,14 @@
  *
  * const seed = new Bip39().fromString(mnemonic).toSeed()
  */
+import * as pbkdf2 from 'pbkdf2'
+import { wordList } from './bip-39-en-wordlist'
+import { Br } from './br'
 import { Bw } from './bw'
 import { Hash } from './hash'
-import * as pbkdf2 from 'pbkdf2'
 import { Random } from './random'
 import { Struct } from './struct'
-import { wordList } from './bip-39-en-wordlist'
 import { Workers } from './workers'
-import { Br } from './br'
 
 export class Bip39 extends Struct {
     public mnemonic: string
