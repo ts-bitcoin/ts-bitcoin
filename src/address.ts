@@ -98,8 +98,8 @@ export class Address extends Struct {
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    public static asyncFromPrivKey(privKey: PrivKey): Address {
-        return new this().fromPrivKey(privKey)
+    public static asyncFromPrivKey(privKey: PrivKey): Promise<Address> {
+        return new this().asyncFromPrivKey(privKey)
     }
 
     public fromRandom(): this {
@@ -117,8 +117,8 @@ export class Address extends Struct {
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
-    public static asyncFromRandom(): Address {
-        return new this().fromRandom()
+    public static asyncFromRandom(): Promise<Address> {
+        return new this().asyncFromRandom()
     }
 
     public fromString(str: string): this {

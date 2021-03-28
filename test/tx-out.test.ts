@@ -1,32 +1,33 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+import should = require('should')
 import { Bn } from '../src/bn'
 import { Br } from '../src/br'
 import { Script } from '../src/script'
 import { TxOut } from '../src/tx-out'
 import { VarInt } from '../src/var-int'
-import should = require('should')
 
-describe('TxOut', function () {
+describe('TxOut', () => {
     const valueBn = new Bn(5)
     const script = new Script().fromString('OP_CHECKMULTISIG')
     const scriptVi = VarInt.fromNumber(script.toBuffer().length)
     const txOut = new TxOut().fromObject({
-        valueBn: valueBn,
-        scriptVi: scriptVi,
-        script: script,
+        valueBn,
+        scriptVi,
+        script,
     })
 
-    it('should make a new txOut', function () {
+    it('should make a new txOut', () => {
         const txOut = new TxOut()
         should.exist(txOut)
         new TxOut(valueBn, scriptVi, script).valueBn.toString().should.equal('5')
     })
 
-    describe('#fromObject', function () {
-        it('should set this object', function () {
+    describe('#fromObject', () => {
+        it('should set this object', () => {
             const txOut = new TxOut().fromObject({
-                valueBn: valueBn,
-                scriptVi: scriptVi,
-                script: script,
+                valueBn,
+                scriptVi,
+                script,
             })
             should.exist(txOut.valueBn)
             should.exist(txOut.scriptVi)
@@ -34,8 +35,8 @@ describe('TxOut', function () {
         })
     })
 
-    describe('#setScript', function () {
-        it('should set the script size correctly', function () {
+    describe('#setScript', () => {
+        it('should set the script size correctly', () => {
             const txOut2 = new TxOut().fromJSON(txOut.toJSON())
             txOut2
                 .setScript(new Script().fromString('OP_RETURN OP_RETURN OP_RETURN'))
@@ -44,8 +45,8 @@ describe('TxOut', function () {
         })
     })
 
-    describe('#fromProperties', function () {
-        it('should make a new txOut', function () {
+    describe('#fromProperties', () => {
+        it('should make a new txOut', () => {
             const valueBn = new Bn(0)
             const script = Script.fromString('OP_RETURN')
             const txOut = new TxOut().fromProperties(valueBn, script)
@@ -53,8 +54,8 @@ describe('TxOut', function () {
         })
     })
 
-    describe('@fromProperties', function () {
-        it('should make a new txOut', function () {
+    describe('@fromProperties', () => {
+        it('should make a new txOut', () => {
             const valueBn = new Bn(0)
             const script = Script.fromString('OP_RETURN')
             const txOut = TxOut.fromProperties(valueBn, script)
@@ -62,8 +63,8 @@ describe('TxOut', function () {
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should set from this json', function () {
+    describe('#fromJSON', () => {
+        it('should set from this json', () => {
             const txOut = new TxOut().fromJSON({
                 valueBn: valueBn.toJSON(),
                 scriptVi: scriptVi.toJSON(),
@@ -75,8 +76,8 @@ describe('TxOut', function () {
         })
     })
 
-    describe('#toJSON', function () {
-        it('should return this json', function () {
+    describe('#toJSON', () => {
+        it('should return this json', () => {
             const txOut = new TxOut().fromJSON({
                 valueBn: valueBn.toJSON(),
                 scriptVi: scriptVi.toJSON(),
@@ -89,13 +90,13 @@ describe('TxOut', function () {
         })
     })
 
-    describe('#fromHex', function () {
-        it('should make this txIn from this known hex', function () {
+    describe('#fromHex', () => {
+        it('should make this txIn from this known hex', () => {
             const txOut = new TxOut().fromHex('050000000000000001ae')
             txOut.toBuffer().toString('hex').should.equal('050000000000000001ae')
         })
 
-        it('should work with this problematic json', function () {
+        it('should work with this problematic json', () => {
             const json = {
                 valueBn: '20000',
                 scriptVi: '56',
@@ -107,29 +108,29 @@ describe('TxOut', function () {
         })
     })
 
-    describe('#fromBuffer', function () {
-        it('should make this txIn from this known buffer', function () {
+    describe('#fromBuffer', () => {
+        it('should make this txIn from this known buffer', () => {
             const txOut = new TxOut().fromBuffer(Buffer.from('050000000000000001ae', 'hex'))
             txOut.toBuffer().toString('hex').should.equal('050000000000000001ae')
         })
     })
 
-    describe('#fromBr', function () {
-        it('should make this txIn from this known buffer', function () {
+    describe('#fromBr', () => {
+        it('should make this txIn from this known buffer', () => {
             const txOut = new TxOut().fromBr(new Br(Buffer.from('050000000000000001ae', 'hex')))
             txOut.toBuffer().toString('hex').should.equal('050000000000000001ae')
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should output this known buffer', function () {
+    describe('#toBuffer', () => {
+        it('should output this known buffer', () => {
             const txOut = new TxOut().fromBr(new Br(Buffer.from('050000000000000001ae', 'hex')))
             txOut.toBuffer().toString('hex').should.equal('050000000000000001ae')
         })
     })
 
-    describe('#toBw', function () {
-        it('should output this known buffer', function () {
+    describe('#toBw', () => {
+        it('should output this known buffer', () => {
             const txOut = new TxOut().fromBr(new Br(Buffer.from('050000000000000001ae', 'hex')))
             txOut.toBw().toBuffer().toString('hex').should.equal('050000000000000001ae')
         })

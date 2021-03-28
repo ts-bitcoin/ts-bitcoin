@@ -284,8 +284,8 @@ export class Ecdsa extends Struct {
 
         try {
             this.keyPair.pubKey.validate()
-        } catch (e) {
-            return 'Invalid pubKey: ' + e
+        } catch (err) {
+            return 'Invalid pubKey: ' + err
         }
 
         const r = this.sig.r

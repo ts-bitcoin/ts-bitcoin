@@ -1,9 +1,9 @@
 import should = require('should')
-import { Hash } from '../src/hash'
 import { Aes } from '../src/aes'
+import { Hash } from '../src/hash'
 import * as vectors from './vectors/aes.json'
 
-describe('Aes', function () {
+describe('Aes', () => {
     const m128 = Hash.sha256(Buffer.from('test1')).slice(0, 128 / 8)
 
     const k128 = Hash.sha256(Buffer.from('test2')).slice(0, 128 / 8)
@@ -16,51 +16,51 @@ describe('Aes', function () {
 
     should.exist(Aes)
 
-    describe('@encrypt', function () {
-        it('should encrypt with a 128 bit key', function () {
+    describe('@encrypt', () => {
+        it('should encrypt with a 128 bit key', () => {
             const encBuf = Aes.encrypt(m128, k128)
             encBuf.toString('hex').should.equal(e128.toString('hex'))
         })
 
-        it('should encrypt with a 192 bit key', function () {
+        it('should encrypt with a 192 bit key', () => {
             const encBuf = Aes.encrypt(m128, k192)
             encBuf.toString('hex').should.equal(e192.toString('hex'))
         })
 
-        it('should encrypt with a 256 bit key', function () {
+        it('should encrypt with a 256 bit key', () => {
             const encBuf = Aes.encrypt(m128, k256)
             encBuf.toString('hex').should.equal(e256.toString('hex'))
         })
     })
 
-    describe('@decrypt', function () {
-        it('should encrypt/decrypt with a 128 bit key', function () {
+    describe('@decrypt', () => {
+        it('should encrypt/decrypt with a 128 bit key', () => {
             const encBuf = Aes.encrypt(m128, k128)
             const m = Aes.decrypt(encBuf, k128)
             m.toString('hex').should.equal(m128.toString('hex'))
         })
 
-        it('should encrypt/decrypt with a 192 bit key', function () {
+        it('should encrypt/decrypt with a 192 bit key', () => {
             const encBuf = Aes.encrypt(m128, k192)
             const m = Aes.decrypt(encBuf, k192)
             m.toString('hex').should.equal(m128.toString('hex'))
         })
 
-        it('should encrypt/decrypt with a 256 bit key', function () {
+        it('should encrypt/decrypt with a 256 bit key', () => {
             const encBuf = Aes.encrypt(m128, k256)
             const m = Aes.decrypt(encBuf, k256)
             m.toString('hex').should.equal(m128.toString('hex'))
         })
     })
 
-    describe('@buf2Words', function () {
-        it('should convert this 4 length buffer into an array', function () {
+    describe('@buf2Words', () => {
+        it('should convert this 4 length buffer into an array', () => {
             const buf = Buffer.from([0, 0, 0, 0])
             const words = Aes.buf2Words(buf)
             words.length.should.equal(1)
         })
 
-        it('should throw an error on this 5 length buffer', function () {
+        it('should throw an error on this 5 length buffer', () => {
             const buf = Buffer.from([0, 0, 0, 0, 0])
             ;(function () {
                 Aes.buf2Words(buf)
@@ -68,17 +68,17 @@ describe('Aes', function () {
         })
     })
 
-    describe('@words2Buf', function () {
-        it('should convert this array into a buffer', function () {
+    describe('@words2Buf', () => {
+        it('should convert this array into a buffer', () => {
             const a = [100, 0]
             const buf = Aes.words2Buf(a)
             buf.length.should.equal(8)
         })
     })
 
-    describe('vectors', function () {
-        vectors.forEach(function (vector, i) {
-            it('should pass sjcl test vector ' + i, function () {
+    describe('vectors', () => {
+        vectors.forEach((vector, i) => {
+            it('should pass sjcl test vector ' + i, () => {
                 const keyBuf = Buffer.from(vector.key, 'hex')
                 const ptbuf = Buffer.from(vector.pt, 'hex')
                 const ctBuf = Buffer.from(vector.ct, 'hex')

@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+import should = require('should')
 import { Br } from '../src/br'
 import { Bw } from '../src/bw'
+import { Constants } from '../src/constants'
 import { Hash } from '../src/hash'
 import { Msg } from '../src/msg'
 import { Random } from '../src/random'
-import should = require('should')
-import { Constants } from '../src/constants'
 
-describe('Msg', function () {
+describe('Msg', () => {
     const msghex = 'e3e1f3e876657261636b000000000000000000005df6e0e2'
     const msgtesthex = 'f4e5f3f476657261636b000000000000000000005df6e0e2'
     const msgregtesthex = 'dab5bffa76657261636b000000000000000000005df6e0e2'
@@ -15,14 +16,14 @@ describe('Msg', function () {
     const msgjson = msg.toJSON()
     const msgjsonstr = JSON.stringify(msgjson)
 
-    it('should satisfy this basic API', function () {
+    it('should satisfy this basic API', () => {
         const msg = new Msg()
         should.exist(msg)
         msg.magicNum.should.equal(msg.constants.Msg.magicNum)
     })
 
-    describe('#setCmd', function () {
-        it('should set the command', function () {
+    describe('#setCmd', () => {
+        it('should set the command', () => {
             const msg = new Msg()
             msg.setCmd('inv')
             const cmdbuf = Buffer.alloc(12)
@@ -32,20 +33,20 @@ describe('Msg', function () {
         })
     })
 
-    describe('#getCmd', function () {
-        it('should get the command', function () {
+    describe('#getCmd', () => {
+        it('should get the command', () => {
             const msg = new Msg()
             msg.setCmd('inv')
             msg.getCmd().should.equal('inv')
         })
 
-        it('should get the command when the command is 12 chars', function () {
+        it('should get the command when the command is 12 chars', () => {
             const msg = new Msg()
             msg.setCmd('a'.repeat(12))
             msg.getCmd().should.equal('a'.repeat(12))
         })
 
-        it('should get the command when there are extra 0s', function () {
+        it('should get the command when there are extra 0s', () => {
             const msg = new Msg()
             msg.setCmd('a')
             msg.cmdbuf.write('a', 2)
@@ -53,16 +54,16 @@ describe('Msg', function () {
         })
     })
 
-    describe('@checksum', function () {
-        it('should return known value', function () {
+    describe('@checksum', () => {
+        it('should return known value', () => {
             const buf = Buffer.alloc(0)
             const checksumbuf = Msg.checksum(buf)
             Buffer.compare(checksumbuf, Hash.sha256Sha256(buf).slice(0, 4)).should.equal(0)
         })
     })
 
-    describe('@asyncChecksum', function () {
-        it('should return known value and compute same as @checksum', async function () {
+    describe('@asyncChecksum', () => {
+        it('should return known value and compute same as @checksum', async () => {
             const buf = Buffer.alloc(0)
             const checksumbuf = await Msg.asyncChecksum(buf)
             Buffer.compare(checksumbuf, Hash.sha256Sha256(buf).slice(0, 4)).should.equal(0)
@@ -71,8 +72,8 @@ describe('Msg', function () {
         })
     })
 
-    describe('#setData', function () {
-        it('should data to a blank buffer', function () {
+    describe('#setData', () => {
+        it('should data to a blank buffer', () => {
             const msg = new Msg()
             msg.setCmd('inv')
             msg.setData(Buffer.from([]))
@@ -80,8 +81,8 @@ describe('Msg', function () {
         })
     })
 
-    describe('#asyncSetData', function () {
-        it('should data to a blank buffer', async function () {
+    describe('#asyncSetData', () => {
+        it('should data to a blank buffer', async () => {
             const msg = new Msg()
             msg.setCmd('inv')
             await msg.asyncSetData(Buffer.from([]))
@@ -89,9 +90,11 @@ describe('Msg', function () {
         })
     })
 
-    describe('#genFromBuffers', function () {
-        it('should parse this known message', function () {
-            let msgassembler, msg, next
+    describe('#genFromBuffers', () => {
+        it('should parse this known message', () => {
+            let msgassembler
+            let msg
+            let next
 
             // test whole message at once
             msg = new Msg()
@@ -129,7 +132,7 @@ describe('Msg', function () {
             next.value.length.should.equal(0)
         })
 
-        it('should throw an error for invalid magicNum in strict mode', function () {
+        it('should throw an error for invalid magicNum in strict mode', () => {
             const msg = new Msg().fromBuffer(msgbuf)
             msg.magicNum = 0
             ;(function () {
@@ -139,7 +142,7 @@ describe('Msg', function () {
             }.should.throw('invalid magicNum'))
         })
 
-        it('should throw an error for message over max size in strict mode', function () {
+        it('should throw an error for message over max size in strict mode', () => {
             const msg = new Msg()
             const msgbuf2 = Buffer.from(msgbuf)
             msgbuf2.writeUInt32BE(msg.constants.MaxSize + 1, 4 + 12)
@@ -151,78 +154,78 @@ describe('Msg', function () {
         })
     })
 
-    describe('#STN', function () {
-        it('should match initialized magicNum against STN magicnum', function () {
+    describe('#STN', () => {
+        it('should match initialized magicNum against STN magicnum', () => {
             const msg = new Msg.STN()
             msg.magicNum.should.equal(Constants.STN.Msg.magicNum)
             msg.magicNum.should.not.equal(Constants.Mainnet.Msg.magicNum)
         })
     })
 
-    describe('#Testnet', function () {
-        it('should parse this known message', function () {
+    describe('#Testnet', () => {
+        it('should parse this known message', () => {
             const msg = new Msg().fromBuffer(Buffer.from(msgtesthex, 'hex'))
             msg.magicNum.should.equal(Constants.Testnet.Msg.magicNum)
         })
     })
 
-    describe('#Regtest', function () {
-        it('should parse this known message', function () {
+    describe('#Regtest', () => {
+        it('should parse this known message', () => {
             const msg = new Msg().fromBuffer(Buffer.from(msgregtesthex, 'hex'))
             msg.magicNum.should.equal(Constants.Regtest.Msg.magicNum)
         })
     })
 
-    describe('#fromBuffer', function () {
-        it('should parse this known message', function () {
+    describe('#fromBuffer', () => {
+        it('should parse this known message', () => {
             const msg = new Msg().fromBuffer(msgbuf)
             msg.toHex().should.equal(msghex)
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should parse this known message', function () {
+    describe('#toBuffer', () => {
+        it('should parse this known message', () => {
             const msg = new Msg().fromBuffer(msgbuf)
             msg.toBuffer().toString('hex').should.equal(msghex)
         })
     })
 
-    describe('#fromBr', function () {
-        it('should parse this known message', function () {
+    describe('#fromBr', () => {
+        it('should parse this known message', () => {
             const br = new Br(msgbuf)
             const msg = new Msg().fromBr(br)
             msg.toHex().should.equal(msghex)
         })
     })
 
-    describe('#toBw', function () {
-        it('should create this known message', function () {
+    describe('#toBw', () => {
+        it('should create this known message', () => {
             const bw = new Bw()
             new Msg().fromHex(msghex).toBw(bw).toBuffer().toString('hex').should.equal(msghex)
             new Msg().fromHex(msghex).toBw().toBuffer().toString('hex').should.equal(msghex)
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should parse this known json msg', function () {
+    describe('#fromJSON', () => {
+        it('should parse this known json msg', () => {
             new Msg().fromJSON(msgjson).toHex().should.equal(msghex)
         })
     })
 
-    describe('#toJSON', function () {
-        it('should create this known message', function () {
+    describe('#toJSON', () => {
+        it('should create this known message', () => {
             JSON.stringify(new Msg().fromHex(msghex).toJSON()).should.equal(msgjsonstr)
         })
     })
 
-    describe('#isValid', function () {
-        it('should know these messages are valid or invalid', function () {
+    describe('#isValid', () => {
+        it('should know these messages are valid or invalid', () => {
             new Msg().fromHex(msghex).isValid().should.equal(true)
         })
     })
 
-    describe('#asyncIsValid', function () {
-        it('should return same as isValid', async function () {
+    describe('#asyncIsValid', () => {
+        it('should return same as isValid', async () => {
             const msg = new Msg()
             msg.setCmd('ping')
             msg.setData(Random.getRandomBuffer(8))
@@ -232,8 +235,8 @@ describe('Msg', function () {
         })
     })
 
-    describe('#asyncValidate', function () {
-        it('should validate this known valid message', function () {
+    describe('#asyncValidate', () => {
+        it('should validate this known valid message', () => {
             const msg = new Msg()
             msg.setCmd('ping')
             msg.setData(Random.getRandomBuffer(8))
@@ -241,15 +244,15 @@ describe('Msg', function () {
         })
     })
 
-    describe('#asyncValidate', function () {
-        it('should validate this known valid message', async function () {
+    describe('#asyncValidate', () => {
+        it('should validate this known valid message', async () => {
             const msg = new Msg()
             msg.setCmd('ping')
             msg.setData(Random.getRandomBuffer(8))
             await msg.asyncValidate()
         })
 
-        it('should validate this known valid message', async function () {
+        it('should validate this known valid message', async () => {
             const msg = new Msg()
             msg.setCmd('ping')
             msg.setData(Random.getRandomBuffer(8))

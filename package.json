@@ -23,7 +23,7 @@
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "lint": "eslint -c .eslintrc.json --ext .ts --max-warnings 0 src",
+    "lint": "eslint -c .eslintrc.json --ext .ts --max-warnings 0 src test",
     "prettier": "prettier --write '{lib,test}/**/*.+(js|json)'",
     "build": "npm run clean && npm run build:node",
     "build:node": "tsc -b",

@@ -1,21 +1,21 @@
 import { Random } from '../src/random'
 import 'should'
 
-describe('Random', function () {
-    describe('@getRandomBuffer', function () {
-        it('should return a buffer', function () {
+describe('Random', () => {
+    describe('@getRandomBuffer', () => {
+        it('should return a buffer', () => {
             const bytes = Random.getRandomBuffer(8)
             bytes.length.should.equal(8)
             Buffer.isBuffer(bytes).should.equal(true)
         })
 
-        it('should not equate two 256 bit random buffers', function () {
+        it('should not equate two 256 bit random buffers', () => {
             const bytes1 = Random.getRandomBuffer(32)
             const bytes2 = Random.getRandomBuffer(32)
             bytes1.toString('hex').should.not.equal(bytes2.toString('hex'))
         })
 
-        it('should generate 100 8 byte buffers in a row that are not equal', function () {
+        it('should generate 100 8 byte buffers in a row that are not equal', () => {
             const hexs = []
             for (let i = 0; i < 100; i++) {
                 hexs[i] = Random.getRandomBuffer(8).toString('hex')

@@ -1,17 +1,17 @@
-import { Inv } from '../src/inv'
-import { Hash } from '../src/hash'
-import { Bw } from '../src/bw'
 import should = require('should')
+import { Bw } from '../src/bw'
+import { Hash } from '../src/hash'
+import { Inv } from '../src/inv'
 
-describe('Inv', function () {
-    it('should exist', function () {
+describe('Inv', () => {
+    it('should exist', () => {
         const inv = new Inv()
         should.exist(inv)
         should.exist(Inv)
     })
 
-    describe('#fromBuffer', function () {
-        it('should convert from a buffer', function () {
+    describe('#fromBuffer', () => {
+        it('should convert from a buffer', () => {
             const hashBuf = Hash.sha256(Buffer.alloc(0))
             const typeNum = 1
             const typebuf = new Bw().writeUInt32LE(typeNum).toBuffer()
@@ -22,8 +22,8 @@ describe('Inv', function () {
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should convert to a buffer', function () {
+    describe('#toBuffer', () => {
+        it('should convert to a buffer', () => {
             const hashBuf = Hash.sha256(Buffer.alloc(0))
             const typeNum = 1
             const typebuf = new Bw().writeUInt32LE(typeNum).toBuffer()
@@ -34,8 +34,8 @@ describe('Inv', function () {
         })
     })
 
-    describe('#isTx', function () {
-        it('should know this is a tx hash', function () {
+    describe('#isTx', () => {
+        it('should know this is a tx hash', () => {
             const hashBuf = Hash.sha256(Buffer.alloc(0))
             const typeNum = Inv.MSG_TX
             const inv = new Inv(typeNum, hashBuf)
@@ -43,8 +43,8 @@ describe('Inv', function () {
         })
     })
 
-    describe('#isBlock', function () {
-        it('should know this is a block hash', function () {
+    describe('#isBlock', () => {
+        it('should know this is a block hash', () => {
             const hashBuf = Hash.sha256(Buffer.alloc(0))
             const typeNum = Inv.MSG_BLOCK
             const inv = new Inv(typeNum, hashBuf)
@@ -52,8 +52,8 @@ describe('Inv', function () {
         })
     })
 
-    describe('#isFilteredBlock', function () {
-        it('should know this is a filtered block hash', function () {
+    describe('#isFilteredBlock', () => {
+        it('should know this is a filtered block hash', () => {
             const hashBuf = Hash.sha256(Buffer.alloc(0))
             const typeNum = Inv.MSG_FILTERED_BLOCK
             const inv = new Inv(typeNum, hashBuf)

@@ -1,15 +1,15 @@
-import { Merkle } from '../src/merkle'
 import should = require('should')
+import { Merkle } from '../src/merkle'
 
-describe('Merkle', function () {
-    it('should satisfy this basic API', function () {
+describe('Merkle', () => {
+    it('should satisfy this basic API', () => {
         const merkle = new Merkle()
         should.exist(merkle)
         should.exist(merkle)
     })
 
-    describe('hash', function () {
-        it('should hash these buffers', function () {
+    describe('hash', () => {
+        it('should hash these buffers', () => {
             const merkle1 = new Merkle(undefined, Buffer.alloc(0))
             const merkle2 = new Merkle(undefined, Buffer.alloc(0))
             const merkle = new Merkle(undefined, undefined, merkle1, merkle2)
@@ -21,7 +21,7 @@ describe('Merkle', function () {
             hashBuf.toString('hex').should.equal('352b71f195e85adbaefdcd6d7380d87067865d9a17c44d38982bb8a40bd0b393')
         })
 
-        it('should hash this buffer', function () {
+        it('should hash this buffer', () => {
             const merkle = new Merkle(undefined, Buffer.alloc(0))
             const hashBuf = merkle.hash()
             hashBuf.length.should.equal(32)
@@ -29,8 +29,8 @@ describe('Merkle', function () {
         })
     })
 
-    describe('#fromBuffers', function () {
-        it('should find this merkle root from three buffers', function () {
+    describe('#fromBuffers', () => {
+        it('should find this merkle root from three buffers', () => {
             const bufs = [Buffer.alloc(0), Buffer.alloc(0), Buffer.alloc(0)]
             const merkle = new Merkle().fromBuffers(bufs)
             const hashBuf = merkle.hash()
@@ -39,7 +39,7 @@ describe('Merkle', function () {
             merkle.leavesNum().should.equal(4)
         })
 
-        it('should find this merkle root from four buffers', function () {
+        it('should find this merkle root from four buffers', () => {
             const bufs = [Buffer.alloc(0), Buffer.alloc(0), Buffer.alloc(0), Buffer.alloc(0)]
             const merkle = new Merkle().fromBuffers(bufs)
             const hashBuf = merkle.hash()
@@ -48,7 +48,7 @@ describe('Merkle', function () {
             merkle.leavesNum().should.equal(4)
         })
 
-        it('should find this merkle root from 9 buffers', function () {
+        it('should find this merkle root from 9 buffers', () => {
             const bufs = []
             for (let i = 0; i < 9; i++) {
                 bufs[i] = Buffer.alloc(0)
@@ -61,8 +61,8 @@ describe('Merkle', function () {
         })
     })
 
-    describe('@fromBuffers', function () {
-        it('should find this merkle root from three buffers', function () {
+    describe('@fromBuffers', () => {
+        it('should find this merkle root from three buffers', () => {
             const bufs = [Buffer.alloc(0), Buffer.alloc(0), Buffer.alloc(0)]
             const merkle = Merkle.fromBuffers(bufs)
             const hashBuf = merkle.hash()
@@ -71,7 +71,7 @@ describe('Merkle', function () {
             merkle.leavesNum().should.equal(4)
         })
 
-        it('should find this merkle root from four buffers', function () {
+        it('should find this merkle root from four buffers', () => {
             const bufs = [Buffer.alloc(0), Buffer.alloc(0), Buffer.alloc(0), Buffer.alloc(0)]
             const merkle = Merkle.fromBuffers(bufs)
             const hashBuf = merkle.hash()
@@ -80,7 +80,7 @@ describe('Merkle', function () {
             merkle.leavesNum().should.equal(4)
         })
 
-        it('should find this merkle root from 9 buffers', function () {
+        it('should find this merkle root from 9 buffers', () => {
             const bufs = []
             for (let i = 0; i < 9; i++) {
                 bufs[i] = Buffer.alloc(0)
@@ -93,8 +93,8 @@ describe('Merkle', function () {
         })
     })
 
-    describe('#fromBufferArrays', function () {
-        it('should find this merkle root from two buffers', function () {
+    describe('#fromBufferArrays', () => {
+        it('should find this merkle root from two buffers', () => {
             const bufs1 = [Buffer.alloc(0)]
             const bufs2 = [Buffer.alloc(0)]
             const merkle = new Merkle().fromBufferArrays(bufs1, bufs2)
@@ -102,7 +102,7 @@ describe('Merkle', function () {
             hashBuf.length.should.equal(32)
         })
 
-        it('should find this merkle root from four buffers', function () {
+        it('should find this merkle root from four buffers', () => {
             const bufs1 = [Buffer.alloc(0), Buffer.alloc(0)]
             const bufs2 = [Buffer.alloc(0), Buffer.alloc(0)]
             const merkle = new Merkle().fromBufferArrays(bufs1, bufs2)
@@ -111,8 +111,8 @@ describe('Merkle', function () {
         })
     })
 
-    describe('@fromBufferArrays', function () {
-        it('should find this merkle root from two buffers', function () {
+    describe('@fromBufferArrays', () => {
+        it('should find this merkle root from two buffers', () => {
             const bufs1 = [Buffer.alloc(0)]
             const bufs2 = [Buffer.alloc(0)]
             const merkle = Merkle.fromBufferArrays(bufs1, bufs2)
@@ -120,7 +120,7 @@ describe('Merkle', function () {
             hashBuf.length.should.equal(32)
         })
 
-        it('should find this merkle root from four buffers', function () {
+        it('should find this merkle root from four buffers', () => {
             const bufs1 = [Buffer.alloc(0), Buffer.alloc(0)]
             const bufs2 = [Buffer.alloc(0), Buffer.alloc(0)]
             const merkle = Merkle.fromBufferArrays(bufs1, bufs2)

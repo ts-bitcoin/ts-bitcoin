@@ -2,11 +2,11 @@ import should = require('should')
 import { Aescbc } from '../src/aescbc'
 import * as vectors from './vectors/aescbc.json'
 
-describe('Aescbc', function () {
+describe('Aescbc', () => {
     should.exist(Aescbc)
 
-    describe('@encrypt', function () {
-        it('should return encrypt one block', function () {
+    describe('@encrypt', () => {
+        it('should return encrypt one block', () => {
             const cipherKeyBuf = Buffer.alloc(256 / 8)
             cipherKeyBuf.fill(0x10)
             const ivBuf = Buffer.alloc(128 / 8)
@@ -17,7 +17,7 @@ describe('Aescbc', function () {
             encBuf.length.should.equal(128 / 8 + 128 / 8)
         })
 
-        it('should return encrypt two blocks', function () {
+        it('should return encrypt two blocks', () => {
             const cipherKeyBuf = Buffer.alloc(256 / 8)
             cipherKeyBuf.fill(0x10)
             const ivBuf = Buffer.alloc(128 / 8)
@@ -29,8 +29,8 @@ describe('Aescbc', function () {
         })
     })
 
-    describe('@decrypt', function () {
-        it('should decrypt that which was encrypted', function () {
+    describe('@decrypt', () => {
+        it('should decrypt that which was encrypted', () => {
             const cipherKeyBuf = Buffer.alloc(256 / 8)
             cipherKeyBuf.fill(0x10)
             const ivBuf = Buffer.alloc(128 / 8)
@@ -43,9 +43,9 @@ describe('Aescbc', function () {
         })
     })
 
-    describe('vectors', function () {
-        vectors.forEach(function (vector, i) {
-            it('should pass sjcl test vector ' + i, function () {
+    describe('vectors', () => {
+        vectors.forEach((vector, i) => {
+            it('should pass sjcl test vector ' + i, () => {
                 const keyBuf = Buffer.from(vector.key, 'hex')
                 const ivBuf = Buffer.from(vector.iv, 'hex')
                 const ptbuf = Buffer.from(vector.pt, 'hex')

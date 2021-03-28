@@ -1,16 +1,16 @@
-import { Version } from '../src/version'
-import { Bn } from '../src/bn'
 import should = require('should')
+import { Bn } from '../src/bn'
 import { VarInt } from '../src/var-int'
+import { Version } from '../src/version'
 
-describe('Version', function () {
-    it('should exist', function () {
+describe('Version', () => {
+    it('should exist', () => {
         should.exist(Version)
         should.exist(new Version())
     })
 
-    describe('#toBuffer', function () {
-        it('should convert to buffer', function () {
+    describe('#toBuffer', () => {
+        it('should convert to buffer', () => {
             const version = Version.fromObject({
                 versionBytesNum: 0,
                 servicesBuf: Buffer.alloc(8),
@@ -31,8 +31,8 @@ describe('Version', function () {
         })
     })
 
-    describe('#fromBuffer', function () {
-        it('should convert from buffer', function () {
+    describe('#fromBuffer', () => {
+        it('should convert from buffer', () => {
             let version = Version.fromObject({
                 versionBytesNum: 0,
                 servicesBuf: Buffer.alloc(8),
@@ -54,8 +54,8 @@ describe('Version', function () {
         })
     })
 
-    describe('@fromBuffer', function () {
-        it('should convert from buffer', function () {
+    describe('@fromBuffer', () => {
+        it('should convert from buffer', () => {
             let version = Version.fromObject({
                 versionBytesNum: 0,
                 servicesBuf: Buffer.alloc(8),

@@ -1,9 +1,9 @@
 import should = require('should')
-import { Point } from '../src/point'
 import { Bn } from '../src/bn'
+import { Point } from '../src/point'
 
-describe('Point', function () {
-    it('should create a point', function () {
+describe('Point', () => {
+    it('should create a point', () => {
         let p = new Point()
         should.exist(p)
         p = new Point()
@@ -11,7 +11,7 @@ describe('Point', function () {
         ;(p instanceof Point).should.equal(true)
     })
 
-    it('should have the standard properties for a point', function () {
+    it('should have the standard properties for a point', () => {
         const p = new Point()
         const props = ['curve', 'type', 'precomputed', 'x', 'y', 'inf']
 
@@ -23,13 +23,13 @@ describe('Point', function () {
         }
 
         // all props should be properties of a point
-        props.forEach(function (k) {
+        for (const k of props) {
             ;(p[k] === undefined).should.equal(false)
-        })
+        }
     })
 
-    describe('#copyFrom', function () {
-        it('should copy G', function () {
+    describe('#copyFrom', () => {
+        it('should copy G', () => {
             const point = Point.getG()
             let point2
             ;(function () {
@@ -41,8 +41,8 @@ describe('Point', function () {
         })
     })
 
-    describe('#toJSON', function () {
-        it('should print G to JSON', function () {
+    describe('#toJSON', () => {
+        it('should print G to JSON', () => {
             const G = Point.getG()
             const json = G.toJSON()
             json.x.should.equal(G.x.toString())
@@ -50,69 +50,69 @@ describe('Point', function () {
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should recover G', function () {
+    describe('#fromJSON', () => {
+        it('should recover G', () => {
             new Point().fromJSON(Point.getG().toJSON()).eq(Point.getG()).should.equal(true)
         })
     })
 
-    describe('#toString', function () {
-        it('should convert G to a string', function () {
+    describe('#toString', () => {
+        it('should convert G to a string', () => {
             const G = Point.getG()
             G.toString().should.equal(JSON.stringify(G.toJSON()))
         })
     })
 
-    describe('#fromString', function () {
-        it('should convert a json string to G', function () {
+    describe('#fromString', () => {
+        it('should convert a json string to G', () => {
             const G = Point.getG()
             new Point().fromString(G.toString()).eq(G).should.equal(true)
         })
     })
 
-    describe('#getX', function () {
-        it('should return a Bn', function () {
+    describe('#getX', () => {
+        it('should return a Bn', () => {
             const p = new Point()
             ;(p.getX() instanceof Bn).should.equal(true)
         })
 
-        it('should return 0', function () {
+        it('should return 0', () => {
             const p = new Point()
             p.getX().toString().should.equal('0')
         })
 
-        it('should be convertable to a buffer', function () {
+        it('should be convertable to a buffer', () => {
             const p = new Point()
             p.getX().toBuffer({ size: 32 }).length.should.equal(32)
         })
     })
 
-    describe('#getY', function () {
-        it('should return a Bn', function () {
+    describe('#getY', () => {
+        it('should return a Bn', () => {
             const p = new Point()
             ;(p.getY() instanceof Bn).should.equal(true)
         })
 
-        it('should return 0', function () {
+        it('should return 0', () => {
             const p = new Point()
             p.getY().toString().should.equal('0')
         })
 
-        it('should be convertable to a buffer', function () {
+        it('should be convertable to a buffer', () => {
             const p = new Point()
             p.getY().toBuffer({ size: 32 }).length.should.equal(32)
         })
     })
 
-    describe('#add', function () {
-        it('should get back a point', function () {
+    describe('#add', () => {
+        it('should get back a point', () => {
             const p1 = Point.getG()
             const p2 = Point.getG()
             const p3 = p1.add(p2)
             ;(p3 instanceof Point).should.equal(true)
         })
 
-        it('should accurately add g to itself', function () {
+        it('should accurately add g to itself', () => {
             const p1 = Point.getG()
             const p2 = Point.getG()
             const p3 = p1.add(p2)
@@ -125,14 +125,14 @@ describe('Point', function () {
         })
     })
 
-    describe('#mul', function () {
-        it('should get back a point', function () {
+    describe('#mul', () => {
+        it('should get back a point', () => {
             const g = Point.getG()
             const b = g.mul(new Bn(2))
             ;(b instanceof Point).should.equal(true)
         })
 
-        it('should accurately multiply g by 2', function () {
+        it('should accurately multiply g by 2', () => {
             const g = Point.getG()
             const b = g.mul(new Bn(2))
             b.getX()
@@ -143,7 +143,7 @@ describe('Point', function () {
                 .should.equal('12158399299693830322967808612713398636155367887041628176798871954788371653930')
         })
 
-        it('should accurately multiply g by n-1', function () {
+        it('should accurately multiply g by n-1', () => {
             const g = Point.getG()
             const n = Point.getN()
             const b = g.mul(n.sub(1))
@@ -155,7 +155,7 @@ describe('Point', function () {
                 .should.equal('83121579216557378445487899878180864668798711284981320763518679672151497189239')
         })
 
-        it('should accurate multiply these problematic values related to a bug in bn.js', function () {
+        it('should accurate multiply these problematic values related to a bug in bn.js', () => {
             // see these discussions:
             // https://github.com/bitpay/bitcore/pull/894
             // https://github.com/indutny/elliptic/issues/17
@@ -199,8 +199,8 @@ describe('Point', function () {
         })
     })
 
-    describe('#mulAdd', function () {
-        it('should get back a point', function () {
+    describe('#mulAdd', () => {
+        it('should get back a point', () => {
             const p1 = Point.getG()
             const bn1 = new Bn(5)
             const p2 = Point.getG().add(p1)
@@ -216,31 +216,31 @@ describe('Point', function () {
         })
     })
 
-    describe('@getN', function () {
-        it('should return n', function () {
+    describe('@getN', () => {
+        it('should return n', () => {
             const bn = Point.getN()
             ;(bn instanceof Bn).should.equal(true)
         })
     })
 
-    describe('@fromX', function () {
-        it('should return g', function () {
+    describe('@fromX', () => {
+        it('should return g', () => {
             const g = Point.getG()
             const p = Point.fromX(false, g.getX())
             g.eq(p).should.equal(true)
         })
     })
 
-    describe('#fromX', function () {
-        it('should return g', function () {
+    describe('#fromX', () => {
+        it('should return g', () => {
             const g = Point.getG()
             const p = new Point().fromX(false, g.getX())
             g.eq(p).should.equal(true)
         })
     })
 
-    describe('#validate', function () {
-        it('should validate this valid point', function () {
+    describe('#validate', () => {
+        it('should validate this valid point', () => {
             const x = new Bn().fromBuffer(
                 Buffer.from('ac242d242d23be966085a2b2b893d989f824e06c9ad0395a8a52f055ba39abb2', 'hex')
             )
@@ -251,7 +251,7 @@ describe('Point', function () {
             should.exist(p.validate())
         })
 
-        it('should invalidate this invalid point', function () {
+        it('should invalidate this invalid point', () => {
             const x = new Bn().fromBuffer(
                 Buffer.from('ac242d242d23be966085a2b2b893d989f824e06c9ad0395a8a52f055ba39abb2', 'hex')
             )

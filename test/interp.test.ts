@@ -1,17 +1,17 @@
 import should = require('should')
-import { Interp } from '../src/interp'
-import { Tx } from '../src/tx'
-import { Script } from '../src/script'
 import { Bn } from '../src/bn'
+import { Interp } from '../src/interp'
 import { KeyPair } from '../src/key-pair'
+import { Script } from '../src/script'
 import { Sig } from '../src/sig'
-import * as bitcoindScriptValid from './vectors/bitcoind/script_valid.json'
-import * as bitcoindScriptInvalid from './vectors/bitcoind/script_invalid.json'
+import { Tx } from '../src/tx'
 import * as bitcoinABCScriptTests from './vectors/bitcoin-abc/script_tests.json'
 import * as bitcoinSVScriptTests from './vectors/bitcoin-sv/script_tests.json'
+import * as bitcoindScriptInvalid from './vectors/bitcoind/script_invalid.json'
+import * as bitcoindScriptValid from './vectors/bitcoind/script_valid.json'
 
-describe('Interp', function () {
-    it('should make a new interp', function () {
+describe('Interp', () => {
+    it('should make a new interp', () => {
         let interp = new Interp()
         ;(interp instanceof Interp).should.equal(true)
         interp.stack.length.should.equal(0)
@@ -34,8 +34,8 @@ describe('Interp', function () {
         interp.flags.should.equal(Interp.defaultFlags)
     })
 
-    describe('#fromJSON', function () {
-        it('should convert a json to an interp', function () {
+    describe('#fromJSON', () => {
+        it('should convert a json to an interp', () => {
             const interp = new Interp().fromObject({
                 script: new Script(),
                 stack: ['00'],
@@ -49,8 +49,8 @@ describe('Interp', function () {
         })
     })
 
-    describe('#fromFastBuffer', function () {
-        it('should convert an interp buf to an interp', function () {
+    describe('#fromFastBuffer', () => {
+        it('should convert an interp buf to an interp', () => {
             const interp = new Interp().fromObject({
                 script: new Script(),
                 stack: ['00'],
@@ -63,7 +63,7 @@ describe('Interp', function () {
             should.exist(interp2.altStack[0])
         })
 
-        it('should convert an interp buf to an interp', function () {
+        it('should convert an interp buf to an interp', () => {
             const interp = new Interp().fromObject({
                 script: new Script(),
                 stack: ['00'],
@@ -78,8 +78,8 @@ describe('Interp', function () {
         })
     })
 
-    describe('#toJSON', function () {
-        it('should convert an interp to json', function () {
+    describe('#toJSON', () => {
+        it('should convert an interp to json', () => {
             const interp = new Interp().fromObject({ script: new Script() })
             const json = interp.toJSON()
             should.exist(json.script)
@@ -87,13 +87,13 @@ describe('Interp', function () {
         })
     })
 
-    describe('#toFastBuffer', function () {
-        it('should convert an interp to buf with no tx', function () {
+    describe('#toFastBuffer', () => {
+        it('should convert an interp to buf with no tx', () => {
             const interp = new Interp().fromObject({ script: new Script() })
             Buffer.isBuffer(interp.toFastBuffer()).should.equal(true)
         })
 
-        it('should convert an interp to buf with a tx', function () {
+        it('should convert an interp to buf with a tx', () => {
             const interp = new Interp().fromObject({
                 script: new Script(),
                 tx: new Tx(),
@@ -102,8 +102,8 @@ describe('Interp', function () {
         })
     })
 
-    describe('@castToBool', function () {
-        it('should cast these bufs to bool correctly', function () {
+    describe('@castToBool', () => {
+        it('should cast these bufs to bool correctly', () => {
             Interp.castToBool(new Bn(0).toSm({ endian: 'little' })).should.equal(false)
             Interp.castToBool(Buffer.from('0080', 'hex')).should.equal(false) // negative 0
             Interp.castToBool(new Bn(1).toSm({ endian: 'little' })).should.equal(true)
@@ -115,8 +115,8 @@ describe('Interp', function () {
         })
     })
 
-    describe('#getDebugObject', function () {
-        it('should get a failure explanation object', function () {
+    describe('#getDebugObject', () => {
+        it('should get a failure explanation object', () => {
             const scriptSig = Script.fromBitcoindString(
                 '0x47 0x3044022057292e2d4dfe775becdd0a9e6547997c728cdf35390f6a017da56d654d374e4902206b643be2fc53763b4e284845bfea2c597d2dc7759941dce937636c9d341b71ed01'
             )
@@ -149,8 +149,8 @@ describe('Interp', function () {
         })
     })
 
-    describe('#getDebugString', function () {
-        it('should get a failure explanation object', function () {
+    describe('#getDebugString', () => {
+        it('should get a failure explanation object', () => {
             const scriptSig = Script.fromBitcoindString(
                 '0x47 0x3044022057292e2d4dfe775becdd0a9e6547997c728cdf35390f6a017da56d654d374e4902206b643be2fc53763b4e284845bfea2c597d2dc7759941dce937636c9d341b71ed01'
             )
@@ -182,8 +182,8 @@ describe('Interp', function () {
         })
     })
 
-    describe('#verify', function () {
-        it('should has correct stack size after verify', function () {
+    describe('#verify', () => {
+        it('should has correct stack size after verify', () => {
             const interp = new Interp()
             const script = Script.fromAsmString('OP_1')
             interp.script = script
@@ -191,7 +191,7 @@ describe('Interp', function () {
             should.equal(interp.stack.length, 1)
         })
 
-        it('should verify or unverify these trivial scripts from script_valid.json', function () {
+        it('should verify or unverify these trivial scripts from script_valid.json', () => {
             let verified
             verified = new Interp().verify(
                 new Script().writeString('OP_1'),
@@ -258,7 +258,7 @@ describe('Interp', function () {
             verified.should.equal(true)
         })
 
-        it('should verify this new pay-to-pubKey script', function () {
+        it('should verify this new pay-to-pubKey script', () => {
             const keyPair = new KeyPair().fromRandom()
             const scriptPubKey = new Script().writeBuffer(keyPair.pubKey.toDer(true)).writeString('OP_CHECKSIG')
 
@@ -282,7 +282,7 @@ describe('Interp', function () {
             verified.should.equal(true)
         })
 
-        it('should verify this pay-to-pubKey script from script_valid.json', function () {
+        it('should verify this pay-to-pubKey script from script_valid.json', () => {
             const scriptSig = new Script().fromBitcoindString(
                 '0x47 0x3044022007415aa37ce7eaa6146001ac8bdefca0ddcba0e37c5dc08c4ac99392124ebac802207d382307fd53f65778b07b9c63b6e196edeadf0be719130c5db21ff1e700d67501'
             )
@@ -307,16 +307,16 @@ describe('Interp', function () {
         })
     })
 
-    describe('Interp vectors', function () {
+    describe('Interp vectors', () => {
         let c
 
         c = 0
-        bitcoinABCScriptTests.forEach(function (vector, i) {
+        bitcoinABCScriptTests.forEach((vector, i) => {
             if (vector.length === 1) {
                 return
             }
             c++
-            it('should verify bitcoindScriptValid vector ' + c, function () {
+            it('should verify bitcoindScriptValid vector ' + c, () => {
                 // ["Format is: [scriptSig, scriptPubKey, flags, expected_scripterror, ... comments]"],
                 // Test vectors for SIGHASH_FORKID
                 const scriptSig = new Script().fromBitcoindString(vector[0])
@@ -352,12 +352,12 @@ describe('Interp', function () {
         })
 
         c = 0
-        bitcoinSVScriptTests.forEach(function (vector, i) {
+        bitcoinSVScriptTests.forEach((vector, i) => {
             if (vector.length === 1) {
                 return
             }
             c++
-            it('should verify bitcoinSVScriptTests vector ' + c, function () {
+            it('should verify bitcoinSVScriptTests vector ' + c, () => {
                 // ["Format is: [scriptSig, scriptPubKey, flags, expected_scripterror, ... comments]"],
                 const scriptSig = new Script().fromBitcoindString(vector[0])
                 const scriptPubKey = new Script().fromBitcoindString(vector[1])
@@ -392,12 +392,12 @@ describe('Interp', function () {
         })
 
         c = 0
-        bitcoindScriptValid.forEach(function (vector, i) {
+        bitcoindScriptValid.forEach((vector, i) => {
             if (vector.length === 1) {
                 return
             }
             c++
-            it('should verify bitcoindScriptValid vector ' + c, function () {
+            it('should verify bitcoindScriptValid vector ' + c, () => {
                 const scriptSig = new Script().fromBitcoindString(vector[0])
                 const scriptPubKey = new Script().fromBitcoindString(vector[1])
                 const flags = Interp.getFlags(vector[2])
@@ -420,12 +420,12 @@ describe('Interp', function () {
         })
 
         c = 0
-        bitcoindScriptInvalid.forEach(function (vector, i) {
+        bitcoindScriptInvalid.forEach((vector, i) => {
             if (vector.length === 1) {
                 return
             }
             c++
-            it('should unverify bitcoindScriptInvalid vector ' + c, function () {
+            it('should unverify bitcoindScriptInvalid vector ' + c, () => {
                 const scriptSig = new Script().fromBitcoindString(vector[0])
                 const scriptPubKey = new Script().fromBitcoindString(vector[1])
                 const flags = Interp.getFlags(vector[2])

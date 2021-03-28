@@ -6,6 +6,6 @@
  */
 import { Workers } from '../src/workers'
 
-after(function () {
+after(() => {
     Workers.endGlobalWorkers()
 })

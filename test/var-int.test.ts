@@ -1,11 +1,11 @@
-import { Bn } from '../src/bn'
 import should = require('should')
+import { Bn } from '../src/bn'
 import { Br } from '../src/br'
 import { Bw } from '../src/bw'
 import { VarInt } from '../src/var-int'
 
-describe('VarInt', function () {
-    it('should make a new varInt', function () {
+describe('VarInt', () => {
+    it('should make a new varInt', () => {
         const buf = Buffer.from('00', 'hex')
         let varInt = new VarInt(buf)
         should.exist(varInt)
@@ -29,42 +29,42 @@ describe('VarInt', function () {
             )
     })
 
-    describe('#fromObject', function () {
-        it('should set a buffer', function () {
+    describe('#fromObject', () => {
+        it('should set a buffer', () => {
             const buf = Buffer.from('00', 'hex')
-            const varInt = new VarInt().fromObject({ buf: buf })
+            const varInt = new VarInt().fromObject({ buf })
             varInt.buf.toString('hex').should.equal('00')
             varInt.fromObject({})
             varInt.buf.toString('hex').should.equal('00')
         })
     })
 
-    describe('#fromJSON', function () {
-        it('should set a buffer', function () {
+    describe('#fromJSON', () => {
+        it('should set a buffer', () => {
             const buf = new Bw().writeVarIntNum(5).toBuffer()
             const varInt = new VarInt().fromJSON(buf.toString('hex'))
             varInt.toNumber().should.equal(5)
         })
     })
 
-    describe('#toJSON', function () {
-        it('should return a buffer', function () {
+    describe('#toJSON', () => {
+        it('should return a buffer', () => {
             const buf = new Bw().writeVarIntNum(5).toBuffer()
             const varInt = new VarInt().fromJSON(buf.toString('hex'))
             varInt.toJSON().should.equal('05')
         })
     })
 
-    describe('#fromBuffer', function () {
-        it('should set a buffer', function () {
+    describe('#fromBuffer', () => {
+        it('should set a buffer', () => {
             const buf = new Bw().writeVarIntNum(5).toBuffer()
             const varInt = new VarInt().fromBuffer(buf)
             varInt.toNumber().should.equal(5)
         })
     })
 
-    describe('#fromBr', function () {
-        it('should set a buffer reader', function () {
+    describe('#fromBr', () => {
+        it('should set a buffer reader', () => {
             const buf = new Bw().writeVarIntNum(5).toBuffer()
             const br = new Br(buf)
             const varInt = new VarInt().fromBr(br)
@@ -72,51 +72,51 @@ describe('VarInt', function () {
         })
     })
 
-    describe('#fromBn', function () {
-        it('should set a number', function () {
+    describe('#fromBn', () => {
+        it('should set a number', () => {
             const varInt = new VarInt().fromBn(new Bn(5))
             varInt.toNumber().should.equal(5)
         })
     })
 
-    describe('@fromBn', function () {
-        it('should set a number', function () {
+    describe('@fromBn', () => {
+        it('should set a number', () => {
             const varInt = VarInt.fromBn(new Bn(5))
             varInt.toNumber().should.equal(5)
         })
     })
 
-    describe('#fromNumber', function () {
-        it('should set a number', function () {
+    describe('#fromNumber', () => {
+        it('should set a number', () => {
             const varInt = new VarInt().fromNumber(5)
             varInt.toNumber().should.equal(5)
         })
     })
 
-    describe('@fromNumber', function () {
-        it('should set a number', function () {
+    describe('@fromNumber', () => {
+        it('should set a number', () => {
             const varInt = VarInt.fromNumber(5)
             varInt.toNumber().should.equal(5)
         })
     })
 
-    describe('#toBuffer', function () {
-        it('should return a buffer', function () {
+    describe('#toBuffer', () => {
+        it('should return a buffer', () => {
             const buf = new Bw().writeVarIntNum(5).toBuffer()
             const varInt = new VarInt(buf)
             varInt.toBuffer().toString('hex').should.equal(buf.toString('hex'))
         })
     })
 
-    describe('#toBn', function () {
-        it('should return a buffer', function () {
+    describe('#toBn', () => {
+        it('should return a buffer', () => {
             const varInt = VarInt.fromNumber(5)
             varInt.toBn().toString().should.equal(new Bn(5).toString())
         })
     })
 
-    describe('#toNumber', function () {
-        it('should return a buffer', function () {
+    describe('#toNumber', () => {
+        it('should return a buffer', () => {
             const varInt = VarInt.fromNumber(5)
             varInt.toNumber().should.equal(5)
         })
