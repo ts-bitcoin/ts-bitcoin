@@ -1,15 +1,19 @@
 {
+  "references": [{ "path": "src" }],
   "compilerOptions": {
     "target": "es2019",
     "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "./lib",
+    "outDir": "out",
+    "rootDir": ".",
+    "incremental": true,
+    "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "incremental": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
+    "composite": true
   },
-  "include": ["src"]
+  "include": []
 }
