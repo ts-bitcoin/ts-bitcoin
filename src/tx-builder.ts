@@ -367,8 +367,10 @@ export class TxBuilder extends Struct {
      * TxBuilder will not necessarily us all the inputs. To force the TxBuilder
      * to use all the inputs (such as if you wish to spend the entire balance
      * of a wallet), set the argument useAllInputs = true.
+     *
+     * @returns Built transaction.
      */
-    public build(opts = { useAllInputs: false }): this {
+    public build(opts = { useAllInputs: false }): Tx {
         let minFeeAmountBn
         if (this.txIns.length <= 0) {
             throw Error('tx-builder number of inputs must be greater than 0')
@@ -430,7 +432,7 @@ export class TxBuilder extends Struct {
             if (this.tx.txOuts.length === 0) {
                 throw new Error('outputs length is zero - unable to create any outputs greater than dust')
             }
-            return this
+            return this.tx
         } else {
             throw new Error('unable to gather enough inputs for outputs and fee')
         }
