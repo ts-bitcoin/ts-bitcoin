@@ -119,7 +119,8 @@ describe('TxVerifier', () => {
 
     describe('TxVerifier Vectors', () => {
         let c = 0
-        txValid.forEach((vector, i) => {
+        // eslint-disable-next-line ban/ban
+        txValid.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }
@@ -168,7 +169,8 @@ describe('TxVerifier', () => {
         })
 
         c = 0
-        txInvalid.forEach((vector, i) => {
+        // eslint-disable-next-line ban/ban
+        txInvalid.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }

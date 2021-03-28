@@ -44,6 +44,7 @@ describe('Aescbc', () => {
     })
 
     describe('vectors', () => {
+        // eslint-disable-next-line ban/ban
         vectors.forEach((vector, i) => {
             it('should pass sjcl test vector ' + i, () => {
                 const keyBuf = Buffer.from(vector.key, 'hex')

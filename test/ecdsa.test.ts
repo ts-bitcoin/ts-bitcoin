@@ -533,6 +533,7 @@ describe('Ecdsa', () => {
     })
 
     describe('vectors', () => {
+        // eslint-disable-next-line ban/ban
         vectors.valid.forEach((obj, i) => {
             it('should validate valid vector ' + i, () => {
                 const ecdsa = new Ecdsa().fromObject({
@@ -558,6 +559,7 @@ describe('Ecdsa', () => {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         vectors.invalid.verifystr.forEach((obj, i) => {
             it('should validate invalid.verifystr vector ' + i + ': ' + obj.description, () => {
                 const ecdsa = new Ecdsa().fromObject({
@@ -571,6 +573,7 @@ describe('Ecdsa', () => {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         vectors.deterministicK.forEach((obj, i) => {
             it('should validate deterministicK vector ' + i, () => {
                 const hashBuf = Hash.sha256(Buffer.from(obj.message))

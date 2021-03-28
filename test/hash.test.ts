@@ -260,6 +260,7 @@ describe('Hash', () => {
     })
 
     describe('vectors', () => {
+        // eslint-disable-next-line ban/ban
         vectors.sha1.forEach((vector, i) => {
             it('should pass sjcl sha1 test vector ' + i, () => {
                 const data = Buffer.from(vector[0])
@@ -267,6 +268,7 @@ describe('Hash', () => {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         vectors.sha256.forEach((vector, i) => {
             it('should pass sjcl sha256 test vector ' + i, () => {
                 const data = Buffer.from(vector[0])
@@ -274,6 +276,7 @@ describe('Hash', () => {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         vectors.sha512.forEach((vector, i) => {
             it('should pass sjcl sha512 test vector ' + i, () => {
                 const data = Buffer.from(vector[0])
@@ -281,6 +284,7 @@ describe('Hash', () => {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         vectors.hmac.forEach((vector, i) => {
             it('should pass standard hmac test vector ' + i, () => {
                 const keyBuf = Buffer.from(vector.key, 'hex')

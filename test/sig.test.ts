@@ -488,6 +488,7 @@ describe('Sig', () => {
         // expedition. I only took a subset relevant for the stuff I wanted to
         // test, but it would be valuable to revisit these test vectors and make
         // sure all of them pass.
+        // eslint-disable-next-line ban/ban
         vectors.valid.forEach((vector) => {
             it('should pass this vector', () => {
                 const compact = vector.compact
@@ -498,6 +499,7 @@ describe('Sig', () => {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         vectors.invalid.compact.forEach((compact) => {
             it('should pass this vector', () => {
                 ;(function () {

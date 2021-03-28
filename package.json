@@ -24,8 +24,8 @@
   "scripts": {
     "clean": "rm -rf lib",
     "lint": "eslint -c .eslintrc.json --ext .ts --max-warnings 0 src test",
-    "prettier": "prettier --write '{lib,test}/**/*.+(js|json)'",
-    "build": "npm run clean && npm run build:node",
+    "format": "prettier --write '{lib,test}/**/*.+(js|json)'",
+    "build": "npm run clean && npm run build:node && npm run build:browser",
     "build:node": "tsc -b",
     "build:browser": "webpack --mode production",
     "test:mocha": "mocha",

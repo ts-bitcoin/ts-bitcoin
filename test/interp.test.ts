@@ -311,7 +311,8 @@ describe('Interp', () => {
         let c
 
         c = 0
-        bitcoinABCScriptTests.forEach((vector, i) => {
+        // eslint-disable-next-line ban/ban
+        bitcoinABCScriptTests.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }
@@ -352,7 +353,8 @@ describe('Interp', () => {
         })
 
         c = 0
-        bitcoinSVScriptTests.forEach((vector, i) => {
+        // eslint-disable-next-line ban/ban
+        bitcoinSVScriptTests.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }
@@ -392,7 +394,8 @@ describe('Interp', () => {
         })
 
         c = 0
-        bitcoindScriptValid.forEach((vector, i) => {
+        // eslint-disable-next-line ban/ban
+        bitcoindScriptValid.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }
@@ -420,7 +423,8 @@ describe('Interp', () => {
         })
 
         c = 0
-        bitcoindScriptInvalid.forEach((vector, i) => {
+        // eslint-disable-next-line ban/ban
+        bitcoindScriptInvalid.forEach((vector) => {
             if (vector.length === 1) {
                 return
             }

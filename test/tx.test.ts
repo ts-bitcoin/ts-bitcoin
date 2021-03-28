@@ -320,6 +320,7 @@ describe('Tx', () => {
             })
         }
 
+        // eslint-disable-next-line ban/ban
         fixture.inputs.forEach((inputSet) => {
             it(inputSet.description, () => {
                 const tx = new Tx()
@@ -336,6 +337,7 @@ describe('Tx', () => {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         fixture.outputs.forEach((outputSet) => {
             it(outputSet.description, () => {
                 const tx = new Tx()
@@ -361,6 +363,7 @@ describe('Tx', () => {
     })
 
     describe('vectors: sighash and serialization', () => {
+        // eslint-disable-next-line ban/ban
         vectorsBitcoindSighash.forEach((vector, i) => {
             if (i === 0) {
                 return
@@ -384,6 +387,7 @@ describe('Tx', () => {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         vectorsBitcoinABCSighash.forEach((vector, i) => {
             if (i === 0) {
                 return
@@ -416,6 +420,7 @@ describe('Tx', () => {
         })
 
         let j = 0
+        // eslint-disable-next-line ban/ban
         vectorsBitcoindTxValid.forEach((vector) => {
             if (vector.length === 1) {
                 return
@@ -430,6 +435,7 @@ describe('Tx', () => {
         })
 
         j = 0
+        // eslint-disable-next-line ban/ban
         vectorsBitcoindTxInvalid.forEach((vector) => {
             if (vector.length === 1) {
                 return

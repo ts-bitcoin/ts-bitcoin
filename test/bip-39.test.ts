@@ -236,6 +236,7 @@ describe('Bip39', function () {
     })
 
     describe('vectors', () => {
+        // eslint-disable-next-line ban/ban
         vectors.english.forEach((vector, v) => {
             it('should pass english test vector ' + v, () => {
                 const entropy = Buffer.from(vector.entropy, 'hex')
@@ -248,6 +249,7 @@ describe('Bip39', function () {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         vectors.japanese.forEach((vector, v) => {
             it('should pass japanese test vector ' + v, () => {
                 const entropy = Buffer.from(vector.entropy, 'hex')

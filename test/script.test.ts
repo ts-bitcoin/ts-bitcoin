@@ -946,6 +946,7 @@ describe('Script', () => {
     })
 
     describe('vectors', () => {
+        // eslint-disable-next-line ban/ban
         scriptValid.forEach((a, i) => {
             if (a.length === 1) {
                 return
@@ -968,6 +969,7 @@ describe('Script', () => {
             })
         })
 
+        // eslint-disable-next-line ban/ban
         scriptInvalid.forEach((a, i) => {
             if (a.length === 1) {
                 return
