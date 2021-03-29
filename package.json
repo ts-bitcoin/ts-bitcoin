@@ -31,7 +31,9 @@
     "build:browser": "webpack --mode production",
     "test:mocha": "mocha",
     "test:karma": "karma start --single-run",
-    "test": "npm run test:mocha"
+    "test": "npm run test:mocha",
+    "typedoc": "typedoc src",
+    "fix-typedoc-pages": "shx cp ./node_modules/typedoc-default-themes/bin/default/partials/type.hbs ./node_modules/typedoc-plugin-pages/dist/theme/v2/partials/type.hbs"
   },
   "keywords": [
     "bitcoin",
@@ -72,10 +74,13 @@
     "mocha": "^8.3.2",
     "prettier": "^2.2.1",
     "should": "^13.2.3",
+    "shx": "^0.3.3",
     "sinon": "^9.0.2",
     "source-map-support": "^0.5.19",
     "ts-loader": "^8.0.18",
     "ts-node": "^9.1.1",
+    "typedoc": "^0.20.34",
+    "typedoc-plugin-pages": "^1.1.0",
     "typescript": "^4.1.5",
     "webpack": "^4.46.0",
     "webpack-cli": "^4.5.0"
