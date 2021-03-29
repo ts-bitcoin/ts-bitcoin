@@ -1,6 +1,9 @@
 {
   "name": "TS-Bitcoin",
   "theme": "../typedoc-default-themes/bin/default",
+  "entryPoints": [
+    "./src/index.ts"
+  ],
   "out": "typedoc",
   "tsconfig": "tsconfig.json",
   "excludeExternals": true,
@@ -10,63 +13,63 @@
     "reflectionNavigationTitle": "Development API",
     "groups": [
       {
-        "title": "Overview",
+        "title": "Guides",
         "pages": [
           {
             "title": "Big Numbers",
-            "source": "./docs/overview/big-numbers.md"
+            "source": "./docs/guides/big-numbers.md"
           },
           {
             "title": "Point (Elliptic Curves)",
-            "source": "./docs/overview/points.md"
+            "source": "./docs/guides/points.md"
           },
           {
             "title": "Hash Functions",
-            "source": "./docs/overview/hash-functions.md"
+            "source": "./docs/guides/hash-functions.md"
           },
           {
             "title": "Base58",
-            "source": "./docs/overview/base58.md"
+            "source": "./docs/guides/base58.md"
           },
           {
             "title": "Private Keys",
-            "source": "./docs/overview/priv-keys.md"
+            "source": "./docs/guides/priv-keys.md"
           },
           {
             "title": "Public Keys",
-            "source": "./docs/overview/pub-keys.md"
+            "source": "./docs/guides/pub-keys.md"
           },
           {
             "title": "Addresses",
-            "source": "./docs/overview/addresses.md"
+            "source": "./docs/guides/addresses.md"
           },
           {
             "title": "ECDSA",
-            "source": "./docs/overview/ecdsa.md"
+            "source": "./docs/guides/ecdsa.md"
           },
           {
             "title": "Bitcoin Signed Messages",
-            "source": "./docs/overview/bsm.md"
+            "source": "./docs/guides/bsm.md"
           },
           {
             "title": "Signatures",
-            "source": "./docs/overview/sigs.md"
+            "source": "./docs/guides/sigs.md"
           },
           {
             "title": "HD Private Keys (BIP32)",
-            "source": "./docs/overview/hd-priv-keys.md"
+            "source": "./docs/guides/hd-priv-keys.md"
           },
           {
             "title": "HD Public Keys (BIP32)",
-            "source": "./docs/overview/hd-pub-keys.md"
+            "source": "./docs/guides/hd-pub-keys.md"
           },
           {
             "title": "Mnemonics (BIP39)",
-            "source": "./docs/overview/mnemonics.md"
+            "source": "./docs/guides/mnemonics.md"
           },
           {
             "title": "Script",
-            "source": "./docs/overview/scripts.md"
+            "source": "./docs/guides/scripts.md"
           }
         ]
       }
