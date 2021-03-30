@@ -1,5 +1,6 @@
-<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
-<img src="./docs/logo.svg" alt="TS Bitcoin" width="240">
+  <br/>
+  
+## <img src="./docs/logo.svg" alt="TS Bitcoin" width="240">
 
 [![npm](https://img.shields.io/npm/v/@ts-bitcoin/core.svg)](https://www.npmjs.com/package/@ts-bitcoin/core)
 ![Main CI](https://github.com/ts-bitcoin/ts-bitcoin/workflows/Main%20CI/badge.svg)
