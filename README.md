@@ -1,4 +1,4 @@
-# <img src="./docs/logo.svg" alt="TS Bitcoin" width="280">
+# <img src="./docs/logo.svg" alt="TS Bitcoin" width="240">
 
 ![Main CI](https://github.com/ts-bitcoin/ts-bitcoin/workflows/Main%20CI/badge.svg)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
