@@ -1,5 +1,5 @@
 <div>
-  <p><small>&nbsp;</small></p>
+  <div><small>&nbsp;</small></div>
   <img src="./docs/logo.svg" alt="TS Bitcoin" width="220">
 </div>
 <hr/>
