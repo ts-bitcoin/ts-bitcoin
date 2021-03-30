@@ -1,4 +1,5 @@
-# TS-Bitcoin
+<div></div>
+<h1><img src="./docs/logo.svg" alt="TS Bitcoin" width="240"></h1>
 
 ![Main CI](https://github.com/ts-bitcoin/ts-bitcoin/workflows/Main%20CI/badge.svg)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
