@@ -1,7 +1,5 @@
 <div><small>&nbsp;</small></div>
-<p>
-  <img src="./docs/logo.svg" alt="TS Bitcoin" width="220">
-</p>
+<h1><img src="./docs/logo.svg" alt="TS Bitcoin" width="220"></h1>
 
 [![npm](https://img.shields.io/npm/v/@ts-bitcoin/core.svg)](https://www.npmjs.com/package/@ts-bitcoin/core)
 ![Main CI](https://github.com/ts-bitcoin/ts-bitcoin/workflows/Main%20CI/badge.svg)
