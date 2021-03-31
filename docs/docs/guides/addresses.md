@@ -9,9 +9,3 @@ const privKey = PrivKey.fromRandom()
 const pubKey = PubKey.fromPrivKey(privKey)
 const address = Address.fromPubKey(pubKey)
 ```
-
-```jsx title="/src/components/HelloCodeTitle.js"
-function HelloCodeTitle(props) {
-  return <h1>Hello, {props.name}</h1>
-}
-```

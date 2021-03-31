@@ -83,6 +83,10 @@ module.exports = {
             ],
             copyright: `Copyright © ${new Date().getFullYear()} TS Bitcoin`,
         },
+        prism: {
+            theme: require('prism-react-renderer/themes/github'),
+            darkTheme: require('prism-react-renderer/themes/oceanicNext'),
+        },
         sidebarCollapsible: true,
     },
     presets: [
@@ -101,6 +105,22 @@ module.exports = {
                 // },
                 theme: {
                     customCss: require.resolve('./src/css/custom.css'),
+                },
+            },
+        ],
+    ],
+    plugins: [
+        [
+            'docusaurus-plugin-typedoc',
+
+            // Plugin / TypeDoc options
+            {
+                entryPoints: ['../src/index.ts'],
+                tsconfig: '../tsconfig.json',
+                allReflectionsHaveOwnDocument: false,
+                sidebar: {
+                    sidebarFile: 'typedoc-sidebar.js',
+                    fullNames: false,
                 },
             },
         ],
