@@ -3,7 +3,7 @@ module.exports = {
     title: 'TS Bitcoin',
     tagline: 'TypeScript library for Bitcoin SV',
     url: 'https://ts-bitcoin.github.io',
-    baseUrl: '/',
+    baseUrl: '/ts-bitcoin/',
     onBrokenLinks: 'throw',
     onBrokenMarkdownLinks: 'warn',
     favicon: 'img/favicon.ico',
