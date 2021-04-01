@@ -22,6 +22,18 @@ module.exports = {
                     label: 'Docs',
                     position: 'left',
                 },
+                // {
+                //     to: 'sample-app',
+                //     activeBasePath: 'sample-app',
+                //     label: 'Sample App',
+                //     position: 'left',
+                // },
+                {
+                    href: 'https://stackblitz.com/edit/ts-bitcoin-playground',
+                    label: 'Playground',
+                    position: 'left',
+                    className: 'header-playground-link',
+                },
                 // { to: 'blog', label: 'Blog', position: 'left' },
                 {
                     href: 'https://github.com/ts-bitcoin/ts-bitcoin',
