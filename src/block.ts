@@ -15,7 +15,7 @@ import { Br } from './br'
 import { Bw } from './bw'
 import { Hash } from './hash'
 import { Merkle } from './merkle'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Tx, TxLike } from './tx'
 import { VarInt } from './var-int'
 import { Workers } from './workers'
@@ -26,7 +26,7 @@ export interface BlockLike {
     txs: TxLike[]
 }
 
-export class Block extends Struct {
+export class Block extends StructLegacy {
     public static readonly MAX_BLOCK_SIZE = 1000000
 
     public blockHeader: BlockHeader
@@ -40,7 +40,7 @@ export class Block extends Struct {
     public fromJSON(json: BlockLike): this {
         const txs = []
         for (const tx of json.txs) {
-            txs.push(new Tx().fromJSON(tx))
+            txs.push(Tx.fromJSON(tx))
         }
         this.fromObject({
             blockHeader: new BlockHeader().fromJSON(json.blockHeader),
@@ -68,7 +68,7 @@ export class Block extends Struct {
         const txsNum = this.txsVi.toNumber()
         this.txs = []
         for (let i = 0; i < txsNum; i++) {
-            this.txs.push(new Tx().fromBr(br))
+            this.txs.push(Tx.fromBr(br))
         }
         return this
     }
@@ -130,7 +130,7 @@ export class Block extends Struct {
             txsNum,
             *[Symbol.iterator]() {
                 for (let i = 0; i < txsNum; i++) {
-                    yield new Tx().fromBr(br)
+                    yield Tx.fromBr(br)
                 }
             },
         }

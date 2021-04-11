@@ -14,7 +14,7 @@ import { KeyPair } from './key-pair'
 import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Sig } from './sig'
-import { Struct } from './struct'
+import { Struct2 } from './struct2'
 import { TxIn, TxInLike } from './tx-in'
 import { TxOut, TxOutLike } from './tx-out'
 import { VarInt } from './var-int'
@@ -22,38 +22,108 @@ import { Workers } from './workers'
 
 export interface TxLike {
     versionBytesNum: number
-    txInsVi: string
     txIns: TxInLike[]
-    txOutsVi: string
     txOuts: TxOutLike[]
     nLockTime: number
 }
 
-export class Tx extends Struct {
+export class Tx extends Struct2 {
+    /**
+     * Max bitcoin supply.
+     */
     public static readonly MAX_MONEY = 21000000 * 1e8
 
-    // This is defined on Interp, but Tx cannot depend on Interp - must redefine here
+    /**
+     * This is defined on Interp, but Tx cannot depend on Interp - must redefine here.
+     */
     public static readonly SCRIPT_ENABLE_SIGHASH_FORKID = 1 << 16
 
-    public versionBytesNum: number
-    public txInsVi: VarInt
-    public txIns: TxIn[]
-    public txOutsVi: VarInt
-    public txOuts: TxOut[]
-    public nLockTime: number
+    /**
+     * Version number.
+     */
+    public versionBytesNum = 1
+
+    /**
+     * Transaction inputs.
+     */
+    public txIns: TxIn[] = []
+
+    /**
+     * Transaction outputs.
+     */
+    public txOuts: TxOut[] = []
+
+    /**
+     * Lock time.
+     */
+    public nLockTime = 0
 
     constructor(
-        versionBytesNum = 1,
-        txInsVi = VarInt.fromNumber(0),
-        txIns: TxIn[] = [],
-        txOutsVi = VarInt.fromNumber(0),
-        txOuts: TxOut[] = [],
-        nLockTime = 0
+        data: {
+            versionBytesNum?: number
+            txInsVi?: VarInt
+            txIns?: TxIn[]
+            txOutsVi?: VarInt
+            txOuts?: TxOut[]
+            nLockTime?: number
+        } = {}
     ) {
-        super({ versionBytesNum, txInsVi, txIns, txOutsVi, txOuts, nLockTime })
+        super()
+        if (data.versionBytesNum !== undefined) {
+            this.setVersion(data.versionBytesNum)
+        }
+        if (data.txIns !== undefined) {
+            for (const txIn of data.txIns) {
+                this.addTxIn(txIn)
+            }
+        }
+        if (data.txOuts !== undefined) {
+            for (const txOut of data.txOuts) {
+                this.addTxOut(txOut)
+            }
+        }
+        if (data.nLockTime !== undefined) {
+            this.setLocktime(data.nLockTime)
+        }
     }
 
-    public fromJSON(json: TxLike): this {
+    public static fromBr(br: Br): Tx {
+        const versionBytesNum = br.readUInt32LE()
+
+        const txInsNum = br.readVarIntNum()
+        const txIns: TxIn[] = []
+        for (let i = 0; i < txInsNum; i++) {
+            txIns.push(TxIn.fromBr(br))
+        }
+
+        const txOutsNum = br.readVarIntNum()
+        const txOuts: TxOut[] = []
+        for (let i = 0; i < txOutsNum; i++) {
+            txOuts.push(TxOut.fromBr(br))
+        }
+
+        const nLockTime = br.readUInt32LE()
+        return new this({ versionBytesNum, txIns, txOuts, nLockTime })
+    }
+
+    public toBw(bw?: Bw): Bw {
+        if (!bw) {
+            bw = new Bw()
+        }
+        bw.writeUInt32LE(this.versionBytesNum)
+        bw.writeVarIntNum(this.txIns.length)
+        for (let i = 0; i < this.txIns.length; i++) {
+            this.txIns[i].toBw(bw)
+        }
+        bw.writeVarIntNum(this.txOuts.length)
+        for (let i = 0; i < this.txOuts.length; i++) {
+            this.txOuts[i].toBw(bw)
+        }
+        bw.writeUInt32LE(this.nLockTime)
+        return bw
+    }
+
+    public static fromJSON(json: TxLike): Tx {
         const txIns: TxIn[] = []
         for (const txIn of json.txIns) {
             txIns.push(new TxIn().fromJSON(txIn))
@@ -62,69 +132,21 @@ export class Tx extends Struct {
         for (const txOut of json.txOuts) {
             txOuts.push(new TxOut().fromJSON(txOut))
         }
-        this.fromObject({
+        return new this({
             versionBytesNum: json.versionBytesNum,
-            txInsVi: new VarInt().fromJSON(json.txInsVi),
             txIns,
-            txOutsVi: new VarInt().fromJSON(json.txOutsVi),
             txOuts,
             nLockTime: json.nLockTime,
         })
-        return this
     }
 
     public toJSON(): TxLike {
-        const txIns: TxInLike[] = []
-        for (const txIn of this.txIns) {
-            txIns.push(txIn.toJSON())
-        }
-        const txOuts: TxOutLike[] = []
-        for (const txOut of this.txOuts) {
-            txOuts.push(txOut.toJSON())
-        }
         return {
             versionBytesNum: this.versionBytesNum,
-            txInsVi: this.txInsVi.toJSON(),
-            txIns,
-            txOutsVi: this.txOutsVi.toJSON(),
-            txOuts,
+            txIns: this.txIns.map((txIn) => txIn.toJSON()),
+            txOuts: this.txOuts.map((txOut) => txOut.toJSON()),
             nLockTime: this.nLockTime,
         }
-    }
-
-    public fromBr(br: Br): this {
-        this.versionBytesNum = br.readUInt32LE()
-        this.txInsVi = new VarInt(br.readVarIntBuf())
-        const txInsNum = this.txInsVi.toNumber()
-        this.txIns = []
-        for (let i = 0; i < txInsNum; i++) {
-            this.txIns.push(new TxIn().fromBr(br))
-        }
-        this.txOutsVi = new VarInt(br.readVarIntBuf())
-        const txOutsNum = this.txOutsVi.toNumber()
-        this.txOuts = []
-        for (let i = 0; i < txOutsNum; i++) {
-            this.txOuts.push(new TxOut().fromBr(br))
-        }
-        this.nLockTime = br.readUInt32LE()
-        return this
-    }
-
-    public toBw(bw?: Bw): Bw {
-        if (!bw) {
-            bw = new Bw()
-        }
-        bw.writeUInt32LE(this.versionBytesNum)
-        bw.write(this.txInsVi.buf)
-        for (let i = 0; i < this.txIns.length; i++) {
-            this.txIns[i].toBw(bw)
-        }
-        bw.write(this.txOutsVi.buf)
-        for (let i = 0; i < this.txOuts.length; i++) {
-            this.txOuts[i].toBw(bw)
-        }
-        bw.writeUInt32LE(this.nLockTime)
-        return bw
     }
 
     // https://github.com/Bitcoin-UAHF/spec/blob/master/replay-protected-sighash.md
@@ -218,7 +240,7 @@ export class Tx extends Struct {
         }
 
         // original bitcoin code follows - not related to UAHF (Bitcoin SV)
-        const txcopy: Tx = this.cloneByBuffer()
+        const txcopy: Tx = this.clone()
 
         subScript = new Script().fromBuffer(subScript.toBuffer())
         subScript.removeCodeseparators()
@@ -231,7 +253,6 @@ export class Tx extends Struct {
 
         if ((nHashType & 31) === Sig.SIGHASH_NONE) {
             txcopy.txOuts.length = 0
-            txcopy.txOutsVi = VarInt.fromNumber(0)
 
             for (let i = 0; i < txcopy.txIns.length; i++) {
                 if (i !== nIn) {
@@ -246,7 +267,6 @@ export class Tx extends Struct {
             }
 
             txcopy.txOuts.length = nIn + 1
-            txcopy.txOutsVi = VarInt.fromNumber(nIn + 1)
 
             for (let i = 0; i < txcopy.txOuts.length; i++) {
                 if (i < nIn) {
@@ -268,7 +288,6 @@ export class Tx extends Struct {
         if (nHashType & Sig.SIGHASH_ANYONECANPAY) {
             txcopy.txIns[0] = txcopy.txIns[nIn]
             txcopy.txIns.length = 1
-            txcopy.txInsVi = VarInt.fromNumber(1)
         }
 
         const buf = new Bw().write(txcopy.toBuffer()).writeInt32LE(nHashType).toBuffer()
@@ -398,7 +417,6 @@ export class Tx extends Struct {
             txIn = new TxIn().fromObject({ txHashBuf, txOutNum, nSequence }).setScript(script)
         }
         this.txIns.push(txIn)
-        this.txInsVi = VarInt.fromNumber(this.txInsVi.toNumber() + 1)
         return this
     }
 
@@ -412,7 +430,6 @@ export class Tx extends Struct {
             txOut = new TxOut().fromObject({ valueBn }).setScript(script)
         }
         this.txOuts.push(txOut)
-        this.txOutsVi = VarInt.fromNumber(this.txOutsVi.toNumber() + 1)
         return this
     }
 
@@ -441,6 +458,28 @@ export class Tx extends Struct {
             )
         })
 
+        return this
+    }
+
+    /**
+     * Set transaction version number.
+     */
+    public setVersion(value: number): this {
+        if (value >>> 0 !== value) {
+            throw new Error('Version must be a uint32')
+        }
+        this.versionBytesNum = value
+        return this
+    }
+
+    /**
+     * Set transaction locktime.
+     */
+    public setLocktime(value: number): this {
+        if (value >>> 0 !== value) {
+            throw new Error('Locktime must be a uint32')
+        }
+        this.nLockTime = value
         return this
     }
 }

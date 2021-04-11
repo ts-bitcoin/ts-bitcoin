@@ -20,7 +20,7 @@ describe('Block', () => {
     const bhbuf = Buffer.from(bhhex, 'hex')
     const bh = new BlockHeader().fromBuffer(bhbuf)
     const txsVi = VarInt.fromNumber(1)
-    const txs = [new Tx().fromBuffer(txbuf)]
+    const txs = [Tx.fromBuffer(txbuf)]
     const block = new Block().fromObject({
         magicNum,
         blockSize,

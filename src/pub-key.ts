@@ -9,10 +9,10 @@ import { Bn } from './bn'
 import { Bw } from './bw'
 import { Point } from './point'
 import { PrivKey } from './priv-key'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Workers } from './workers'
 
-export class PubKey extends Struct {
+export class PubKey extends StructLegacy {
     public point: Point
     public compressed: boolean
 

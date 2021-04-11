@@ -5,12 +5,12 @@
 import { Block } from './block'
 import { Bn } from './bn'
 import { Interp } from './interp'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Tx } from './tx'
 import { TxOutMap } from './tx-out-map'
 import { Workers } from './workers'
 
-export class TxVerifier extends Struct {
+export class TxVerifier extends StructLegacy {
     public tx: Tx
     public txOutMap: TxOutMap
     public errStr: string
@@ -63,11 +63,11 @@ export class TxVerifier extends Struct {
      */
     public checkStr(): boolean | string {
         // Basic checks that don't depend on any context
-        if (this.tx.txIns.length === 0 || this.tx.txInsVi.toNumber() === 0) {
+        if (this.tx.txIns.length === 0) {
             this.errStr = 'transaction txIns empty'
             return this.errStr
         }
-        if (this.tx.txOuts.length === 0 || this.tx.txOutsVi.toNumber() === 0) {
+        if (this.tx.txOuts.length === 0) {
             this.errStr = 'transaction txOuts empty'
             return this.errStr
         }

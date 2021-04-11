@@ -23,7 +23,7 @@ import { OpCode } from './op-code'
 import { PrivKey } from './priv-key'
 import { PubKey } from './pub-key'
 import { Script } from './script'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Workers } from './workers'
 
 interface AddressLike {
@@ -31,7 +31,7 @@ interface AddressLike {
     hashBuf: string
 }
 
-export class Address extends Struct {
+export class Address extends StructLegacy {
     public versionByteNum: number
     public hashBuf: Buffer
     public Constants: NetworkConstants['Address']

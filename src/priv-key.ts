@@ -10,9 +10,9 @@ import { Bn } from './bn'
 import { Constants, NetworkConstants } from './constants'
 import { Point } from './point'
 import { Random } from './random'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
-export class PrivKey extends Struct {
+export class PrivKey extends StructLegacy {
     public bn: Bn
     public compressed: boolean
     public Constants: NetworkConstants['PrivKey']

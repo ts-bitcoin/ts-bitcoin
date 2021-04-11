@@ -8,9 +8,9 @@
 import { Base58 } from './base-58'
 import { cmp } from './cmp'
 import { Hash } from './hash'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
-export class Base58Check extends Struct {
+export class Base58Check extends StructLegacy {
     public buf: Buffer
 
     constructor(buf?: Buffer) {

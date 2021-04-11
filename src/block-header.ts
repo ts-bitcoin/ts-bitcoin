@@ -7,7 +7,7 @@
  */
 import { Br } from './br'
 import { Bw } from './bw'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
 export interface BlockHeaderLike {
     versionBytesNum: number
@@ -18,7 +18,7 @@ export interface BlockHeaderLike {
     nonce: number
 }
 
-export class BlockHeader extends Struct {
+export class BlockHeader extends StructLegacy {
     public versionBytesNum: number
     public prevBlockHashBuf: Buffer
     public merkleRootBuf: Buffer

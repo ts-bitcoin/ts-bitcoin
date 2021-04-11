@@ -18,7 +18,7 @@
  * Message (Bsm).
  */
 import { Bn } from './bn'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
 /**
  * r, s: big numbers constiting a cryptographic signature
@@ -26,7 +26,7 @@ import { Struct } from './struct'
  * recovery: public key recovery number
  * compressed: whether the recovered pubKey is compressed
  */
-export class Sig extends Struct {
+export class Sig extends StructLegacy {
     public static readonly SIGHASH_ALL = 0x00000001
     public static readonly SIGHASH_NONE = 0x00000002
     public static readonly SIGHASH_SINGLE = 0x00000003

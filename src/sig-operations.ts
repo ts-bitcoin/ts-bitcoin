@@ -14,7 +14,7 @@
  * where the private keys are.
  */
 import { Sig } from './sig'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
 interface SigOperationsMapItem {
     nScriptChunk: number
@@ -28,7 +28,7 @@ export interface SigOperationsLike {
     [label: string]: SigOperationsMapItem[]
 }
 
-export class SigOperations extends Struct {
+export class SigOperations extends StructLegacy {
     public map: Map<string, SigOperationsMapItem[]>
 
     constructor(map: Map<string, SigOperationsMapItem[]> = new Map()) {

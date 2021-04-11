@@ -24,7 +24,7 @@ describe('Tx', () => {
         Buffer.from('00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000', 'hex')
     )
     const txOut = new TxOut().fromBuffer(Buffer.from('050000000000000001ae', 'hex'))
-    const tx = new Tx().fromObject({
+    const tx = new Tx({
         versionBytesNum: 0,
         txInsVi: VarInt.fromNumber(1),
         txIns: [txIn],
@@ -51,9 +51,7 @@ describe('Tx', () => {
 
         // should set known defaults
         tx.versionBytesNum.should.equal(1)
-        tx.txInsVi.toNumber().should.equal(0)
         tx.txIns.length.should.equal(0)
-        tx.txOutsVi.toNumber().should.equal(0)
         tx.txOuts.length.should.equal(0)
         tx.nLockTime.should.equal(0)
     })
@@ -62,9 +60,7 @@ describe('Tx', () => {
         it('should set these known defaults', () => {
             const tx = new Tx()
             tx.versionBytesNum.should.equal(1)
-            tx.txInsVi.toNumber().should.equal(0)
             tx.txIns.length.should.equal(0)
-            tx.txOutsVi.toNumber().should.equal(0)
             tx.txOuts.length.should.equal(0)
             tx.nLockTime.should.equal(0)
         })
@@ -83,7 +79,7 @@ describe('Tx', () => {
         it('should clone a tx by buffer', () => {
             const tx1 = Tx.fromHex(tx2hex)
             tx1.toJSON = sinon.spy()
-            const tx2 = tx1.cloneByBuffer()
+            const tx2 = tx1.clone()
             ;(tx1.toJSON as sinon.SinonSpy).calledOnce.should.equal(false)
             tx2.should.not.equal(tx1)
             tx2.toHex().should.equal(tx1.toHex())
@@ -92,7 +88,7 @@ describe('Tx', () => {
 
     describe('#fromObject', () => {
         it('should set all the basic parameters', () => {
-            const tx = new Tx().fromObject({
+            const tx = new Tx({
                 versionBytesNum: 0,
                 txInsVi: VarInt.fromNumber(1),
                 txIns: [txIn],
@@ -101,9 +97,7 @@ describe('Tx', () => {
                 nLockTime: 0,
             })
             should.exist(tx.versionBytesNum)
-            should.exist(tx.txInsVi)
             should.exist(tx.txIns)
-            should.exist(tx.txOutsVi)
             should.exist(tx.txOuts)
             should.exist(tx.nLockTime)
         })
@@ -111,18 +105,14 @@ describe('Tx', () => {
 
     describe('#fromJSON', () => {
         it('should set all the basic parameters', () => {
-            const tx = new Tx().fromJSON({
+            const tx = Tx.fromJSON({
                 versionBytesNum: 0,
-                txInsVi: VarInt.fromNumber(1).toJSON(),
                 txIns: [txIn.toJSON()],
-                txOutsVi: VarInt.fromNumber(1).toJSON(),
                 txOuts: [txOut.toJSON()],
                 nLockTime: 0,
             })
             should.exist(tx.versionBytesNum)
-            should.exist(tx.txInsVi)
             should.exist(tx.txIns)
-            should.exist(tx.txOutsVi)
             should.exist(tx.txOuts)
             should.exist(tx.nLockTime)
         })
@@ -132,9 +122,7 @@ describe('Tx', () => {
         it('should recover all the basic parameters', () => {
             const json = tx.toJSON()
             should.exist(json.versionBytesNum)
-            should.exist(json.txInsVi)
             should.exist(json.txIns)
-            should.exist(json.txOutsVi)
             should.exist(json.txOuts)
             should.exist(json.nLockTime)
         })
@@ -142,45 +130,45 @@ describe('Tx', () => {
 
     describe('#fromHex', () => {
         it('should recover from this known tx', () => {
-            new Tx().fromHex(txhex).toHex().should.equal(txhex)
+            Tx.fromHex(txhex).toHex().should.equal(txhex)
         })
 
         it('should recover from this known tx from the blockchain', () => {
-            new Tx().fromHex(tx2hex).toHex().should.equal(tx2hex)
+            Tx.fromHex(tx2hex).toHex().should.equal(tx2hex)
         })
     })
 
     describe('#fromBuffer', () => {
         it('should recover from this known tx', () => {
-            new Tx().fromBuffer(txbuf).toBuffer().toString('hex').should.equal(txhex)
+            Tx.fromBuffer(txbuf).toBuffer().toString('hex').should.equal(txhex)
         })
 
         it('should recover from this known tx from the blockchain', () => {
-            new Tx().fromBuffer(tx2buf).toBuffer().toString('hex').should.equal(tx2hex)
+            Tx.fromBuffer(tx2buf).toBuffer().toString('hex').should.equal(tx2hex)
         })
     })
 
     describe('#fromBr', () => {
         it('should recover from this known tx', () => {
-            new Tx().fromBr(new Br(txbuf)).toBuffer().toString('hex').should.equal(txhex)
+            Tx.fromBr(new Br(txbuf)).toBuffer().toString('hex').should.equal(txhex)
         })
     })
 
     describe('#toHex', () => {
         it('should produce this known tx', () => {
-            new Tx().fromHex(txhex).toHex().should.equal(txhex)
+            Tx.fromHex(txhex).toHex().should.equal(txhex)
         })
     })
 
     describe('#toBuffer', () => {
         it('should produce this known tx', () => {
-            new Tx().fromBuffer(txbuf).toBuffer().toString('hex').should.equal(txhex)
+            Tx.fromBuffer(txbuf).toBuffer().toString('hex').should.equal(txhex)
         })
     })
 
     describe('#toBw', () => {
         it('should produce this known tx', () => {
-            new Tx().fromBuffer(txbuf).toBw().toBuffer().toString('hex').should.equal(txhex)
+            Tx.fromBuffer(txbuf).toBw().toBuffer().toString('hex').should.equal(txhex)
         })
     })
 
@@ -192,7 +180,6 @@ describe('Tx', () => {
         it('should return 1 for the SIGHASH_SINGLE bug', () => {
             const tx = Tx.fromBuffer(tx2buf)
             tx.txOuts.length = 1
-            tx.txOutsVi = VarInt.fromNumber(1)
             tx.sighash(Sig.SIGHASH_SINGLE, 1, new Script())
                 .toString('hex')
                 .should.equal('0000000000000000000000000000000000000000000000000000000000000001')
@@ -208,7 +195,6 @@ describe('Tx', () => {
         it('should return 1 for the SIGHASH_SINGLE bug', async () => {
             const tx = Tx.fromBuffer(tx2buf)
             tx.txOuts.length = 1
-            tx.txOutsVi = VarInt.fromNumber(1)
             const hashBuf = await tx.asyncSighash(Sig.SIGHASH_SINGLE, 1, new Script())
             hashBuf.toString('hex').should.equal('0000000000000000000000000000000000000000000000000000000000000001')
         })
@@ -294,9 +280,7 @@ describe('Tx', () => {
         it('should add an input', () => {
             const txIn = new TxIn()
             const tx = new Tx()
-            tx.txInsVi.toNumber().should.equal(0)
             tx.addTxIn(txIn)
-            tx.txInsVi.toNumber().should.equal(1)
             tx.txIns.length.should.equal(1)
         })
     })
@@ -305,9 +289,7 @@ describe('Tx', () => {
         it('should add an output', () => {
             const txOut = new TxOut()
             const tx = new Tx()
-            tx.txOutsVi.toNumber().should.equal(0)
             tx.addTxOut(txOut)
-            tx.txOutsVi.toNumber().should.equal(1)
             tx.txOuts.length.should.equal(1)
         })
     })

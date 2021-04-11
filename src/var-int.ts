@@ -10,9 +10,9 @@
 import { Bn } from './bn'
 import { Br } from './br'
 import { Bw } from './bw'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
-export class VarInt extends Struct {
+export class VarInt extends StructLegacy {
     public buf: Buffer
 
     constructor(buf?: Buffer) {

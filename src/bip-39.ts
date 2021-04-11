@@ -20,10 +20,10 @@ import { Br } from './br'
 import { Bw } from './bw'
 import { Hash } from './hash'
 import { Random } from './random'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Workers } from './workers'
 
-export class Bip39 extends Struct {
+export class Bip39 extends StructLegacy {
     public mnemonic: string
     public seed: Buffer
     public Wordlist: { value: string[]; space: string }

@@ -40,7 +40,7 @@ describe('TxVerifier', () => {
                 txOutMap.set(txHashBuf, txOutNum, txOut)
             }
 
-            const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
+            const tx = Tx.fromBuffer(Buffer.from(txhex, 'hex'))
             const txVerifier = new TxVerifier(tx, txOutMap)
             const verified = txVerifier.verify(flags)
             verified.should.equal(false)
@@ -68,7 +68,7 @@ describe('TxVerifier', () => {
                 txOutMap.set(txHashBuf, txOutNum, txOut)
             }
 
-            const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
+            const tx = Tx.fromBuffer(Buffer.from(txhex, 'hex'))
             const txVerifier = new TxVerifier(tx, txOutMap)
             const verified = txVerifier.verify(flags)
             verified.should.equal(false)
@@ -141,7 +141,7 @@ describe('TxVerifier', () => {
                     txOutMap.set(txHashBuf, txOutNum, txOut)
                 }
 
-                const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
+                const tx = Tx.fromBuffer(Buffer.from(txhex, 'hex'))
                 const verified = TxVerifier.verify(tx, txOutMap, flags)
                 verified.should.equal(true)
             })
@@ -162,7 +162,7 @@ describe('TxVerifier', () => {
                     txOutMap.set(txHashBuf, txOutNum, txOut)
                 }
 
-                const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
+                const tx = Tx.fromBuffer(Buffer.from(txhex, 'hex'))
                 const verified = await TxVerifier.asyncVerify(tx, txOutMap, flags)
                 verified.should.equal(true)
             })
@@ -191,7 +191,7 @@ describe('TxVerifier', () => {
                     txOutMap.set(txHashBuf, txOutNum, txOut)
                 }
 
-                const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
+                const tx = Tx.fromBuffer(Buffer.from(txhex, 'hex'))
 
                 const verified = TxVerifier.verify(tx, txOutMap, flags)
                 verified.should.equal(false)
@@ -213,7 +213,7 @@ describe('TxVerifier', () => {
                     txOutMap.set(txHashBuf, txOutNum, txOut)
                 }
 
-                const tx = new Tx().fromBuffer(Buffer.from(txhex, 'hex'))
+                const tx = Tx.fromBuffer(Buffer.from(txhex, 'hex'))
 
                 const verified = await TxVerifier.asyncVerify(tx, txOutMap, flags)
                 verified.should.equal(false)

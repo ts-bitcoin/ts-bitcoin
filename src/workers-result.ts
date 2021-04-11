@@ -10,9 +10,9 @@
  */
 import { Br } from './br'
 import { Bw } from './bw'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
-export class WorkersResult extends Struct {
+export class WorkersResult extends StructLegacy {
     public resbuf: Buffer
     public isError: boolean
     public id: number
@@ -21,7 +21,7 @@ export class WorkersResult extends Struct {
         super({ resbuf, isError, id })
     }
 
-    public fromResult(result: Buffer | Struct | string, id: number): this {
+    public fromResult(result: Buffer | StructLegacy | string, id: number): this {
         if (Buffer.isBuffer(result)) {
             this.resbuf = result
         } else if ((result as any).toFastBuffer) {
@@ -34,7 +34,7 @@ export class WorkersResult extends Struct {
         return this
     }
 
-    public static fromResult(result: Buffer | Struct | string, id: number): WorkersResult {
+    public static fromResult(result: Buffer | StructLegacy | string, id: number): WorkersResult {
         return new this().fromResult(result, id)
     }
 

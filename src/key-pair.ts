@@ -12,14 +12,14 @@ import { Br } from './br'
 import { Bw } from './bw'
 import { PrivKey as DefaultPrivKey } from './priv-key'
 import { PubKey } from './pub-key'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
 interface KeyPairLike {
     privKey: string
     pubKey: string
 }
 
-export class KeyPair extends Struct {
+export class KeyPair extends StructLegacy {
     public privKey: DefaultPrivKey
     public pubKey: PubKey
     public PrivKey: typeof DefaultPrivKey

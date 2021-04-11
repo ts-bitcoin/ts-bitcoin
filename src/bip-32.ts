@@ -24,10 +24,10 @@ import { Point } from './point'
 import { PrivKey as PrivKeyClass } from './priv-key'
 import { PubKey } from './pub-key'
 import { Random } from './random'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Workers } from './workers'
 
-export class Bip32 extends Struct {
+export class Bip32 extends StructLegacy {
     public versionBytesNum: number
     public depth: number
     public parentFingerPrint: Buffer

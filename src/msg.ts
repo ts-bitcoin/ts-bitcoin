@@ -9,9 +9,9 @@ import { Bw } from './bw'
 import { cmp } from './cmp'
 import { Constants, getConstants, NetworkConstants } from './constants'
 import { Hash } from './hash'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
-export class Msg extends Struct {
+export class Msg extends StructLegacy {
     public constants: NetworkConstants
     public magicNum: number
 

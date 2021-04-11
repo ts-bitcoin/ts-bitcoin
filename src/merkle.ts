@@ -6,9 +6,9 @@
  * Merkle root). A node either contains a buffer or links to two other nodes.
  */
 import { Hash } from './hash'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
-export class Merkle extends Struct {
+export class Merkle extends StructLegacy {
     public hashBuf: Buffer
     public buf: Buffer
     public merkle1: Merkle

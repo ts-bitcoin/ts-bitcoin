@@ -39,7 +39,7 @@ import * as isHex from 'is-hex'
 import { Br } from './br'
 import { Bw } from './bw'
 
-export class Struct {
+export class StructLegacy {
     constructor(obj?: any) {
         this.fromObject(obj)
     }
@@ -56,7 +56,7 @@ export class Struct {
         return this
     }
 
-    public static fromObject<T extends Struct>(this: (new () => T) & typeof Struct, obj: any): T {
+    public static fromObject<T extends StructLegacy>(this: (new () => T) & typeof StructLegacy, obj: any): T {
         return new this().fromObject(obj) as T
     }
 
@@ -67,7 +67,7 @@ export class Struct {
         throw new Error('not implemented')
     }
 
-    public static fromBr<T extends Struct>(this: (new () => T) & typeof Struct, br: Br): T {
+    public static fromBr<T extends StructLegacy>(this: (new () => T) & typeof StructLegacy, br: Br): T {
         return new this().fromBr(br) as T
     }
 
@@ -78,7 +78,7 @@ export class Struct {
         throw new Error('not implemented')
     }
 
-    public static asyncFromBr<T extends Struct>(this: (new () => T) & typeof Struct, br: Br): Promise<T> {
+    public static asyncFromBr<T extends StructLegacy>(this: (new () => T) & typeof StructLegacy, br: Br): Promise<T> {
         return new this().asyncFromBr(br) as Promise<T>
     }
 
@@ -148,7 +148,11 @@ export class Struct {
         return this.fromBr(br, ...rest)
     }
 
-    public static fromBuffer<T extends Struct>(this: (new () => T) & typeof Struct, buf: Buffer, ...rest: any[]): T {
+    public static fromBuffer<T extends StructLegacy>(
+        this: (new () => T) & typeof StructLegacy,
+        buf: Buffer,
+        ...rest: any[]
+    ): T {
         return new this().fromBuffer(buf, ...rest) as T
     }
 
@@ -160,8 +164,8 @@ export class Struct {
         return this.asyncFromBr(br, ...rest)
     }
 
-    public static asyncFromBuffer<T extends Struct>(
-        this: (new () => T) & typeof Struct,
+    public static asyncFromBuffer<T extends StructLegacy>(
+        this: (new () => T) & typeof StructLegacy,
         buf: Buffer,
         ...rest: any[]
     ): Promise<T> {
@@ -179,8 +183,8 @@ export class Struct {
         }
     }
 
-    public static fromFastBuffer<T extends Struct>(
-        this: (new () => T) & typeof Struct,
+    public static fromFastBuffer<T extends StructLegacy>(
+        this: (new () => T) & typeof StructLegacy,
         buf: Buffer,
         ...rest: any[]
     ): T {
@@ -229,7 +233,11 @@ export class Struct {
         return this.fromBuffer(buf, ...rest)
     }
 
-    public static fromHex<T extends Struct>(this: (new () => T) & typeof Struct, hex: string, ...rest: any[]): T {
+    public static fromHex<T extends StructLegacy>(
+        this: (new () => T) & typeof StructLegacy,
+        hex: string,
+        ...rest: any[]
+    ): T {
         return new this().fromHex(hex, ...rest) as T
     }
 
@@ -241,8 +249,8 @@ export class Struct {
         return this.asyncFromBuffer(buf, ...rest)
     }
 
-    public static asyncFromHex<T extends Struct>(
-        this: (new () => T) & typeof Struct,
+    public static asyncFromHex<T extends StructLegacy>(
+        this: (new () => T) & typeof StructLegacy,
         hex: string,
         ...rest: any[]
     ): Promise<T> {
@@ -257,7 +265,11 @@ export class Struct {
         return this.fromFastBuffer(buf, ...rest)
     }
 
-    public static fromFastHex<T extends Struct>(this: (new () => T) & typeof Struct, hex: string, ...rest: any[]): T {
+    public static fromFastHex<T extends StructLegacy>(
+        this: (new () => T) & typeof StructLegacy,
+        hex: string,
+        ...rest: any[]
+    ): T {
         return new this().fromFastHex(hex, ...rest) as T
     }
 
@@ -280,7 +292,11 @@ export class Struct {
         return this.fromHex(str, ...rest)
     }
 
-    public static fromString<T extends Struct>(this: (new () => T) & typeof Struct, str: string, ...rest: any[]): T {
+    public static fromString<T extends StructLegacy>(
+        this: (new () => T) & typeof StructLegacy,
+        str: string,
+        ...rest: any[]
+    ): T {
         return new this().fromString(str, ...rest) as T
     }
 
@@ -291,8 +307,8 @@ export class Struct {
         return this.asyncFromHex(str, ...rest)
     }
 
-    public static asyncFromString<T extends Struct>(
-        this: (new () => T) & typeof Struct,
+    public static asyncFromString<T extends StructLegacy>(
+        this: (new () => T) & typeof StructLegacy,
         str: string,
         ...rest: any[]
     ): Promise<T> {
@@ -311,7 +327,7 @@ export class Struct {
         throw new Error('not implemented')
     }
 
-    public static fromJSON<T extends Struct>(this: (new () => T) & typeof Struct, json): T {
+    public static fromJSON<T extends StructLegacy>(this: (new () => T) & typeof StructLegacy, json): T {
         return new this().fromJSON(json) as T
     }
 
@@ -319,7 +335,11 @@ export class Struct {
         throw new Error('not implemented')
     }
 
-    public static asyncFromJSON<T extends Struct>(this: (new () => T) & typeof Struct, json, ...rest): Promise<T> {
+    public static asyncFromJSON<T extends StructLegacy>(
+        this: (new () => T) & typeof StructLegacy,
+        json,
+        ...rest
+    ): Promise<T> {
         return new this().asyncFromJSON(json, ...rest) as Promise<T>
     }
 
@@ -375,22 +395,22 @@ export class Struct {
     }
 
     public cloneByBuffer(): this {
-        return new (this.constructor as typeof Struct)().fromBuffer(this.toBuffer()) as any
+        return new (this.constructor as typeof StructLegacy)().fromBuffer(this.toBuffer()) as any
     }
 
     public cloneByFastBuffer(): this {
-        return new (this.constructor as typeof Struct)().fromFastBuffer(this.toFastBuffer()) as any
+        return new (this.constructor as typeof StructLegacy)().fromFastBuffer(this.toFastBuffer()) as any
     }
 
     public cloneByHex(): this {
-        return new (this.constructor as typeof Struct)().fromHex(this.toHex()) as any
+        return new (this.constructor as typeof StructLegacy)().fromHex(this.toHex()) as any
     }
 
     public cloneByString(): this {
-        return new (this.constructor as typeof Struct)().fromString(this.toString()) as any
+        return new (this.constructor as typeof StructLegacy)().fromString(this.toString()) as any
     }
 
     public cloneByJSON(): this {
-        return new (this.constructor as typeof Struct)().fromJSON(this.toJSON()) as any
+        return new (this.constructor as typeof StructLegacy)().fromJSON(this.toJSON()) as any
     }
 }

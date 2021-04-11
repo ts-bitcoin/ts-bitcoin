@@ -6,9 +6,9 @@
  */
 import { Br } from './br'
 import { Bw } from './bw'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
-export class Inv extends Struct {
+export class Inv extends StructLegacy {
     public static readonly MSG_TX = 1
     public static readonly MSG_BLOCK = 2
     public static readonly MSG_FILTERED_BLOCK = 3

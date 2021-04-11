@@ -20,7 +20,7 @@ import { cmp } from './cmp'
 import { OpCode } from './op-code'
 import { PubKey } from './pub-key'
 import { Sig } from './sig'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
 interface ScriptChunk {
     buf?: Buffer
@@ -28,7 +28,7 @@ interface ScriptChunk {
     opCodeNum: number
 }
 
-export class Script extends Struct {
+export class Script extends StructLegacy {
     public chunks: ScriptChunk[]
 
     constructor(chunks: ScriptChunk[] = []) {

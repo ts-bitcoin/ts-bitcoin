@@ -11,7 +11,7 @@ import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Sig } from './sig'
 import { SigOperations, SigOperationsLike } from './sig-operations'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Tx } from './tx'
 import { TxIn } from './tx-in'
 import { TxOut } from './tx-out'
@@ -36,7 +36,7 @@ interface TxBuilderLike {
     hashCache: HashCacheLike
 }
 
-export class TxBuilder extends Struct {
+export class TxBuilder extends StructLegacy {
     public tx: Tx
     public txIns: TxIn[]
     public txOuts: TxOut[]
@@ -109,7 +109,7 @@ export class TxBuilder extends Struct {
     }
 
     public fromJSON(json: TxBuilderLike): this {
-        this.tx = new Tx().fromHex(json.tx)
+        this.tx = Tx.fromHex(json.tx)
         this.txIns = json.txIns.map((txIn) => TxIn.fromHex(txIn))
         this.txOuts = json.txOuts.map((txOut) => TxOut.fromHex(txOut))
         this.uTxOutMap = new TxOutMap().fromJSON(json.uTxOutMap)
@@ -419,7 +419,6 @@ export class TxBuilder extends Struct {
                     // Remove the change amount since it is less than dust and the
                     // builder has requested dust be sent to fees.
                     this.tx.txOuts.pop()
-                    this.tx.txOutsVi = VarInt.fromNumber(this.tx.txOutsVi.toNumber() - 1)
                     this.feeAmountBn = this.feeAmountBn.add(this.changeAmountBn)
                     this.changeAmountBn = new Bn(0)
                 } else {

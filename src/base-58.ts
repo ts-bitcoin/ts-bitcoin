@@ -5,9 +5,9 @@
  * Base58 (no check)
  */
 import * as bs58 from 'bs58'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
-export class Base58 extends Struct {
+export class Base58 extends StructLegacy {
     public buf: Buffer
 
     constructor(buf?: Buffer) {

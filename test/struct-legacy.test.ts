@@ -2,41 +2,41 @@
 import should = require('should')
 import * as sinon from 'sinon'
 import { Br } from '../src/br'
-import { Struct } from '../src/struct'
+import { StructLegacy } from '../src/struct-legacy'
 
-describe('Struct', () => {
+describe('StructLegacy', () => {
     it('should make a new struct', () => {
-        let struct = new Struct()
+        let struct = new StructLegacy()
         should.exist(struct)
-        struct = new Struct()
+        struct = new StructLegacy()
         should.exist(struct)
     })
 
     describe('#fromObject', () => {
         it('should set from an object', () => {
-            ;(new Struct().fromObject({ test: 'test' }) as any).test.should.equal('test')
-            Object.keys(new Struct().fromObject({})).length.should.equal(0)
+            ;(new StructLegacy().fromObject({ test: 'test' }) as any).test.should.equal('test')
+            Object.keys(new StructLegacy().fromObject({})).length.should.equal(0)
         })
     })
 
     describe('@fromObject', () => {
         it('should set from an object', () => {
-            ;(Struct.fromObject({ test: 'test' }) as any).test.should.equal('test')
-            Object.keys(Struct.fromObject({})).length.should.equal(0)
+            ;(StructLegacy.fromObject({ test: 'test' }) as any).test.should.equal('test')
+            Object.keys(StructLegacy.fromObject({})).length.should.equal(0)
         })
     })
 
     describe('#fromBr', () => {
         it('should throw an error if arg is not a Br', () => {
             ;(function () {
-                new Struct().fromBr({} as any)
+                new StructLegacy().fromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
                 const br = new Br()
-                new Struct().fromBr(br)
+                new StructLegacy().fromBr(br)
             }.should.throw('not implemented'))
         })
     })
@@ -44,14 +44,14 @@ describe('Struct', () => {
     describe('@fromBr', () => {
         it('should throw an error if arg is not a Br', () => {
             ;(function () {
-                Struct.fromBr({} as any)
+                StructLegacy.fromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
                 const br = new Br()
-                Struct.fromBr(br)
+                StructLegacy.fromBr(br)
             }.should.throw('not implemented'))
         })
     })
@@ -59,14 +59,14 @@ describe('Struct', () => {
     describe('#asyncFromBr', () => {
         it('should throw an error if arg is not a Br', () => {
             ;(function () {
-                new Struct().asyncFromBr({} as any)
+                new StructLegacy().asyncFromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
                 const br = new Br()
-                new Struct().asyncFromBr(br)
+                new StructLegacy().asyncFromBr(br)
             }.should.throw('not implemented'))
         })
     })
@@ -74,14 +74,14 @@ describe('Struct', () => {
     describe('@asyncFromBr', () => {
         it('should throw an error if arg is not a Br', () => {
             ;(function () {
-                Struct.asyncFromBr({} as any)
+                StructLegacy.asyncFromBr({} as any)
             }.should.throw('br must be a buffer reader'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
                 const br = new Br()
-                Struct.asyncFromBr(br)
+                StructLegacy.asyncFromBr(br)
             }.should.throw('not implemented'))
         })
     })
@@ -89,7 +89,7 @@ describe('Struct', () => {
     describe('#toBw', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().toBw()
+                new StructLegacy().toBw()
             }.should.throw('not implemented'))
         })
     })
@@ -97,7 +97,7 @@ describe('Struct', () => {
     describe('#asyncToBw', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().asyncToBw()
+                new StructLegacy().asyncToBw()
             }.should.throw('not implemented'))
         })
     })
@@ -105,7 +105,7 @@ describe('Struct', () => {
     describe('#genFromBuffers', () => {
         it('should throw an error', () => {
             ;(function () {
-                new Struct().genFromBuffers().next()
+                new StructLegacy().genFromBuffers().next()
             }.should.throw('not implemented'))
         })
     })
@@ -113,14 +113,14 @@ describe('Struct', () => {
     describe('#fromBuffer', () => {
         it('should throw an error if arg is not a buffer', () => {
             ;(function () {
-                new Struct().fromBuffer({} as any)
+                new StructLegacy().fromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
                 const buf = Buffer.from([])
-                new Struct().fromBuffer(buf)
+                new StructLegacy().fromBuffer(buf)
             }.should.throw('not implemented'))
         })
     })
@@ -128,14 +128,14 @@ describe('Struct', () => {
     describe('@fromBuffer', () => {
         it('should throw an error if arg is not a buffer', () => {
             ;(function () {
-                Struct.fromBuffer({} as any)
+                StructLegacy.fromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
                 const buf = Buffer.from([])
-                Struct.fromBuffer(buf)
+                StructLegacy.fromBuffer(buf)
             }.should.throw('not implemented'))
         })
     })
@@ -143,14 +143,14 @@ describe('Struct', () => {
     describe('#asyncFromBuffer', () => {
         it('should throw an error if arg is not a buffer', () => {
             ;(function () {
-                new Struct().asyncFromBuffer({} as any)
+                new StructLegacy().asyncFromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
                 const buf = Buffer.from([])
-                new Struct().asyncFromBuffer(buf)
+                new StructLegacy().asyncFromBuffer(buf)
             }.should.throw('not implemented'))
         })
     })
@@ -158,21 +158,21 @@ describe('Struct', () => {
     describe('@asyncFromBuffer', () => {
         it('should throw an error if arg is not a buffer', () => {
             ;(function () {
-                Struct.asyncFromBuffer({} as any)
+                StructLegacy.asyncFromBuffer({} as any)
             }.should.throw('buf must be a buffer'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
                 const buf = Buffer.from([])
-                Struct.asyncFromBuffer(buf)
+                StructLegacy.asyncFromBuffer(buf)
             }.should.throw('not implemented'))
         })
     })
 
     describe('#fromFastBuffer', () => {
         it('should call fromBuffer', () => {
-            let struct = new Struct()
+            let struct = new StructLegacy()
             struct.fromBuffer = sinon.spy()
             struct = Object.create(struct)
             const buf = Buffer.from('00', 'hex')
@@ -181,7 +181,7 @@ describe('Struct', () => {
         })
 
         it('should not call fromBuffer if buf length is zero', () => {
-            let struct = new Struct()
+            let struct = new StructLegacy()
             struct.fromBuffer = sinon.spy()
             struct = Object.create(struct)
             const buf = Buffer.from('', 'hex')
@@ -192,26 +192,26 @@ describe('Struct', () => {
 
     describe('@fromFastBuffer', () => {
         it('should call fromBuffer', () => {
-            class StructMock extends Struct {}
-            StructMock.prototype.fromBuffer = sinon.spy()
+            class StructLegacyMock extends StructLegacy {}
+            StructLegacyMock.prototype.fromBuffer = sinon.spy()
             const buf = Buffer.from('00', 'hex')
-            StructMock.fromFastBuffer(buf)
-            ;(StructMock.prototype.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
+            StructLegacyMock.fromFastBuffer(buf)
+            ;(StructLegacyMock.prototype.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
         })
 
         it('should not call fromBuffer if buf length is zero', () => {
-            class StructMock extends Struct {}
-            StructMock.prototype.fromBuffer = sinon.spy()
+            class StructLegacyMock extends StructLegacy {}
+            StructLegacyMock.prototype.fromBuffer = sinon.spy()
             const buf = Buffer.from('', 'hex')
-            StructMock.fromFastBuffer(buf)
-            ;(StructMock.prototype.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(false)
+            StructLegacyMock.fromFastBuffer(buf)
+            ;(StructLegacyMock.prototype.fromBuffer as sinon.SinonSpy).calledOnce.should.equal(false)
         })
     })
 
     describe('#toBuffer', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().toBuffer()
+                new StructLegacy().toBuffer()
             }.should.throw('not implemented'))
         })
     })
@@ -219,14 +219,14 @@ describe('Struct', () => {
     describe('#asyncToBuffer', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().asyncToBuffer()
+                new StructLegacy().asyncToBuffer()
             }.should.throw('not implemented'))
         })
     })
 
     describe('#toFastBuffer', () => {
         it('should call toBuffer', () => {
-            let struct = new Struct()
+            let struct = new StructLegacy()
             struct.toBuffer = sinon.spy()
             struct = Object.create(struct)
             ;(struct as any).property = 'test'
@@ -236,7 +236,7 @@ describe('Struct', () => {
         })
 
         it('should return zero-length buffer if object has no keys', () => {
-            let struct = new Struct()
+            let struct = new StructLegacy()
             struct.toBuffer = sinon.spy()
             struct = Object.create(struct)
             Object.keys(struct).length.should.equal(0)
@@ -248,13 +248,13 @@ describe('Struct', () => {
     describe('#fromHex', () => {
         it('should throw an error for invalid hex string', () => {
             ;(function () {
-                new Struct().fromHex('x00')
+                new StructLegacy().fromHex('x00')
             }.should.throw('invalid hex string'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().fromHex('00')
+                new StructLegacy().fromHex('00')
             }.should.throw('not implemented'))
         })
     })
@@ -262,13 +262,13 @@ describe('Struct', () => {
     describe('@fromHex', () => {
         it('should throw an error for invalid hex string', () => {
             ;(function () {
-                Struct.fromHex('x00')
+                StructLegacy.fromHex('x00')
             }.should.throw('invalid hex string'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
-                Struct.fromHex('00')
+                StructLegacy.fromHex('00')
             }.should.throw('not implemented'))
         })
     })
@@ -276,13 +276,13 @@ describe('Struct', () => {
     describe('#fromFastHex', () => {
         it('should throw an error for invalid hex string', () => {
             ;(function () {
-                new Struct().fromFastHex('x00')
+                new StructLegacy().fromFastHex('x00')
             }.should.throw('invalid hex string'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().fromFastHex('00')
+                new StructLegacy().fromFastHex('00')
             }.should.throw('not implemented'))
         })
     })
@@ -290,13 +290,13 @@ describe('Struct', () => {
     describe('@fromFastHex', () => {
         it('should throw an error for invalid hex string', () => {
             ;(function () {
-                Struct.fromFastHex('x00')
+                StructLegacy.fromFastHex('x00')
             }.should.throw('invalid hex string'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
-                Struct.fromFastHex('00')
+                StructLegacy.fromFastHex('00')
             }.should.throw('not implemented'))
         })
     })
@@ -304,7 +304,7 @@ describe('Struct', () => {
     describe('#toHex', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().toHex()
+                new StructLegacy().toHex()
             }.should.throw('not implemented'))
         })
     })
@@ -312,14 +312,14 @@ describe('Struct', () => {
     describe('#asyncToHex', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().asyncToHex()
+                new StructLegacy().asyncToHex()
             }.should.throw('not implemented'))
         })
     })
 
     describe('#toFastHex', () => {
         it('should return an empty string for blank data', () => {
-            const hex = new Struct().toFastHex()
+            const hex = new StructLegacy().toFastHex()
             ;(typeof hex === 'string').should.equal(true)
             hex.length.should.equal(0)
         })
@@ -328,13 +328,13 @@ describe('Struct', () => {
     describe('#fromString', () => {
         it('should throw an error for invalid string', () => {
             ;(function () {
-                new Struct().fromString({} as any)
+                new StructLegacy().fromString({} as any)
             }.should.throw('str must be a string'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().fromString('00')
+                new StructLegacy().fromString('00')
             }.should.throw('not implemented'))
         })
     })
@@ -342,13 +342,13 @@ describe('Struct', () => {
     describe('@fromString', () => {
         it('should throw an error for invalid string', () => {
             ;(function () {
-                Struct.fromString({} as any)
+                StructLegacy.fromString({} as any)
             }.should.throw('str must be a string'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
-                Struct.fromString('00')
+                StructLegacy.fromString('00')
             }.should.throw('not implemented'))
         })
     })
@@ -356,13 +356,13 @@ describe('Struct', () => {
     describe('#asyncFromString', () => {
         it('should throw an error for invalid string', () => {
             ;(function () {
-                new Struct().asyncFromString({} as any)
+                new StructLegacy().asyncFromString({} as any)
             }.should.throw('str must be a string'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().asyncFromString('00')
+                new StructLegacy().asyncFromString('00')
             }.should.throw('not implemented'))
         })
     })
@@ -370,13 +370,13 @@ describe('Struct', () => {
     describe('@asyncFromString', () => {
         it('should throw an error for invalid string', () => {
             ;(function () {
-                Struct.asyncFromString({} as any)
+                StructLegacy.asyncFromString({} as any)
             }.should.throw('str must be a string'))
         })
 
         it('should throw a not implemented error', () => {
             ;(function () {
-                Struct.asyncFromString('00')
+                StructLegacy.asyncFromString('00')
             }.should.throw('not implemented'))
         })
     })
@@ -384,7 +384,7 @@ describe('Struct', () => {
     describe('#toString', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().toString()
+                new StructLegacy().toString()
             }.should.throw('not implemented'))
         })
     })
@@ -392,7 +392,7 @@ describe('Struct', () => {
     describe('#asyncToString', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().asyncToString()
+                new StructLegacy().asyncToString()
             }.should.throw('not implemented'))
         })
     })
@@ -400,7 +400,7 @@ describe('Struct', () => {
     describe('#fromJSON', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().fromJSON(undefined)
+                new StructLegacy().fromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
@@ -408,7 +408,7 @@ describe('Struct', () => {
     describe('@fromJSON', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                Struct.fromJSON(undefined)
+                StructLegacy.fromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
@@ -416,7 +416,7 @@ describe('Struct', () => {
     describe('#asyncFromJSON', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().asyncFromJSON(undefined)
+                new StructLegacy().asyncFromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
@@ -424,16 +424,16 @@ describe('Struct', () => {
     describe('@asyncFromJSON', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                Struct.asyncFromJSON(undefined)
+                StructLegacy.asyncFromJSON(undefined)
             }.should.throw('not implemented'))
         })
     })
 
     describe('#toJSON', () => {
         it('should convert an object into a json string', () => {
-            const obj = new Struct()
+            const obj = new StructLegacy()
             ;(obj as any).arr = [1, 2, 3, 4]
-            ;(obj as any).anotherObj = new Struct()
+            ;(obj as any).anotherObj = new StructLegacy()
 
             const json = obj.toJSON()
 
@@ -445,14 +445,14 @@ describe('Struct', () => {
     describe('#asyncToJSON', () => {
         it('should throw a not implemented error', () => {
             ;(function () {
-                new Struct().asyncToJSON()
+                new StructLegacy().asyncToJSON()
             }.should.throw('not implemented'))
         })
     })
 
     describe('#clone', () => {
         it('should call cloneByJSON', () => {
-            const struct = new Struct()
+            const struct = new StructLegacy()
             struct.cloneByJSON = sinon.spy()
             struct.clone()
             ;(struct.cloneByJSON as sinon.SinonSpy).calledOnce.should.equal(true)
@@ -461,7 +461,7 @@ describe('Struct', () => {
 
     describe('#cloneByBuffer', () => {
         it('should call toBuffer', () => {
-            class Struct2 extends Struct {
+            class StructLegacy2 extends StructLegacy {
                 public toBuffer() {
                     return {} as any
                 }
@@ -470,7 +470,7 @@ describe('Struct', () => {
                     return this
                 }
             }
-            const struct = new Struct2()
+            const struct = new StructLegacy2()
             struct.toBuffer = sinon.spy()
             struct.cloneByBuffer()
             ;(struct.toBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
@@ -479,7 +479,7 @@ describe('Struct', () => {
 
     describe('#cloneByFastBuffer', () => {
         it('should call toFastBuffer', () => {
-            class Struct2 extends Struct {
+            class StructLegacy2 extends StructLegacy {
                 public toFastBuffer() {
                     return {} as any
                 }
@@ -488,7 +488,7 @@ describe('Struct', () => {
                     return this
                 }
             }
-            const struct = new Struct2()
+            const struct = new StructLegacy2()
             struct.toFastBuffer = sinon.spy()
             struct.cloneByFastBuffer()
             ;(struct.toFastBuffer as sinon.SinonSpy).calledOnce.should.equal(true)
@@ -497,7 +497,7 @@ describe('Struct', () => {
 
     describe('#cloneByHex', () => {
         it('should call toHex', () => {
-            class Struct2 extends Struct {
+            class StructLegacy2 extends StructLegacy {
                 public toHex() {
                     return {} as any
                 }
@@ -506,7 +506,7 @@ describe('Struct', () => {
                     return this
                 }
             }
-            const struct = new Struct2()
+            const struct = new StructLegacy2()
             struct.toHex = sinon.spy()
             struct.cloneByHex()
             ;(struct.toHex as sinon.SinonSpy).calledOnce.should.equal(true)
@@ -515,7 +515,7 @@ describe('Struct', () => {
 
     describe('#cloneByString', () => {
         it('should call toString', () => {
-            class Struct2 extends Struct {
+            class StructLegacy2 extends StructLegacy {
                 public toString() {
                     return {} as any
                 }
@@ -524,7 +524,7 @@ describe('Struct', () => {
                     return this
                 }
             }
-            const struct = new Struct2()
+            const struct = new StructLegacy2()
             struct.toString = sinon.spy()
             struct.cloneByString()
             ;(struct.toString as sinon.SinonSpy).calledOnce.should.equal(true)
@@ -533,7 +533,7 @@ describe('Struct', () => {
 
     describe('#cloneByJSON', () => {
         it('should call toJSON', () => {
-            class Struct2 extends Struct {
+            class StructLegacy2 extends StructLegacy {
                 public toJSON() {
                     return {}
                 }
@@ -542,7 +542,7 @@ describe('Struct', () => {
                     return this
                 }
             }
-            const struct = new Struct2()
+            const struct = new StructLegacy2()
             struct.toJSON = sinon.spy()
             struct.cloneByJSON()
             ;(struct.toJSON as sinon.SinonSpy).calledOnce.should.equal(true)

@@ -8,7 +8,7 @@
  * source code. The way you probably want to use this is with
  * new OpCode(str).toNumber() or new OpCode(num).toString()
  */
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
 enum OpCodeValue {
     // push value
@@ -158,7 +158,7 @@ enum OpCodeValue {
     OP_INVALIDOPCODE = 0xff,
 }
 
-class _OpCode extends Struct {
+class _OpCode extends StructLegacy {
     public static str: { [key in OpCodeValue]: keyof typeof OpCodeValue } = {} as any
 
     public num: number

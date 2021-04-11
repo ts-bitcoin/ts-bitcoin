@@ -9,12 +9,12 @@ import { Bn } from './bn'
 import { Br } from './br'
 import { Bw } from './bw'
 import { Constants as Cst } from './constants'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { VarInt } from './var-int'
 
 const Constants = Cst.Default
 
-export class Version extends Struct {
+export class Version extends StructLegacy {
     public versionBytesNum: number
     public servicesBuf: Buffer
     public timeBn: Bn

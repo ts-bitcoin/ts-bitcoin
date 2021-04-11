@@ -10,7 +10,7 @@ import { Bn } from './bn'
 import { Br } from './br'
 import { Bw } from './bw'
 import { Script } from './script'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { VarInt } from './var-int'
 
 export interface TxOutLike {
@@ -19,7 +19,7 @@ export interface TxOutLike {
     script: string
 }
 
-export class TxOut extends Struct {
+export class TxOut extends StructLegacy {
     public valueBn: Bn
     public scriptVi: VarInt
     public script: Script

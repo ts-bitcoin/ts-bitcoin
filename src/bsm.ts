@@ -16,10 +16,10 @@ import { Ecdsa } from './ecdsa'
 import { Hash } from './hash'
 import { KeyPair } from './key-pair'
 import { Sig } from './sig'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Workers } from './workers'
 
-export class Bsm extends Struct {
+export class Bsm extends StructLegacy {
     public static readonly magicBytes = Buffer.from('Bitcoin Signed Message:\n')
 
     public messageBuf: Buffer

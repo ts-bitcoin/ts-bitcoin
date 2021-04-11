@@ -24,7 +24,7 @@ import { Point } from './point'
 import { PubKey } from './pub-key'
 import { Random } from './random'
 import { Sig } from './sig'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Workers } from './workers'
 
 interface EcdsaLike {
@@ -36,7 +36,7 @@ interface EcdsaLike {
     verified: boolean
 }
 
-export class Ecdsa extends Struct {
+export class Ecdsa extends StructLegacy {
     public sig: Sig
     public keyPair: KeyPair
     public hashBuf: Buffer

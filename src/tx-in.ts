@@ -12,7 +12,7 @@ import { Bw } from './bw'
 import { OpCode } from './op-code'
 import { PubKey } from './pub-key'
 import { Script } from './script'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { TxOut } from './tx-out'
 import { VarInt } from './var-int'
 
@@ -24,7 +24,7 @@ export interface TxInLike {
     nSequence: number
 }
 
-export class TxIn extends Struct {
+export class TxIn extends StructLegacy {
     /* Interpret sequence numbers as relative lock-time constraints. */
     public static readonly LOCKTIME_VERIFY_SEQUENCE = 1 << 0
 

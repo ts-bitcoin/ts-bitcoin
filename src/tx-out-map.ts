@@ -8,7 +8,7 @@
  * TxOutMap is necessary when signing a transction to get the script and value
  * of that output which is plugged into the sighash algorithm.
  */
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Tx } from './tx'
 import { TxOut } from './tx-out'
 
@@ -16,7 +16,7 @@ export interface TxOutMapLike {
     [label: string]: string
 }
 
-export class TxOutMap extends Struct {
+export class TxOutMap extends StructLegacy {
     public map: Map<string, TxOut>
 
     constructor(map: Map<string, TxOut> = new Map()) {

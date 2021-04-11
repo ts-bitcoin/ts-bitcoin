@@ -4,7 +4,7 @@
  *
  * For use in sighash.
  */
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 
 export interface HashCacheLike {
     prevoutsHashBuf: string
@@ -12,7 +12,7 @@ export interface HashCacheLike {
     outputsHashBuf: string
 }
 
-export class HashCache extends Struct {
+export class HashCache extends StructLegacy {
     public prevoutsHashBuf: Buffer
     public sequenceHashBuf: Buffer
     public outputsHashBuf: Buffer

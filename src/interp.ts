@@ -25,7 +25,7 @@ import { OpCode } from './op-code'
 import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Sig } from './sig'
-import { Struct } from './struct'
+import { StructLegacy } from './struct-legacy'
 import { Tx, TxLike } from './tx'
 import { TxIn } from './tx-in'
 
@@ -43,7 +43,7 @@ interface InterpLike {
     flags: number
 }
 
-export class Interp extends Struct {
+export class Interp extends StructLegacy {
     public static readonly true = Buffer.from([1])
     public static readonly false = Buffer.from([])
 
@@ -178,7 +178,7 @@ export class Interp extends Struct {
 
     public fromJSON(json: InterpLike): this {
         this.fromJSONNoTx(json)
-        this.tx = json.tx ? new Tx().fromJSON(json.tx) : undefined
+        this.tx = json.tx ? Tx.fromJSON(json.tx) : undefined
         return this
     }
     /**
@@ -215,7 +215,7 @@ export class Interp extends Struct {
         const txbuflen = br.readVarIntNum()
         if (txbuflen > 0) {
             const txbuf = br.read(txbuflen)
-            this.tx = new Tx().fromFastBuffer(txbuf)
+            this.tx = Tx.fromBuffer(txbuf)
         }
         return this
     }
@@ -260,7 +260,7 @@ export class Interp extends Struct {
         bw.writeVarIntNum(jsonNoTxBuf.length)
         bw.write(jsonNoTxBuf)
         if (this.tx) {
-            const txbuf = this.tx.toFastBuffer()
+            const txbuf = this.tx.toBuffer()
             bw.writeVarIntNum(txbuf.length)
             bw.write(txbuf)
         } else {
