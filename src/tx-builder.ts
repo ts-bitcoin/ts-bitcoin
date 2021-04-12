@@ -212,7 +212,7 @@ export class TxBuilder extends StructLegacy {
         ) {
             throw new Error('invalid one of: txHashBuf, txOutNum, txOut, script')
         }
-        this.txIns.push(TxIn.fromProperties(txHashBuf, txOutNum, script, nSequence))
+        this.txIns.push(new TxIn({ txHashBuf, txOutNum, script, nSequence }))
         this.sigOperations.setMany(txHashBuf, txOutNum, [])
         this.uTxOutMap.set(txHashBuf, txOutNum, txOut)
         return this
@@ -245,7 +245,11 @@ export class TxBuilder extends StructLegacy {
         if (!Buffer.isBuffer(txHashBuf) || typeof txOutNum !== 'number' || !(txOut instanceof TxOut)) {
             throw new Error('invalid one of: txHashBuf, txOutNum, txOut')
         }
-        this.txIns.push(new TxIn().fromObject({ nSequence }).fromPubKeyHashTxOut(txHashBuf, txOutNum, txOut, pubKey))
+        const txIn = TxIn.fromPubKeyHashTxOut(txHashBuf, txOutNum, txOut, pubKey)
+        if (nSequence) {
+            txIn.setSequence(nSequence)
+        }
+        this.txIns.push(txIn)
         this.uTxOutMap.set(txHashBuf, txOutNum, txOut)
         const addressStr = Address.fromTxOutScript(txOut.script).toString()
         this.addSigOperation(txHashBuf, txOutNum, 0, 'sig', addressStr, nHashType)
@@ -476,7 +480,6 @@ export class TxBuilder extends StructLegacy {
     public fillSig(nIn: number, nScriptChunk: number, sig: Sig): this {
         const txIn = this.tx.txIns[nIn]
         txIn.script.chunks[nScriptChunk] = new Script().writeBuffer(sig.toTxFormat()).chunks[0]
-        txIn.scriptVi = VarInt.fromNumber(txIn.script.toBuffer().length)
         return this
     }
 

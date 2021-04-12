@@ -7,19 +7,16 @@ import { KeyPair } from '../src/key-pair'
 import { Script } from '../src/script'
 import { TxIn } from '../src/tx-in'
 import { TxOut } from '../src/tx-out'
-import { VarInt } from '../src/var-int'
 
 describe('TxIn', () => {
     const txHashBuf = Buffer.alloc(32)
     txHashBuf.fill(0)
     const txOutNum = 0
     const script = new Script().fromString('OP_CHECKMULTISIG')
-    const scriptVi = VarInt.fromNumber(script.toBuffer().length)
     const nSequence = 0
-    const txIn = new TxIn().fromObject({
+    const txIn = new TxIn({
         txHashBuf,
         txOutNum,
-        scriptVi,
         script,
         nSequence,
     })
@@ -31,62 +28,42 @@ describe('TxIn', () => {
         should.exist(txIn)
         const txHashBuf = Buffer.alloc(32)
         txHashBuf.fill(0)
-        new TxIn(txHashBuf, 0).txHashBuf.length.should.equal(32)
+        new TxIn({ txHashBuf }).txHashBuf.length.should.equal(32)
     })
 
     describe('#initialize', () => {
         it('should default to 0xffffffff nSequence', () => {
             new TxIn().nSequence.should.equal(0xffffffff)
         })
-    })
-
-    describe('#fromObject', () => {
         it('should set these vars', () => {
-            const txIn = new TxIn().fromObject({
+            const txIn = new TxIn({
                 txHashBuf,
                 txOutNum,
-                scriptVi,
                 script,
                 nSequence,
             })
             should.exist(txIn.txHashBuf)
             should.exist(txIn.txOutNum)
-            should.exist(txIn.scriptVi)
             should.exist(txIn.script)
             should.exist(txIn.nSequence)
         })
     })
 
-    describe('#fromProperties', () => {
-        it('should make a new txIn', () => {
-            const txIn = new TxIn().fromProperties(txHashBuf, txOutNum, script, nSequence)
-            should.exist(txIn.scriptVi)
-        })
-    })
-
-    describe('@fromProperties', () => {
-        it('should make a new txIn', () => {
-            const txIn = TxIn.fromProperties(txHashBuf, txOutNum, script, nSequence)
-            should.exist(txIn.scriptVi)
-        })
-    })
-
     describe('#setScript', () => {
         it('should calculate the varInt size correctly', () => {
-            const txIn2 = new TxIn().fromJSON(txIn.toJSON())
+            const txIn2 = TxIn.fromJSON(txIn.toJSON())
             txIn2
                 .setScript(new Script().fromString('OP_RETURN OP_RETURN OP_RETURN'))
-                .scriptVi.toNumber()
-                .should.equal(3)
+                .script.toBuffer()
+                .length.should.equal(3)
         })
     })
 
     describe('#fromJSON', () => {
         it('should set these vars', () => {
-            const txIn2 = new TxIn().fromJSON(txIn.toJSON())
+            const txIn2 = TxIn.fromJSON(txIn.toJSON())
             should.exist(txIn2.txHashBuf)
             should.exist(txIn2.txOutNum)
-            should.exist(txIn2.scriptVi)
             should.exist(txIn2.script)
             should.exist(txIn2.nSequence)
         })
@@ -97,7 +74,6 @@ describe('TxIn', () => {
             const json = txIn.toJSON()
             should.exist(json.txHashBuf)
             should.exist(json.txOutNum)
-            should.exist(json.scriptVi)
             should.exist(json.script)
             should.exist(json.nSequence)
         })
@@ -106,8 +82,7 @@ describe('TxIn', () => {
     describe('#fromHex', () => {
         it('should convert this known buffer', () => {
             const hex = '00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000'
-            const txIn = new TxIn().fromHex(hex)
-            txIn.scriptVi.toNumber().should.equal(1)
+            const txIn = TxIn.fromHex(hex)
             txIn.script.toString().should.equal('OP_CHECKMULTISIG')
         })
     })
@@ -116,8 +91,7 @@ describe('TxIn', () => {
         it('should convert this known buffer', () => {
             const hex = '00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000'
             const buf = Buffer.from(hex, 'hex')
-            const txIn = new TxIn().fromBuffer(buf)
-            txIn.scriptVi.toNumber().should.equal(1)
+            const txIn = TxIn.fromBuffer(buf)
             txIn.script.toString().should.equal('OP_CHECKMULTISIG')
         })
     })
@@ -127,8 +101,7 @@ describe('TxIn', () => {
             const hex = '00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000'
             const buf = Buffer.from(hex, 'hex')
             const br = new Br(buf)
-            const txIn = new TxIn().fromBr(br)
-            txIn.scriptVi.toNumber().should.equal(1)
+            const txIn = TxIn.fromBr(br)
             txIn.script.toString().should.equal('OP_CHECKMULTISIG')
         })
     })
@@ -166,7 +139,7 @@ describe('TxIn', () => {
             const txHashBuf = Buffer.alloc(32)
             txHashBuf.fill(0)
             const txOutNum = 0
-            const txIn = new TxIn().fromPubKeyHashTxOut(txHashBuf, txOutNum, txOut, keyPair.pubKey)
+            const txIn = TxIn.fromPubKeyHashTxOut(txHashBuf, txOutNum, txOut, keyPair.pubKey)
             should.exist(txIn)
         })
     })

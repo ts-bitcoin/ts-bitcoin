@@ -12,19 +12,17 @@ import { Bw } from './bw'
 import { OpCode } from './op-code'
 import { PubKey } from './pub-key'
 import { Script } from './script'
-import { StructLegacy } from './struct-legacy'
+import { Struct } from './struct'
 import { TxOut } from './tx-out'
-import { VarInt } from './var-int'
 
-export interface TxInLike {
+export interface TxInSchema {
     txHashBuf: string
     txOutNum: number
-    scriptVi: string
     script: string
     nSequence: number
 }
 
-export class TxIn extends StructLegacy {
+export class TxIn extends Struct {
     /* Interpret sequence numbers as relative lock-time constraints. */
     public static readonly LOCKTIME_VERIFY_SEQUENCE = 1 << 0
 
@@ -54,60 +52,41 @@ export class TxIn extends StructLegacy {
      * shifting up by 9 bits. */
     public static readonly SEQUENCE_LOCKTIME_GRANULARITY = 9
 
-    public txHashBuf: Buffer
-    public txOutNum: number
-    public scriptVi: VarInt
-    public script: Script
-    public nSequence: number
+    public txHashBuf = Buffer.alloc(32, 0x00)
+    public txOutNum = 0xffffffff
+    public script = new Script()
+    public nSequence = 0xffffffff
 
-    constructor(txHashBuf?: Buffer, txOutNum?: number, scriptVi?: VarInt, script?: Script, nSequence = 0xffffffff) {
-        super({ txHashBuf, txOutNum, scriptVi, script, nSequence })
-    }
-
-    public setScript(script: Script): this {
-        this.scriptVi = VarInt.fromNumber(script.toBuffer().length)
-        this.script = script
-        return this
-    }
-
-    public fromProperties(txHashBuf: Buffer, txOutNum: number, script: Script, nSequence: number) {
-        this.fromObject({ txHashBuf, txOutNum, nSequence })
-        this.setScript(script)
-        return this
-    }
-
-    public static fromProperties(txHashBuf: Buffer, txOutNum: number, script: Script, nSequence?: number): TxIn {
-        return new this().fromProperties(txHashBuf, txOutNum, script, nSequence)
-    }
-
-    public fromJSON(json: TxInLike): this {
-        this.fromObject({
-            txHashBuf: typeof json.txHashBuf !== 'undefined' ? Buffer.from(json.txHashBuf, 'hex') : undefined,
-            txOutNum: json.txOutNum,
-            scriptVi: typeof json.scriptVi !== 'undefined' ? VarInt.fromJSON(json.scriptVi) : undefined,
-            script: typeof json.script !== 'undefined' ? Script.fromJSON(json.script) : undefined,
-            nSequence: json.nSequence,
-        })
-        return this
-    }
-
-    public toJSON(): TxInLike {
-        return {
-            txHashBuf: typeof this.txHashBuf !== 'undefined' ? this.txHashBuf.toString('hex') : undefined,
-            txOutNum: this.txOutNum,
-            scriptVi: typeof this.scriptVi !== 'undefined' ? this.scriptVi.toJSON() : undefined,
-            script: typeof this.script !== 'undefined' ? this.script.toJSON() : undefined,
-            nSequence: this.nSequence,
+    constructor(
+        data: {
+            txHashBuf?: Buffer
+            txOutNum?: number
+            script?: Script
+            nSequence?: number
+        } = {}
+    ) {
+        super()
+        if (data.txHashBuf !== undefined) {
+            this.txHashBuf = data.txHashBuf
+        }
+        if (data.txOutNum !== undefined) {
+            this.txOutNum = data.txOutNum
+        }
+        if (data.script !== undefined) {
+            this.setScript(data.script)
+        }
+        if (data.nSequence !== undefined) {
+            this.nSequence = data.nSequence
         }
     }
 
-    public fromBr(br: Br): this {
-        this.txHashBuf = br.read(32)
-        this.txOutNum = br.readUInt32LE()
-        this.scriptVi = VarInt.fromBuffer(br.readVarIntBuf())
-        this.script = Script.fromBuffer(br.read(this.scriptVi.toNumber()))
-        this.nSequence = br.readUInt32LE()
-        return this
+    public static fromBr(br: Br): TxIn {
+        const txHashBuf = br.read(32)
+        const txOutNum = br.readUInt32LE()
+        const scriptLength = br.readVarIntNum()
+        const script = Script.fromBuffer(br.read(scriptLength))
+        const nSequence = br.readUInt32LE()
+        return new this({ txHashBuf, txOutNum, script, nSequence })
     }
 
     public toBw(bw?: Bw): Bw {
@@ -116,10 +95,29 @@ export class TxIn extends StructLegacy {
         }
         bw.write(this.txHashBuf)
         bw.writeUInt32LE(this.txOutNum)
-        bw.write(this.scriptVi.buf)
-        bw.write(this.script.toBuffer())
+        const scriptBuf = this.script.toBuffer()
+        bw.writeVarIntNum(scriptBuf.length)
+        bw.write(scriptBuf)
         bw.writeUInt32LE(this.nSequence)
         return bw
+    }
+
+    public static fromJSON(json: Partial<TxInSchema>): TxIn {
+        return new this({
+            txHashBuf: json.txHashBuf !== undefined ? Buffer.from(json.txHashBuf, 'hex') : undefined,
+            txOutNum: json.txOutNum,
+            script: json.script !== undefined ? Script.fromJSON(json.script) : undefined,
+            nSequence: json.nSequence,
+        })
+    }
+
+    public toJSON(): TxInSchema {
+        return {
+            txHashBuf: this.txHashBuf.toString('hex'),
+            txOutNum: this.txOutNum,
+            script: this.script.toJSON(),
+            nSequence: this.nSequence,
+        }
     }
 
     /**
@@ -128,7 +126,7 @@ export class TxIn extends StructLegacy {
      * defaults to blank but can be substituted with the real public key if you
      * know what it is.
      */
-    public fromPubKeyHashTxOut(txHashBuf: Buffer, txOutNum: number, txOut: TxOut, pubKey: PubKey): this {
+    public static fromPubKeyHashTxOut(txHashBuf: Buffer, txOutNum: number, txOut: TxOut, pubKey: PubKey): TxIn {
         const script = new Script()
         if (txOut.script.isPubKeyHashOut()) {
             script.writeOpCode(OpCode.OP_0) // blank signature
@@ -140,10 +138,11 @@ export class TxIn extends StructLegacy {
         } else {
             throw new Error('txOut must be of type pubKeyHash')
         }
-        this.txHashBuf = txHashBuf
-        this.txOutNum = txOutNum
-        this.setScript(script)
-        return this
+        return new this({
+            txHashBuf,
+            txOutNum,
+            script,
+        })
     }
 
     public hasNullInput(): boolean {
@@ -161,8 +160,20 @@ export class TxIn extends StructLegacy {
      * Analagous to bitcoind's SetNull in COutPoint
      */
     public setNullInput(): void {
-        this.txHashBuf = Buffer.alloc(32)
-        this.txHashBuf.fill(0)
+        this.txHashBuf = Buffer.alloc(32, 0x00)
         this.txOutNum = 0xffffffff // -1 cast to unsigned int
+    }
+
+    public setScript(value: Script): this {
+        this.script = value
+        return this
+    }
+
+    public setSequence(value: number): this {
+        if (value >>> 0 !== value) {
+            throw new Error('Sequence must be a uint32')
+        }
+        this.nSequence = value
+        return this
     }
 }

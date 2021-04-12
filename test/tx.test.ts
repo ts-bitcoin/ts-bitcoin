@@ -20,7 +20,7 @@ import * as vectorsBitcoindTxValid from './vectors/bitcoind/tx_valid.json'
 import * as largesttxvector from './vectors/largesttx.json'
 
 describe('Tx', () => {
-    const txIn = new TxIn().fromBuffer(
+    const txIn = TxIn.fromBuffer(
         Buffer.from('00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000', 'hex')
     )
     const txOut = TxOut.fromBuffer(Buffer.from('050000000000000001ae', 'hex'))
@@ -310,7 +310,7 @@ describe('Tx', () => {
                     const txHashBuf = Buffer.from(input.txId, 'hex').reverse()
                     const txOutNum = input.vout
                     const script = new Script()
-                    const txIn = TxIn.fromProperties(txHashBuf, txOutNum, script)
+                    const txIn = new TxIn({ txHashBuf, txOutNum, script })
                     return txIn
                 })
                 tx.txIns = [...txIns]

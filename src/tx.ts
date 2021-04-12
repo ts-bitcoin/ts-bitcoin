@@ -15,19 +15,19 @@ import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Sig } from './sig'
 import { Struct } from './struct'
-import { TxIn, TxInLike } from './tx-in'
+import { TxIn, TxInSchema } from './tx-in'
 import { TxOut, TxOutSchema } from './tx-out'
 import { VarInt } from './var-int'
 import { Workers } from './workers'
 
 export interface TxSchema {
     versionBytesNum: number
-    txIns: TxInLike[]
+    txIns: TxInSchema[]
     txOuts: TxOutSchema[]
     nLockTime: number
 }
 
-export class Tx extends Struct implements Record<keyof TxSchema, unknown> {
+export class Tx extends Struct {
     /**
      * Max bitcoin supply.
      */
@@ -123,19 +123,11 @@ export class Tx extends Struct implements Record<keyof TxSchema, unknown> {
         return bw
     }
 
-    public static fromJSON(json: TxSchema): Tx {
-        const txIns: TxIn[] = []
-        for (const txIn of json.txIns) {
-            txIns.push(new TxIn().fromJSON(txIn))
-        }
-        const txOuts: TxOut[] = []
-        for (const txOut of json.txOuts) {
-            txOuts.push(TxOut.fromJSON(txOut))
-        }
+    public static fromJSON(json: Partial<TxSchema>): Tx {
         return new this({
             versionBytesNum: json.versionBytesNum,
-            txIns,
-            txOuts,
+            txIns: json.txIns ? json.txIns.map((txIn) => TxIn.fromJSON(txIn)) : undefined,
+            txOuts: json.txOuts ? json.txOuts.map((txOut) => TxOut.fromJSON(txOut)) : undefined,
             nLockTime: json.nLockTime,
         })
     }
@@ -414,7 +406,7 @@ export class Tx extends Struct implements Record<keyof TxSchema, unknown> {
         if (txHashBuf instanceof TxIn) {
             txIn = txHashBuf
         } else {
-            txIn = new TxIn().fromObject({ txHashBuf, txOutNum, nSequence }).setScript(script)
+            txIn = new TxIn({ txHashBuf, txOutNum, script, nSequence })
         }
         this.txIns.push(txIn)
         return this
@@ -427,7 +419,7 @@ export class Tx extends Struct implements Record<keyof TxSchema, unknown> {
         if (valueBn instanceof TxOut) {
             txOut = valueBn
         } else {
-            txOut = new TxOut({ valueBn }).setScript(script)
+            txOut = new TxOut({ valueBn, script })
         }
         this.txOuts.push(txOut)
         return this

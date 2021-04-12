@@ -49,10 +49,10 @@ export class TxOut extends Struct implements Record<keyof TxOutSchema, unknown> 
         return bw
     }
 
-    public static fromJSON(json: TxOutSchema): TxOut {
+    public static fromJSON(json: Partial<TxOutSchema>): TxOut {
         return new this({
-            valueBn: new Bn().fromJSON(json.valueBn),
-            script: new Script().fromJSON(json.script),
+            valueBn: json.valueBn ? new Bn().fromJSON(json.valueBn) : undefined,
+            script: json.script ? new Script().fromJSON(json.script) : undefined,
         })
     }
 
