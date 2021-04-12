@@ -23,7 +23,7 @@ describe('Tx', () => {
     const txIn = new TxIn().fromBuffer(
         Buffer.from('00000000000000000000000000000000000000000000000000000000000000000000000001ae00000000', 'hex')
     )
-    const txOut = new TxOut().fromBuffer(Buffer.from('050000000000000001ae', 'hex'))
+    const txOut = TxOut.fromBuffer(Buffer.from('050000000000000001ae', 'hex'))
     const tx = new Tx({
         versionBytesNum: 0,
         txInsVi: VarInt.fromNumber(1),
@@ -324,7 +324,10 @@ describe('Tx', () => {
             it(outputSet.description, () => {
                 const tx = new Tx()
                 const txOuts = outputSet.outputs.map((output) => {
-                    const txOut = TxOut.fromProperties(new Bn(output.value), Script.fromAsmString(output.script))
+                    const txOut = new TxOut({
+                        valueBn: new Bn(output.value),
+                        script: Script.fromAsmString(output.script),
+                    })
                     return txOut
                 })
                 tx.txOuts = [...txOuts]

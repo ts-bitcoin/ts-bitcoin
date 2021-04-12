@@ -60,8 +60,8 @@ describe('TxBuilder', () => {
             'OP_DUP OP_HASH160 20 0x' + addr2.hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
         )
 
-        const txOut1 = TxOut.fromProperties(new Bn(1e8), scriptout1)
-        const txOut2 = TxOut.fromProperties(new Bn(1e8), scriptout2)
+        const txOut1 = new TxOut({ valueBn: new Bn(1e8), script: scriptout1 })
+        const txOut2 = new TxOut({ valueBn: new Bn(1e8), script: scriptout2 })
         // total balance: 2e8
 
         const txHashBuf = Buffer.alloc(32)
@@ -298,9 +298,9 @@ describe('TxBuilder', () => {
             const keyPair3 = new KeyPair().fromPrivKey(privKey3)
             const addr3 = new Address().fromPubKey(keyPair3.pubKey)
 
-            const txOut1 = TxOut.fromProperties(new Bn(1e8), addr1.toTxOutScript())
-            const txOut2 = TxOut.fromProperties(new Bn(1e8), addr2.toTxOutScript())
-            const txOut3 = TxOut.fromProperties(new Bn(1e8), addr3.toTxOutScript())
+            const txOut1 = new TxOut({ valueBn: new Bn(1e8), script: addr1.toTxOutScript() })
+            const txOut2 = new TxOut({ valueBn: new Bn(1e8), script: addr2.toTxOutScript() })
+            const txOut3 = new TxOut({ valueBn: new Bn(1e8), script: addr3.toTxOutScript() })
             // total balance: 3e8
 
             const txHashBuf = Buffer.alloc(32)
@@ -350,7 +350,7 @@ describe('TxBuilder', () => {
             const txOutNum = 0
             const inputAmount = new Bn().fromNumber(1000)
             const inputScript = inputAddress.toTxOutScript()
-            const txOut = TxOut.fromProperties(inputAmount, inputScript)
+            const txOut = new TxOut({ valueBn: inputAmount, script: inputScript })
 
             txb.inputFromPubKeyHash(txHashBuf, txOutNum, txOut, inputKeyPair.pubKey)
             txb.setChangeAddress(changeAddr)
@@ -417,7 +417,7 @@ describe('TxBuilder', () => {
         it('should add an input from a script', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
-            const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))
+            const txOut = new TxOut({ valueBn: new Bn(1000), script: new Script().fromPubKeyHash(address.hashBuf) })
             const script = new Script().fromString('OP_RETURN')
             const txHashBuf = Buffer.alloc(32)
             txHashBuf.fill(0)
@@ -429,7 +429,7 @@ describe('TxBuilder', () => {
         it('should add an input from a script and set nSequence', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
-            const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))
+            const txOut = new TxOut({ valueBn: new Bn(1000), script: new Script().fromPubKeyHash(address.hashBuf) })
             const script = new Script().fromString('OP_RETURN')
             const txHashBuf = Buffer.alloc(32)
             txHashBuf.fill(0)
@@ -444,7 +444,7 @@ describe('TxBuilder', () => {
         it('should add an input from a pubKeyHash output', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
-            const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))
+            const txOut = new TxOut({ valueBn: new Bn(1000), script: new Script().fromPubKeyHash(address.hashBuf) })
             const txHashBuf = Buffer.alloc(32)
             txHashBuf.fill(0)
             const txOutNum = 0
@@ -455,7 +455,7 @@ describe('TxBuilder', () => {
         it('should add an input from a pubKeyHash output and set nSequence', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
-            const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))
+            const txOut = new TxOut({ valueBn: new Bn(1000), script: new Script().fromPubKeyHash(address.hashBuf) })
             const txHashBuf = Buffer.alloc(32)
             txHashBuf.fill(0)
             const txOutNum = 0
@@ -740,8 +740,8 @@ describe('TxBuilder', () => {
                     'OP_DUP OP_HASH160 20 0x' + addr2.hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                 )
 
-                const txOut1 = TxOut.fromProperties(new Bn(1e8), scriptout1)
-                const txOut2 = TxOut.fromProperties(new Bn(1e8), scriptout2)
+                const txOut1 = new TxOut({ valueBn: new Bn(1e8), script: scriptout1 })
+                const txOut2 = new TxOut({ valueBn: new Bn(1e8), script: scriptout2 })
                 // total balance: 2e8
 
                 const txHashBuf = Buffer.alloc(32)
@@ -838,7 +838,7 @@ describe('TxBuilder', () => {
                 'OP_DUP OP_HASH160 20 0x' + addr1.hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
             )
 
-            const txOut1 = TxOut.fromProperties(new Bn(1e8), customScript)
+            const txOut1 = new TxOut({ valueBn: new Bn(1e8), script: customScript })
 
             const txHashBuf = Buffer.alloc(32)
             txHashBuf.fill(1)
@@ -937,17 +937,17 @@ describe('TxBuilder', () => {
                 'OP_DUP OP_HASH160 20 0x' + addr11.hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
             )
 
-            const txOut1 = TxOut.fromProperties(new Bn(1e8), scriptout1)
-            const txOut2 = TxOut.fromProperties(new Bn(1e8), scriptout2)
-            const txOut3 = TxOut.fromProperties(new Bn(1e8), scriptout3)
-            const txOut4 = TxOut.fromProperties(new Bn(1e8), scriptout4)
-            const txOut5 = TxOut.fromProperties(new Bn(1e8), scriptout5)
-            const txOut6 = TxOut.fromProperties(new Bn(1e8), scriptout6)
-            const txOut7 = TxOut.fromProperties(new Bn(1e8), scriptout7)
-            const txOut8 = TxOut.fromProperties(new Bn(1e8), scriptout8)
-            const txOut9 = TxOut.fromProperties(new Bn(1e8), scriptout9)
-            const txOut10 = TxOut.fromProperties(new Bn(1e8), scriptout10)
-            const txOut11 = TxOut.fromProperties(new Bn(1e8), scriptout11)
+            const txOut1 = new TxOut({ valueBn: new Bn(1e8), script: scriptout1 })
+            const txOut2 = new TxOut({ valueBn: new Bn(1e8), script: scriptout2 })
+            const txOut3 = new TxOut({ valueBn: new Bn(1e8), script: scriptout3 })
+            const txOut4 = new TxOut({ valueBn: new Bn(1e8), script: scriptout4 })
+            const txOut5 = new TxOut({ valueBn: new Bn(1e8), script: scriptout5 })
+            const txOut6 = new TxOut({ valueBn: new Bn(1e8), script: scriptout6 })
+            const txOut7 = new TxOut({ valueBn: new Bn(1e8), script: scriptout7 })
+            const txOut8 = new TxOut({ valueBn: new Bn(1e8), script: scriptout8 })
+            const txOut9 = new TxOut({ valueBn: new Bn(1e8), script: scriptout9 })
+            const txOut10 = new TxOut({ valueBn: new Bn(1e8), script: scriptout10 })
+            const txOut11 = new TxOut({ valueBn: new Bn(1e8), script: scriptout11 })
             // total balance: 11e8
 
             const txHashBuf = Buffer.alloc(32)
@@ -1074,10 +1074,10 @@ describe('TxBuilder', () => {
                 'OP_DUP OP_HASH160 20 0x' + addr4.hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
             )
 
-            const txOut1 = TxOut.fromProperties(new Bn(1e8), scriptout1)
-            const txOut2 = TxOut.fromProperties(new Bn(1e8), scriptout2)
-            const txOut3 = TxOut.fromProperties(new Bn(1e8), scriptout3)
-            const txOut4 = TxOut.fromProperties(new Bn(1e8), scriptout4)
+            const txOut1 = new TxOut({ valueBn: new Bn(1e8), script: scriptout1 })
+            const txOut2 = new TxOut({ valueBn: new Bn(1e8), script: scriptout2 })
+            const txOut3 = new TxOut({ valueBn: new Bn(1e8), script: scriptout3 })
+            const txOut4 = new TxOut({ valueBn: new Bn(1e8), script: scriptout4 })
             // total balance: 4e8
 
             const txHashBuf = Buffer.alloc(32)
@@ -1150,8 +1150,8 @@ describe('TxBuilder', () => {
                     'OP_DUP OP_HASH160 20 0x' + addr2.hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                 )
 
-                const txOut1 = TxOut.fromProperties(new Bn(1e8), scriptout1)
-                const txOut2 = TxOut.fromProperties(new Bn(1e8), scriptout2)
+                const txOut1 = new TxOut({ valueBn: new Bn(1e8), script: scriptout1 })
+                const txOut2 = new TxOut({ valueBn: new Bn(1e8), script: scriptout2 })
                 // total balance: 2e8
 
                 const txHashBuf = Buffer.alloc(32)
@@ -1262,7 +1262,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1e8), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1e8), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8
 
@@ -1329,7 +1329,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1e8), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1e8), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8
 
@@ -1399,7 +1399,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1e8 * (i + 1)), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1e8 * (i + 1)), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8
 
@@ -1469,7 +1469,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1e8), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1e8), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8
 
@@ -1533,7 +1533,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1e8), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1e8), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8
 
@@ -1598,7 +1598,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1e8 + i), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1e8 + i), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8...plus a bit due to incrementing amounts
 
@@ -1663,7 +1663,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1e8 + 10000 - i), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1e8 + 10000 - i), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8...plus a bit due to incrementing amounts
 
@@ -1728,7 +1728,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(200), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(200), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8 = 600
 
@@ -1793,7 +1793,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1000), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1000), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8
 
@@ -1857,7 +1857,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1000), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1000), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8
 
@@ -1921,7 +1921,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1499), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1499), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8
 
@@ -1985,7 +1985,7 @@ describe('TxBuilder', () => {
                         'OP_DUP OP_HASH160 20 0x' + addrs[i].hashBuf.toString('hex') + ' OP_EQUALVERIFY OP_CHECKSIG'
                     )
                 )
-                txOuts.push(TxOut.fromProperties(new Bn(1499), scriptouts[i]))
+                txOuts.push(new TxOut({ valueBn: new Bn(1499), script: scriptouts[i] }))
             }
             // total input amount: nIns * 1e8
 

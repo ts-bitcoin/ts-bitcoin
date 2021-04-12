@@ -26,12 +26,12 @@ import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Sig } from './sig'
 import { StructLegacy } from './struct-legacy'
-import { Tx, TxLike } from './tx'
+import { Tx, TxSchema } from './tx'
 import { TxIn } from './tx-in'
 
 interface InterpLike {
     script: string
-    tx?: TxLike
+    tx?: TxSchema
     nIn: number
     stack: string[]
     altStack: string[]

@@ -8,7 +8,7 @@
 import { Br } from './br'
 import { Bw } from './bw'
 
-export class Struct2 {
+export class Struct {
     constructor(data?: Record<string, unknown>) {
         Object.assign(this, data)
     }
@@ -20,35 +20,7 @@ export class Struct2 {
         throw new Error('Not implemented')
     }
 
-    public static asyncFromBr<T extends Struct2>(_br: Br): Promise<T> {
-        // TODO: send to worker
-        throw new Error('Not implemented')
-    }
-
-    public static fromBuffer<T extends Struct2>(this: (new () => T) & typeof Struct2, buf: Buffer): T {
-        if (!Buffer.isBuffer(buf)) {
-            throw new Error('Invalid buffer')
-        }
-        const br = new Br(buf)
-        return this.fromBr(br) as T
-    }
-
-    public static asyncFromBuffer<T extends Struct2>(this: (new () => T) & typeof Struct2, _buf: Buffer): Promise<T> {
-        // TODO: send to worker
-        throw new Error('Not implemented')
-    }
-
-    public static fromHex<T extends Struct2>(this: (new () => T) & typeof Struct2, hex: string): T {
-        const size = hex.length >>> 1
-        const buf = Buffer.from(hex, 'hex')
-        if (buf.length !== size) {
-            throw new Error('Invalid hex string')
-        }
-        const br = new Br(buf)
-        return this.fromBr(br) as T
-    }
-
-    public static asyncFromHex<T extends Struct2>(this: (new () => T) & typeof Struct2, _hex: string): Promise<T> {
+    public static asyncFromBr<T extends Struct>(_br: Br): Promise<T> {
         // TODO: send to worker
         throw new Error('Not implemented')
     }
@@ -58,6 +30,19 @@ export class Struct2 {
     }
 
     public asyncToBw(_bw?: Bw): Promise<Bw> {
+        // TODO: send to worker
+        throw new Error('Not implemented')
+    }
+
+    public static fromBuffer<T extends Struct>(this: (new () => T) & typeof Struct, buf: Buffer): T {
+        if (!Buffer.isBuffer(buf)) {
+            throw new Error('Invalid buffer')
+        }
+        const br = new Br(buf)
+        return this.fromBr(br) as T
+    }
+
+    public static asyncFromBuffer<T extends Struct>(this: (new () => T) & typeof Struct, _buf: Buffer): Promise<T> {
         // TODO: send to worker
         throw new Error('Not implemented')
     }
@@ -75,11 +60,44 @@ export class Struct2 {
         throw new Error('Not implemented')
     }
 
+    public static fromHex<T extends Struct>(this: (new () => T) & typeof Struct, hex: string): T {
+        const size = hex.length >>> 1
+        const buf = Buffer.from(hex, 'hex')
+        if (buf.length !== size) {
+            throw new Error('Invalid hex string')
+        }
+        const br = new Br(buf)
+        return this.fromBr(br) as T
+    }
+
+    public static asyncFromHex<T extends Struct>(this: (new () => T) & typeof Struct, _hex: string): Promise<T> {
+        // TODO: send to worker
+        throw new Error('Not implemented')
+    }
+
     public toHex(): string {
         return this.toBuffer().toString('hex')
     }
 
     public asyncToHex(): Promise<string> {
+        // TODO: send to worker
+        throw new Error('Not implemented')
+    }
+
+    public static fromJSON(_json: any): any {
+        throw new Error('Not implemented')
+    }
+
+    public static asyncFromJSON(_br: Br): any {
+        // TODO: send to worker
+        throw new Error('Not implemented')
+    }
+
+    public toJSON(): any {
+        throw new Error('not implemented')
+    }
+
+    public asyncToJSON(): Promise<any> {
         // TODO: send to worker
         throw new Error('Not implemented')
     }
@@ -93,13 +111,8 @@ export class Struct2 {
         throw new Error('Not implemented')
     }
 
-    public toJSON(): any {
-        throw new Error('not implemented')
-    }
-
-    public asyncToJSON(): Promise<any> {
-        // TODO: send to worker
-        throw new Error('Not implemented')
+    public clone(): this {
+        return (this.constructor as typeof Struct).fromBuffer(this.toBuffer()) as any
     }
 
     /**
@@ -147,9 +160,5 @@ export class Struct2 {
             buf,
             remainderbuf,
         }
-    }
-
-    public clone(): this {
-        return (this.constructor as typeof Struct2).fromBuffer(this.toBuffer()) as any
     }
 }

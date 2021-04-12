@@ -274,7 +274,7 @@ export class TxBuilder extends StructLegacy {
         if (!(script instanceof Script) || !(valueBn instanceof Bn)) {
             throw new Error('script must be a Script, and valueBn must be a Bn')
         }
-        const txOut = TxOut.fromProperties(valueBn, script)
+        const txOut = new TxOut({ valueBn, script })
         this.txOuts.push(txOut)
         return this
     }
@@ -385,7 +385,7 @@ export class TxBuilder extends StructLegacy {
         ) {
             this.tx = new Tx()
             const outAmountBn = this.buildOutputs()
-            const changeTxOut = TxOut.fromProperties(new Bn(0), this.changeScript)
+            const changeTxOut = new TxOut({ valueBn: new Bn(0), script: this.changeScript })
             this.tx.addTxOut(changeTxOut)
 
             let inAmountBn

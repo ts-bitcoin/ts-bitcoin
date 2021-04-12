@@ -9,7 +9,7 @@ describe('TxOutMap', () => {
     const txHashBuf = Buffer.alloc(32)
     txHashBuf.fill(0)
     const label = txHashBuf.toString('hex') + ':' + '0'
-    const txOut = TxOut.fromProperties(new Bn(0), new Script('OP_RETURN' as any))
+    const txOut = new TxOut({ valueBn: new Bn(0), script: new Script('OP_RETURN' as any) })
     const map: Map<string, TxOut> = new Map()
     map.set(label, txOut)
     const tx = Tx.fromHex(

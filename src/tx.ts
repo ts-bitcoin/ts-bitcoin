@@ -14,20 +14,20 @@ import { KeyPair } from './key-pair'
 import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Sig } from './sig'
-import { Struct2 } from './struct2'
+import { Struct } from './struct'
 import { TxIn, TxInLike } from './tx-in'
-import { TxOut, TxOutLike } from './tx-out'
+import { TxOut, TxOutSchema } from './tx-out'
 import { VarInt } from './var-int'
 import { Workers } from './workers'
 
-export interface TxLike {
+export interface TxSchema {
     versionBytesNum: number
     txIns: TxInLike[]
-    txOuts: TxOutLike[]
+    txOuts: TxOutSchema[]
     nLockTime: number
 }
 
-export class Tx extends Struct2 {
+export class Tx extends Struct implements Record<keyof TxSchema, unknown> {
     /**
      * Max bitcoin supply.
      */
@@ -123,14 +123,14 @@ export class Tx extends Struct2 {
         return bw
     }
 
-    public static fromJSON(json: TxLike): Tx {
+    public static fromJSON(json: TxSchema): Tx {
         const txIns: TxIn[] = []
         for (const txIn of json.txIns) {
             txIns.push(new TxIn().fromJSON(txIn))
         }
         const txOuts: TxOut[] = []
         for (const txOut of json.txOuts) {
-            txOuts.push(new TxOut().fromJSON(txOut))
+            txOuts.push(TxOut.fromJSON(txOut))
         }
         return new this({
             versionBytesNum: json.versionBytesNum,
@@ -140,7 +140,7 @@ export class Tx extends Struct2 {
         })
     }
 
-    public toJSON(): TxLike {
+    public toJSON(): TxSchema {
         return {
             versionBytesNum: this.versionBytesNum,
             txIns: this.txIns.map((txIn) => txIn.toJSON()),
@@ -270,10 +270,10 @@ export class Tx extends Struct2 {
 
             for (let i = 0; i < txcopy.txOuts.length; i++) {
                 if (i < nIn) {
-                    txcopy.txOuts[i] = TxOut.fromProperties(
-                        new Bn().fromBuffer(Buffer.from('ffffffffffffffff', 'hex')),
-                        new Script()
-                    )
+                    txcopy.txOuts[i] = new TxOut({
+                        valueBn: new Bn().fromBuffer(Buffer.from('ffffffffffffffff', 'hex')),
+                        script: new Script(),
+                    })
                 }
             }
 
@@ -427,7 +427,7 @@ export class Tx extends Struct2 {
         if (valueBn instanceof TxOut) {
             txOut = valueBn
         } else {
-            txOut = new TxOut().fromObject({ valueBn }).setScript(script)
+            txOut = new TxOut({ valueBn }).setScript(script)
         }
         this.txOuts.push(txOut)
         return this

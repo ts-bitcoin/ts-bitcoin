@@ -10,62 +10,32 @@ import { Bn } from './bn'
 import { Br } from './br'
 import { Bw } from './bw'
 import { Script } from './script'
-import { StructLegacy } from './struct-legacy'
-import { VarInt } from './var-int'
+import { Struct } from './struct'
 
-export interface TxOutLike {
+export interface TxOutSchema {
     valueBn: string
-    scriptVi: string
     script: string
 }
 
-export class TxOut extends StructLegacy {
-    public valueBn: Bn
-    public scriptVi: VarInt
-    public script: Script
+export class TxOut extends Struct implements Record<keyof TxOutSchema, unknown> {
+    public valueBn: Bn = new Bn(0)
+    public script: Script = new Script()
 
-    constructor(valueBn?: Bn, scriptVi?: VarInt, script?: Script) {
-        super({ valueBn, scriptVi, script })
-    }
-
-    public setScript(script: Script): this {
-        this.scriptVi = VarInt.fromNumber(script.toBuffer().length)
-        this.script = script
-        return this
-    }
-
-    public fromProperties(valueBn: Bn, script: Script): this {
-        this.fromObject({ valueBn })
-        this.setScript(script)
-        return this
-    }
-
-    public static fromProperties(valueBn: Bn, script: Script): TxOut {
-        return new this().fromProperties(valueBn, script)
-    }
-
-    public fromJSON(json: TxOutLike): this {
-        this.fromObject({
-            valueBn: new Bn().fromJSON(json.valueBn),
-            scriptVi: new VarInt().fromJSON(json.scriptVi),
-            script: new Script().fromJSON(json.script),
-        })
-        return this
-    }
-
-    public toJSON(): TxOutLike {
-        return {
-            valueBn: this.valueBn.toJSON(),
-            scriptVi: this.scriptVi.toJSON(),
-            script: this.script.toJSON(),
+    constructor(data: { valueBn?: Bn; script?: Script } = {}) {
+        super()
+        if (data.valueBn !== undefined) {
+            this.setValue(data.valueBn)
+        }
+        if (data.script !== undefined) {
+            this.setScript(data.script)
         }
     }
 
-    public fromBr(br: Br): this {
-        this.valueBn = br.readUInt64LEBn()
-        this.scriptVi = VarInt.fromNumber(br.readVarIntNum())
-        this.script = new Script().fromBuffer(br.read(this.scriptVi.toNumber()))
-        return this
+    public static fromBr(br: Br): TxOut {
+        const valueBn = br.readUInt64LEBn()
+        const scriptLength = br.readVarIntNum()
+        const script = new Script().fromBuffer(br.read(scriptLength))
+        return new this({ valueBn, script })
     }
 
     public toBw(bw?: Bw): Bw {
@@ -73,8 +43,33 @@ export class TxOut extends StructLegacy {
             bw = new Bw()
         }
         bw.writeUInt64LEBn(this.valueBn)
-        bw.write(this.scriptVi.buf)
-        bw.write(this.script.toBuffer())
+        const scriptBuf = this.script.toBuffer()
+        bw.writeVarIntNum(scriptBuf.length)
+        bw.write(scriptBuf)
         return bw
+    }
+
+    public static fromJSON(json: TxOutSchema): TxOut {
+        return new this({
+            valueBn: new Bn().fromJSON(json.valueBn),
+            script: new Script().fromJSON(json.script),
+        })
+    }
+
+    public toJSON(): TxOutSchema {
+        return {
+            valueBn: this.valueBn.toJSON(),
+            script: this.script.toJSON(),
+        }
+    }
+
+    public setValue(value: Bn): this {
+        this.valueBn = value
+        return this
+    }
+
+    public setScript(value: Script): this {
+        this.script = value
+        return this
     }
 }

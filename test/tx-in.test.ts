@@ -162,7 +162,7 @@ describe('TxIn', () => {
         it('should convert from pubKeyHash out', () => {
             const keyPair = new KeyPair().fromRandom()
             const address = new Address().fromPubKey(keyPair.pubKey)
-            const txOut = TxOut.fromProperties(new Bn(1000), new Script().fromPubKeyHash(address.hashBuf))
+            const txOut = new TxOut({ valueBn: new Bn(1000), script: new Script().fromPubKeyHash(address.hashBuf) })
             const txHashBuf = Buffer.alloc(32)
             txHashBuf.fill(0)
             const txOutNum = 0

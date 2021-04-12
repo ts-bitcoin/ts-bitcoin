@@ -35,7 +35,7 @@ describe('TxVerifier', () => {
                 if (txOutNum === -1) {
                     txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
                 }
-                const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
+                const txOut = new TxOut({ valueBn: new Bn(0), script: new Script().fromBitcoindString(input[2]) })
                 const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                 txOutMap.set(txHashBuf, txOutNum, txOut)
             }
@@ -63,7 +63,7 @@ describe('TxVerifier', () => {
                 if (txOutNum === -1) {
                     txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
                 }
-                const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
+                const txOut = new TxOut({ valueBn: new Bn(0), script: new Script().fromBitcoindString(input[2]) })
                 const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                 txOutMap.set(txHashBuf, txOutNum, txOut)
             }
@@ -136,7 +136,7 @@ describe('TxVerifier', () => {
                     if (txOutNum === -1) {
                         txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
                     }
-                    const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
+                    const txOut = new TxOut({ valueBn: new Bn(0), script: new Script().fromBitcoindString(input[2]) })
                     const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                     txOutMap.set(txHashBuf, txOutNum, txOut)
                 }
@@ -157,7 +157,7 @@ describe('TxVerifier', () => {
                     if (txOutNum === -1) {
                         txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
                     }
-                    const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
+                    const txOut = new TxOut({ valueBn: new Bn(0), script: new Script().fromBitcoindString(input[2]) })
                     const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                     txOutMap.set(txHashBuf, txOutNum, txOut)
                 }
@@ -186,7 +186,7 @@ describe('TxVerifier', () => {
                     if (txOutNum === -1) {
                         txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
                     }
-                    const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
+                    const txOut = new TxOut({ valueBn: new Bn(0), script: new Script().fromBitcoindString(input[2]) })
                     const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                     txOutMap.set(txHashBuf, txOutNum, txOut)
                 }
@@ -208,7 +208,7 @@ describe('TxVerifier', () => {
                     if (txOutNum === -1) {
                         txOutNum = 0xffffffff // bitcoind casts -1 to an unsigned int
                     }
-                    const txOut = TxOut.fromProperties(new Bn(0), new Script().fromBitcoindString(input[2]))
+                    const txOut = new TxOut({ valueBn: new Bn(0), script: new Script().fromBitcoindString(input[2]) })
                     const txHashBuf = new Br(Buffer.from(input[0], 'hex')).readReverse()
                     txOutMap.set(txHashBuf, txOutNum, txOut)
                 }

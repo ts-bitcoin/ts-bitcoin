@@ -16,14 +16,14 @@ import { Bw } from './bw'
 import { Hash } from './hash'
 import { Merkle } from './merkle'
 import { StructLegacy } from './struct-legacy'
-import { Tx, TxLike } from './tx'
+import { Tx, TxSchema } from './tx'
 import { VarInt } from './var-int'
 import { Workers } from './workers'
 
 export interface BlockLike {
     blockHeader: BlockHeaderLike
     txsVi: string
-    txs: TxLike[]
+    txs: TxSchema[]
 }
 
 export class Block extends StructLegacy {
