@@ -18,7 +18,7 @@
  */
 import { WorkersResult } from './workers-result'
 
-let globalWorkers: Workers
+let globalWorkers: Workers | undefined
 
 export class Workers {
     public nativeWorkers: any[]
@@ -33,10 +33,7 @@ export class Workers {
         this.promisemap = promisemap
     }
 
-    public asyncObjectMethod(obj: any, methodname: string, args: any[], id = this.lastid + 1): WorkersResult {
-        if (!args) {
-            throw new Error('must specify args')
-        }
+    public asyncObjectMethod(obj: any, methodname: string, args: any[] = [], id = this.lastid + 1): WorkersResult {
         const result = obj[methodname](...args)
         const workersResult = new WorkersResult().fromResult(result, id)
         return workersResult
@@ -45,7 +42,7 @@ export class Workers {
     public static async asyncObjectMethod(
         obj: any,
         methodname: string,
-        args: any[],
+        args?: any[],
         id?: number
     ): Promise<WorkersResult> {
         if (!globalWorkers) {

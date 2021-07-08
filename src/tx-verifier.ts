@@ -98,7 +98,7 @@ export class TxVerifier extends Struct {
         }
 
         // Check for duplicate inputs
-        const txInmap = {}
+        const txInmap: Record<string, boolean> = {}
         for (let i = 0; i < this.tx.txIns.length; i++) {
             const txIn = this.tx.txIns[i]
             const inputid = txIn.txHashBuf.toString('hex') + ':' + txIn.txOutNum

@@ -172,6 +172,10 @@ export class Tx extends Struct {
         // start with UAHF part (Bitcoin SV)
         // https://github.com/Bitcoin-UAHF/spec/blob/master/replay-protected-sighash.md
         if (nHashType & Sig.SIGHASH_FORKID && flags & Tx.SCRIPT_ENABLE_SIGHASH_FORKID) {
+            if (!valueBn) {
+                throw new Error('Sighash version requires value')
+            }
+
             let hashPrevouts = Buffer.alloc(32, 0)
             let hashSequence = Buffer.alloc(32, 0)
             let hashOutputs = Buffer.alloc(32, 0)
@@ -395,7 +399,7 @@ export class Tx extends Struct {
         if (txHashBuf instanceof TxIn) {
             txIn = txHashBuf
         } else {
-            txIn = new TxIn().fromObject({ txHashBuf, txOutNum, nSequence }).setScript(script)
+            txIn = new TxIn().fromObject({ txHashBuf, txOutNum, nSequence }).setScript(script!)
         }
         this.txIns.push(txIn)
         this.txInsVi = VarInt.fromNumber(this.txInsVi.toNumber() + 1)
@@ -409,7 +413,7 @@ export class Tx extends Struct {
         if (valueBn instanceof TxOut) {
             txOut = valueBn
         } else {
-            txOut = new TxOut().fromObject({ valueBn }).setScript(script)
+            txOut = new TxOut().fromObject({ valueBn }).setScript(script!)
         }
         this.txOuts.push(txOut)
         this.txOutsVi = VarInt.fromNumber(this.txOutsVi.toNumber() + 1)

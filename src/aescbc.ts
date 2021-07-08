@@ -11,7 +11,7 @@ import { Cbc } from './cbc'
 import { Random } from './random'
 
 export class Aescbc {
-    public static encrypt(messageBuf: Buffer, cipherKeyBuf: Buffer, ivBuf: Buffer, concatIvBuf = true): Buffer {
+    public static encrypt(messageBuf: Buffer, cipherKeyBuf: Buffer, ivBuf?: Buffer, concatIvBuf = true): Buffer {
         ivBuf = ivBuf || Random.getRandomBuffer(128 / 8)
         const ctBuf = Cbc.encrypt(messageBuf, ivBuf, Aes, cipherKeyBuf)
         if (concatIvBuf) {

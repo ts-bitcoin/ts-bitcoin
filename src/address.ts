@@ -88,7 +88,7 @@ export class Address extends Struct {
         return this.fromPubKeyHashBuf(hashBuf)
     }
 
-    public static fromPrivKey(privKey): Address {
+    public static fromPrivKey(privKey: PrivKey): Address {
         return new this().fromPrivKey(privKey)
     }
 
@@ -112,8 +112,7 @@ export class Address extends Struct {
     }
 
     public async asyncFromRandom(): Promise<this> {
-        const args = []
-        const workersResult = await Workers.asyncObjectMethod(this, 'fromRandom', args)
+        const workersResult = await Workers.asyncObjectMethod(this, 'fromRandom')
         return this.fromFastBuffer(workersResult.resbuf)
     }
 
@@ -172,6 +171,9 @@ export class Address extends Struct {
     }
 
     public fromTxOutScript(script: Script): this {
+        if (!script.chunks[2].buf) {
+            throw new Error('Script is not P2PKH')
+        }
         return this.fromPubKeyHashBuf(script.chunks[2].buf)
     }
 
@@ -211,8 +213,7 @@ export class Address extends Struct {
     }
 
     public async asyncToString(): Promise<string> {
-        const args = []
-        const workersResult = await Workers.asyncObjectMethod(this, 'toString', args)
+        const workersResult = await Workers.asyncObjectMethod(this, 'toString')
         return JSON.parse(workersResult.resbuf.toString())
     }
 

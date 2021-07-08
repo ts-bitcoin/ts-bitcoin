@@ -128,7 +128,7 @@ export class TxIn extends Struct {
      * defaults to blank but can be substituted with the real public key if you
      * know what it is.
      */
-    public fromPubKeyHashTxOut(txHashBuf: Buffer, txOutNum: number, txOut: TxOut, pubKey: PubKey): this {
+    public fromPubKeyHashTxOut(txHashBuf: Buffer, txOutNum: number, txOut: TxOut, pubKey?: PubKey): this {
         const script = new Script()
         if (txOut.script.isPubKeyHashOut()) {
             script.writeOpCode(OpCode.OP_0) // blank signature
