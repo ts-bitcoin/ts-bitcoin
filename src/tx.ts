@@ -1,9 +1,3 @@
-/**
- * Transaction
- * ===========
- *
- * A bitcoin transaction.
- */
 import { Bn } from './bn'
 import { Br } from './br'
 import { Bw } from './bw'
@@ -17,9 +11,11 @@ import { Sig } from './sig'
 import { Struct } from './struct'
 import { TxIn, TxInSchema } from './tx-in'
 import { TxOut, TxOutSchema } from './tx-out'
-import { VarInt } from './var-int'
 import { Workers } from './workers'
 
+/**
+ * Transaction schema.
+ */
 export interface TxSchema {
     versionBytesNum: number
     txIns: TxInSchema[]
@@ -27,6 +23,9 @@ export interface TxSchema {
     nLockTime: number
 }
 
+/**
+ * A bitcoin transaction.
+ */
 export class Tx extends Struct {
     /**
      * Max bitcoin supply.
@@ -58,17 +57,18 @@ export class Tx extends Struct {
      */
     public nLockTime = 0
 
-    constructor(
+    /**
+     * Create a transaction instance.
+     * @param data Plain transaction object.
+     */
+    public fromObject(
         data: {
             versionBytesNum?: number
-            txInsVi?: VarInt
             txIns?: TxIn[]
-            txOutsVi?: VarInt
             txOuts?: TxOut[]
             nLockTime?: number
         } = {}
-    ) {
-        super()
+    ): this {
         if (data.versionBytesNum !== undefined) {
             this.setVersion(data.versionBytesNum)
         }
@@ -85,9 +85,15 @@ export class Tx extends Struct {
         if (data.nLockTime !== undefined) {
             this.setLocktime(data.nLockTime)
         }
+        return this
     }
 
-    public static fromBr(br: Br): Tx {
+    /**
+     * Instantiate transaction from a buffer reader.
+     * @param br Buffer reader.
+     * @returns Transaction instance.
+     */
+    public fromBr(br: Br): this {
         const versionBytesNum = br.readUInt32LE()
 
         const txInsNum = br.readVarIntNum()
@@ -103,9 +109,13 @@ export class Tx extends Struct {
         }
 
         const nLockTime = br.readUInt32LE()
-        return new this({ versionBytesNum, txIns, txOuts, nLockTime })
+        return this.fromObject({ versionBytesNum, txIns, txOuts, nLockTime })
     }
 
+    /**
+     * Write the transaction to a buffer writer.
+     * @param bw Buffer writer.
+     */
     public toBw(bw?: Bw): Bw {
         if (!bw) {
             bw = new Bw()
@@ -123,8 +133,13 @@ export class Tx extends Struct {
         return bw
     }
 
-    public static fromJSON(json: Partial<TxSchema>): Tx {
-        return new this({
+    /**
+     * Instantiate transaction from json object.
+     * @param json Json object.
+     * @returns Transaction instance.
+     */
+    public fromJSON(json: Partial<TxSchema>): this {
+        return this.fromObject({
             versionBytesNum: json.versionBytesNum,
             txIns: json.txIns ? json.txIns.map((txIn) => TxIn.fromJSON(txIn)) : undefined,
             txOuts: json.txOuts ? json.txOuts.map((txOut) => TxOut.fromJSON(txOut)) : undefined,
@@ -132,6 +147,10 @@ export class Tx extends Struct {
         })
     }
 
+    /**
+     * Convert transaction to json object.
+     * @returns Json object.
+     */
     public toJSON(): TxSchema {
         return {
             versionBytesNum: this.versionBytesNum,
@@ -340,7 +359,7 @@ export class Tx extends Struct {
             flags,
             hashCache,
         ])
-        return new Sig().fromFastBuffer(workersResult.resbuf)
+        return new Sig().fromBuffer(workersResult.resbuf)
     }
 
     // This function takes a signature as input and does not parse any inputs

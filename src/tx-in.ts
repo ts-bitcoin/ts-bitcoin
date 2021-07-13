@@ -57,15 +57,14 @@ export class TxIn extends Struct {
     public script = new Script()
     public nSequence = 0xffffffff
 
-    constructor(
+    public fromObject(
         data: {
             txHashBuf?: Buffer
             txOutNum?: number
             script?: Script
             nSequence?: number
         } = {}
-    ) {
-        super()
+    ): this {
         if (data.txHashBuf !== undefined) {
             this.txHashBuf = data.txHashBuf
         }
@@ -78,15 +77,16 @@ export class TxIn extends Struct {
         if (data.nSequence !== undefined) {
             this.nSequence = data.nSequence
         }
+        return this
     }
 
-    public static fromBr(br: Br): TxIn {
+    public fromBr(br: Br): this {
         const txHashBuf = br.read(32)
         const txOutNum = br.readUInt32LE()
         const scriptLength = br.readVarIntNum()
         const script = Script.fromBuffer(br.read(scriptLength))
         const nSequence = br.readUInt32LE()
-        return new this({ txHashBuf, txOutNum, script, nSequence })
+        return this.fromObject({ txHashBuf, txOutNum, script, nSequence })
     }
 
     public toBw(bw?: Bw): Bw {
@@ -102,8 +102,8 @@ export class TxIn extends Struct {
         return bw
     }
 
-    public static fromJSON(json: Partial<TxInSchema>): TxIn {
-        return new this({
+    public fromJSON(json: Partial<TxInSchema>): this {
+        return this.fromObject({
             txHashBuf: json.txHashBuf !== undefined ? Buffer.from(json.txHashBuf, 'hex') : undefined,
             txOutNum: json.txOutNum,
             script: json.script !== undefined ? Script.fromJSON(json.script) : undefined,

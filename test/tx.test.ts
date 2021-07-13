@@ -10,7 +10,6 @@ import { Sig } from '../src/sig'
 import { Tx } from '../src/tx'
 import { TxIn } from '../src/tx-in'
 import { TxOut } from '../src/tx-out'
-import { VarInt } from '../src/var-int'
 
 import * as fixture from './vectors/bip69.json'
 import * as vectorsBitcoinABCSighash from './vectors/bitcoin-abc/sighash.json'
@@ -26,9 +25,7 @@ describe('Tx', () => {
     const txOut = TxOut.fromBuffer(Buffer.from('050000000000000001ae', 'hex'))
     const tx = new Tx({
         versionBytesNum: 0,
-        txInsVi: VarInt.fromNumber(1),
         txIns: [txIn],
-        txOutsVi: VarInt.fromNumber(1),
         txOuts: [txOut],
         nLockTime: 0,
     })
@@ -90,9 +87,7 @@ describe('Tx', () => {
         it('should set all the basic parameters', () => {
             const tx = new Tx({
                 versionBytesNum: 0,
-                txInsVi: VarInt.fromNumber(1),
                 txIns: [txIn],
-                txOutsVi: VarInt.fromNumber(1),
                 txOuts: [txOut],
                 nLockTime: 0,
             })

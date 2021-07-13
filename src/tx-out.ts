@@ -17,7 +17,7 @@ export interface TxOutSchema {
     script: string
 }
 
-export class TxOut extends Struct implements Record<keyof TxOutSchema, unknown> {
+export class TxOut extends Struct {
     public valueBn: Bn = new Bn(0)
     public script: Script = new Script()
 

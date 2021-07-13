@@ -11,12 +11,11 @@ import { PubKey } from './pub-key'
 import { Script } from './script'
 import { Sig } from './sig'
 import { SigOperations, SigOperationsLike } from './sig-operations'
-import { StructLegacy } from './struct-legacy'
+import { Struct } from './struct'
 import { Tx } from './tx'
 import { TxIn } from './tx-in'
 import { TxOut } from './tx-out'
 import { TxOutMap, TxOutMapLike } from './tx-out-map'
-import { VarInt } from './var-int'
 
 const Constants = Cst.Default.TxBuilder
 
@@ -36,7 +35,7 @@ interface TxBuilderLike {
     hashCache: HashCacheLike
 }
 
-export class TxBuilder extends StructLegacy {
+export class TxBuilder extends Struct {
     public tx: Tx
     public txIns: TxIn[]
     public txOuts: TxOut[]
