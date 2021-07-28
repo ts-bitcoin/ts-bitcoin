@@ -540,6 +540,12 @@ export class Script extends Struct {
         return true
     }
 
+    public isNonSpendable(): boolean {
+        const startsWithOpFalse = this.chunks[0].opCodeNum === OpCode.OP_FALSE
+        const andThenReturns = this.chunks[1] && this.chunks[1].opCodeNum === OpCode.OP_RETURN
+        return !!startsWithOpFalse && !!andThenReturns
+    }
+
     public isOpReturn(): boolean {
         return (
             this.chunks[0].opCodeNum === OpCode.OP_RETURN &&
