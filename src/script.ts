@@ -541,14 +541,7 @@ export class Script extends Struct {
     }
 
     public isOpReturn(): boolean {
-        if (
-            this.chunks[0].opCodeNum === OpCode.OP_RETURN &&
-            this.chunks.filter((chunk) => Buffer.isBuffer(chunk.buf)).length === this.chunks.slice(1).length
-        ) {
-            return true
-        } else {
-            return false
-        }
+        return this.chunks[0].opCodeNum === OpCode.OP_RETURN
     }
 
     public isSafeDataOut(): boolean {
