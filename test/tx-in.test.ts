@@ -24,6 +24,9 @@ describe('TxIn', () => {
         nSequence,
     })
 
+    const txIn2Hex = 'f2bc60825b513c5a94eb9997858dfddacc901b00e0091403affe5bd366a99a8c0000000001ae00000000'
+    const txIn2TxHash = '8c9aa966d35bfeaf031409e0001b90ccdafd8d859799eb945a3c515b8260bcf2'
+
     it('should make a new txIn', () => {
         let txIn = new TxIn()
         should.exist(txIn)
@@ -168,6 +171,12 @@ describe('TxIn', () => {
             const txOutNum = 0
             const txIn = new TxIn().fromPubKeyHashTxOut(txHashBuf, txOutNum, txOut, keyPair.pubKey)
             should.exist(txIn)
+        })
+    })
+
+    describe('#txid', () => {
+        it('should convert txHashBuf to little-endian hash', () => {
+            new TxIn().fromBuffer(Buffer.from(txIn2Hex, 'hex')).txid().should.equal(txIn2TxHash)
         })
     })
 })

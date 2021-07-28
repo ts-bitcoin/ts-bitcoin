@@ -165,4 +165,11 @@ export class TxIn extends Struct {
         this.txHashBuf.fill(0)
         this.txOutNum = 0xffffffff // -1 cast to unsigned int
     }
+
+    /**
+     * Get little-endian tx hash.
+     */
+    public txid(): string {
+        return new Br(this.txHashBuf).readReverse().toString('hex')
+    }
 }
