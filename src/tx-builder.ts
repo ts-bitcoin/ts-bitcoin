@@ -281,7 +281,7 @@ export class TxBuilder extends Struct {
     public buildOutputs(): Bn {
         let outAmountBn = new Bn(0)
         for (const txOut of this.txOuts) {
-            if (txOut.valueBn.lt(this.dust) && !txOut.script.isOpReturn() && !txOut.script.isSafeDataOut()) {
+            if (txOut.valueBn.lt(this.dust) && !txOut.script.isNonSpendable()) {
                 throw new Error('cannot create output lesser than dust')
             }
             outAmountBn = outAmountBn.add(txOut.valueBn)
