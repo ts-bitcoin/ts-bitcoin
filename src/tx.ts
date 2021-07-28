@@ -169,6 +169,40 @@ export class Tx extends Struct {
         flags = 0,
         hashCache = new HashCache()
     ): Buffer {
+        const buf = this.sighashPreimage(nHashType, nIn, subScript, valueBn, flags, hashCache)
+        if (buf.compare(Buffer.from('0000000000000000000000000000000000000000000000000000000000000001', 'hex')) === 0) {
+            return buf
+        }
+        return new Br(Hash.sha256Sha256(buf)).readReverse()
+    }
+
+    public async asyncSighash(
+        nHashType: number,
+        nIn: number,
+        subScript: Script,
+        valueBn?: Bn,
+        flags = 0,
+        hashCache?: HashCache
+    ) {
+        const workersResult = await Workers.asyncObjectMethod(this, 'sighash', [
+            nHashType,
+            nIn,
+            subScript,
+            valueBn,
+            flags,
+            hashCache,
+        ])
+        return workersResult.resbuf
+    }
+
+    public sighashPreimage(
+        nHashType: number,
+        nIn: number,
+        subScript: Script,
+        valueBn?: Bn,
+        flags = 0,
+        hashCache = new HashCache()
+    ): Buffer {
         // start with UAHF part (Bitcoin SV)
         // https://github.com/Bitcoin-UAHF/spec/blob/master/replay-protected-sighash.md
         if (nHashType & Sig.SIGHASH_FORKID && flags & Tx.SCRIPT_ENABLE_SIGHASH_FORKID) {
@@ -214,7 +248,7 @@ export class Tx extends Struct {
             bw.writeUInt32LE(this.nLockTime)
             bw.writeUInt32LE(nHashType >>> 0)
 
-            return new Br(Hash.sha256Sha256(bw.toBuffer())).readReverse()
+            return bw.toBuffer()
         }
 
         // original bitcoin code follows - not related to UAHF (Bitcoin SV)
@@ -271,11 +305,10 @@ export class Tx extends Struct {
             txcopy.txInsVi = VarInt.fromNumber(1)
         }
 
-        const buf = new Bw().write(txcopy.toBuffer()).writeInt32LE(nHashType).toBuffer()
-        return new Br(Hash.sha256Sha256(buf)).readReverse()
+        return new Bw().write(txcopy.toBuffer()).writeInt32LE(nHashType).toBuffer()
     }
 
-    public async asyncSighash(
+    public async asyncSighashPreimage(
         nHashType: number,
         nIn: number,
         subScript: Script,
@@ -283,7 +316,7 @@ export class Tx extends Struct {
         flags = 0,
         hashCache?: HashCache
     ): Promise<Buffer> {
-        const workersResult = await Workers.asyncObjectMethod(this, 'sighash', [
+        const workersResult = await Workers.asyncObjectMethod(this, 'sighashPreimage', [
             nHashType,
             nIn,
             subScript,
