@@ -33,7 +33,7 @@ export class Bip32 extends Struct {
     public parentFingerPrint: Buffer
     public childIndex: number
     public chainCode: Buffer
-    public privKey: PrivKeyClass
+    public privKey: PrivKeyClass | undefined
     public pubKey: PubKey
     public Constants: NetworkConstants['Bip32']
     public PrivKey: typeof PrivKeyClass

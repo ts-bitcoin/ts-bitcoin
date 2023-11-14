@@ -26,9 +26,9 @@ interface TxBuilderLike {
     txOuts: string[]
     uTxOutMap: TxOutMapLike
     sigOperations: SigOperationsLike
-    changeScript: string
-    changeAmountBn: number
-    feeAmountBn: number
+    changeScript?: string
+    changeAmountBn?: number
+    feeAmountBn?: number
     feePerKbNum: number
     sigsPerInput: number
     dust: number
@@ -42,9 +42,9 @@ export class TxBuilder extends Struct {
     public txOuts: TxOut[]
     public uTxOutMap: TxOutMap
     public sigOperations: SigOperations
-    public changeScript: Script
-    public changeAmountBn: Bn
-    public feeAmountBn: Bn
+    public changeScript?: Script
+    public changeAmountBn?: Bn
+    public feeAmountBn?: Bn
     public feePerKbNum: number
     public sigsPerInput: number
     public dust: number

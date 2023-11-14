@@ -22,11 +22,19 @@ import { PubKey } from './pub-key'
 import { Sig } from './sig'
 import { Struct } from './struct'
 
-interface ScriptChunk {
-    buf?: Buffer
-    len?: number
+interface ScriptChunkOpCode {
     opCodeNum: number
+    buf?: never
+    len?: never
 }
+
+interface ScriptChunkData {
+    opCodeNum: number
+    buf: Buffer
+    len: number
+}
+
+type ScriptChunk = ScriptChunkOpCode | ScriptChunkData
 
 export class Script extends Struct {
     public chunks: ScriptChunk[]
