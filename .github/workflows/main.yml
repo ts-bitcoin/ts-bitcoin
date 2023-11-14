@@ -12,22 +12,24 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [16.x, 18.x, 20.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - run: npm run format -- --list-different
+      - run: npm run format:ci
       - run: npm run lint
-      - run: npm run build
+      - run: npm run build:node
+      - if: matrix.node-version == '16.x'
+        run: npm run build:browser
       - run: npm run test
       - name: Semantic Release
-        if: github.event_name == 'push' && matrix.node-version == '14.x'
-        uses: cycjimmy/semantic-release-action@v2
+        if: github.event_name == 'push' && matrix.node-version == '16.x'
+        uses: cycjimmy/semantic-release-action@v3
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

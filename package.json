@@ -25,6 +25,7 @@
     "clean": "rm -rf lib",
     "lint": "eslint -c .eslintrc.json --ext .ts --max-warnings 0 src test",
     "format": "prettier --write '{lib,test}/**/*.+(js|json)'",
+    "format:ci": "prettier --list-different '{lib,test}/**/*.+(js|json)'",
     "watch": "tsc -w",
     "build": "npm run clean && npm run build:node && npm run build:browser",
     "build:node": "tsc",
